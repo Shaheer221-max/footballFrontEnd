@@ -1,0 +1,9 @@
+#player{
+    
+    background-image: url("../assets/d.png"), url("../assets/image.png");
+  background-position: .1px bottom, right;
+  background-repeat: no-repeat, repeat;
+  padding:right 15 ;
+   
+}
+

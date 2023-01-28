@@ -1,0 +1,25 @@
+@media (min-width: 1350px) {
+    .xl1-ml-600px {
+        margin-left: 600px;
+    }
+    .\xl\:px-10 {
+        padding-left: 2rem/* 40px */;
+        padding-right: 3.5rem/* 40px */;
+    }
+    .\xl\:px-4 {
+        padding-left: 16px/* 40px */;
+        padding-right: 16px/* 40px */;
+    }
+    .\xl\:px-3 {
+        padding-left: 12px/* 40px */;
+        padding-right: 12px/* 40px */;
+    }
+    .\xl\:px-2 {
+        padding-left: 8px/* 40px */;
+        padding-right: 8px/* 40px */;
+    }
+    .\xl\:px-5 {
+        padding-left: 20px/* 40px */;
+        padding-right: 20px/* 40px */;
+    }
+}
