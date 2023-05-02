@@ -3,6 +3,13 @@
     opacity: 1;
 }
 
+.highlight {
+    background-color: red;
+    color: white;
+    /* disable */
+    pointer-events: none;
+  }
+
 .schedule {
     background-color: rgba(33, 33, 33, 0.7);
     width:260px;

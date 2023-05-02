@@ -4,6 +4,8 @@ import "../styles/font.css";
 import pfp from "../assets/pfp.png";
 import { NavLink } from "react-router-dom";
 import axios from "../axios";
+import Spinner from "./Spinner";
+import { message } from "antd";
 
 export default function VerificationCenter() {
   const [staticdata, setStaticData] = useState(false);
@@ -61,6 +63,7 @@ export default function VerificationCenter() {
   };
 
   const approve = (id) => {
+    console.log(id)
     axios
       .patch(
         `https://football-backend-updated.herokuapp.com/users/updateUser/${id}`,
@@ -69,24 +72,27 @@ export default function VerificationCenter() {
         }
       )
       .then((response) => {
+        message.success("Player Approved");
         console.log(response);
       })
       .catch((error) => {
         console.log(error.response.data);
       });
-  }
+  };
 
   const unapprove = (id) => {
-    axios.delete(
+    axios
+      .delete(
         `https://football-backend-updated.herokuapp.com/users/deleteUser/${id}`
-        )
-        .then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(error.response.data);
-        });
-    }
+      )
+      .then((response) => {
+        message.success("Player Deleted");
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
 
   const setPage = (data) => {
     const current = currentPage;
@@ -299,233 +305,266 @@ export default function VerificationCenter() {
               </tr>
             </thead>
             <tbody>
-              {staticdataCopy !== false ? (
-                <>
-                  {/* if searched */}
-                  {staticdataCopy.map((object, index) => (
-                    <tr className="font-dm border-[#7E7E7E] border-b text-center">
-                      <th
-                        scope="row"
-                        className="py-4 font-medium whitespace-nowrap text-white"
-                        onClick={() => setopenAddsubcatmodal(false)}
-                      >
-                        #{index + 1}
-                      </th>
-                      <td className="py-4 ">
-                        <div
-                          className="flex gap-2 items-center ml-7"
-                          onClick={() => closeProfile(index)}
+              {staticdata.length > 0 || staticdataCopy.length > 0 ? (
+                staticdataCopy !== false ? (
+                  <>
+                    {/* if searched */}
+                    {staticdataCopy.map((object, index) => (
+                      <tr className="font-dm border-[#7E7E7E] border-b text-center">
+                        <th
+                          scope="row"
+                          className="py-4 font-medium whitespace-nowrap text-white"
+                          onClick={() => setopenAddsubcatmodal(false)}
                         >
-                          <img
-                            className=" w-10 h-10 rounded-full "
-                            src={object.image}
-                          />
-                          <p> {object.name} </p>
-                        </div>
-                      </td>
-                      <td className="py-4" onClick={() => closeProfile(index)}>
-                        {object.email}
-                      </td>
-                      <td className="py-4 " onClick={() => closeProfile(index)}>
-                        {object.phone}
-                      </td>
-                      <td className="py-4 " onClick={() => closeProfile(index)}>
-                        {object.datedjoined.split("T")[0]}
-                      </td>
-                      <td className="py-4 ">
-                        <button onClick={() => approve(object._id)} className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm">
-                          Approve
-                        </button>
-                        <button onClick={() => unapprove(object._id)} className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm">
-                          Un Approve
-                        </button>
-                      </td>
-
-                      <td>
-                        <div className="flex pl-3 gap-10 justify-center">
-                          <NavLink to={"/userarea/playerprofile/profile"}>
-                            <p className="text-blue-500">View Attachments</p>{" "}
-                          </NavLink>
-                          <div className="mt-2">
-                            <svg
-                              onClick={() => openProfile(index)}
-                              width="19"
-                              height="5"
-                              viewBox="0 0 19 5"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M9.201 5.68597e-08C8.91196 5.07687e-08 8.62575 0.0569305 8.35871 0.167541C8.09168 0.278152 7.84904 0.440276 7.64466 0.644658C7.44028 0.84904 7.27815 1.09168 7.16754 1.35871C7.05693 1.62575 7 1.91196 7 2.201C7 2.49004 7.05693 2.77625 7.16754 3.04329C7.27815 3.31032 7.44028 3.55296 7.64466 3.75734C7.84904 3.96172 8.09168 4.12385 8.35871 4.23446C8.62575 4.34507 8.91196 4.402 9.201 4.402C9.78474 4.40187 10.3445 4.16985 10.7572 3.75699C11.1699 3.34413 11.4016 2.78424 11.4015 2.2005C11.4014 1.61676 11.1693 1.05698 10.7565 0.644304C10.3436 0.231631 9.78374 -0.000132534 9.2 5.68597e-08H9.201ZM2.201 5.68597e-08C1.91196 5.07687e-08 1.62575 0.0569305 1.35871 0.167541C1.09168 0.278152 0.84904 0.440276 0.644658 0.644658C0.440276 0.84904 0.278152 1.09168 0.167541 1.35871C0.0569305 1.62575 0 1.91196 0 2.201C0 2.49004 0.0569305 2.77625 0.167541 3.04329C0.278152 3.31032 0.440276 3.55296 0.644658 3.75734C0.84904 3.96172 1.09168 4.12385 1.35871 4.23446C1.62575 4.34507 1.91196 4.402 2.201 4.402C2.78474 4.40187 3.34452 4.16985 3.7572 3.75699C4.16987 3.34413 4.40163 2.78424 4.4015 2.2005C4.40137 1.61676 4.16935 1.05698 3.75649 0.644304C3.34363 0.231631 2.78474 -0.000132534 2.201 5.68597e-08ZM16.201 5.68597e-08C15.912 5.07687e-08 15.6258 0.0569305 15.3587 0.167541C15.0917 0.278152 14.849 0.440276 14.6447 0.644658C14.4403 0.84904 14.2782 1.09168 14.1675 1.35871C14.0569 1.62575 14 1.91196 14 2.201C14 2.49004 14.0569 2.77625 14.1675 3.04329C14.2782 3.31032 14.4403 3.55296 14.6447 3.75734C14.849 3.96172 15.0917 4.12385 15.3587 4.23446C15.6258 4.34507 15.912 4.402 16.201 4.402C16.7847 4.40187 17.3445 4.16985 17.7572 3.75699C18.1699 3.34413 18.4016 2.78424 18.4015 2.2005C18.4014 1.61676 18.1693 1.05698 17.7565 0.644304C17.3436 0.231631 16.7847 -0.000132534 16.201 5.68597e-08Z"
-                                fill="white"
-                              />
-                            </svg>
+                          #{index + 1}
+                        </th>
+                        <td className="py-4 ">
+                          <div
+                            className="flex gap-2 items-center ml-7"
+                            onClick={() => closeProfile(index)}
+                          >
+                            <img
+                              className=" w-10 h-10 rounded-full "
+                              src={object.image}
+                            />
+                            <p> {object.name} </p>
                           </div>
-                        </div>
-                      </td>
-                      {/* view profile */}
-                      <tr>
-                        <div
-                          id="defaultModal"
+                        </td>
+                        <td
+                          className="py-4"
                           onClick={() => closeProfile(index)}
-                          className={
-                            !object.isPlayer
-                              ? "hidden"
-                              : " flex  mt-3  bg-black/0 justify-center items-center"
-                          }
                         >
+                          {object.email}
+                        </td>
+                        <td
+                          className="py-4 "
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.phone}
+                        </td>
+                        <td
+                          className="py-4 "
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.datedjoined.split("T")[0]}
+                        </td>
+                        <td className="py-4 ">
+                          <button
+                            onClick={() => approve(object._id)}
+                            className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => unapprove(object._id)}
+                            className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
+                          >
+                            Un Approve
+                          </button>
+                        </td>
+
+                        <td>
+                          <div className="flex pl-3 gap-10 justify-center">
+                            <NavLink to={"/userarea/playerprofile/profile"}>
+                              <p className="text-blue-500">View Attachments</p>{" "}
+                            </NavLink>
+                            <div className="mt-2">
+                              <svg
+                                onClick={() => openProfile(index)}
+                                width="19"
+                                height="5"
+                                viewBox="0 0 19 5"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M9.201 5.68597e-08C8.91196 5.07687e-08 8.62575 0.0569305 8.35871 0.167541C8.09168 0.278152 7.84904 0.440276 7.64466 0.644658C7.44028 0.84904 7.27815 1.09168 7.16754 1.35871C7.05693 1.62575 7 1.91196 7 2.201C7 2.49004 7.05693 2.77625 7.16754 3.04329C7.27815 3.31032 7.44028 3.55296 7.64466 3.75734C7.84904 3.96172 8.09168 4.12385 8.35871 4.23446C8.62575 4.34507 8.91196 4.402 9.201 4.402C9.78474 4.40187 10.3445 4.16985 10.7572 3.75699C11.1699 3.34413 11.4016 2.78424 11.4015 2.2005C11.4014 1.61676 11.1693 1.05698 10.7565 0.644304C10.3436 0.231631 9.78374 -0.000132534 9.2 5.68597e-08H9.201ZM2.201 5.68597e-08C1.91196 5.07687e-08 1.62575 0.0569305 1.35871 0.167541C1.09168 0.278152 0.84904 0.440276 0.644658 0.644658C0.440276 0.84904 0.278152 1.09168 0.167541 1.35871C0.0569305 1.62575 0 1.91196 0 2.201C0 2.49004 0.0569305 2.77625 0.167541 3.04329C0.278152 3.31032 0.440276 3.55296 0.644658 3.75734C0.84904 3.96172 1.09168 4.12385 1.35871 4.23446C1.62575 4.34507 1.91196 4.402 2.201 4.402C2.78474 4.40187 3.34452 4.16985 3.7572 3.75699C4.16987 3.34413 4.40163 2.78424 4.4015 2.2005C4.40137 1.61676 4.16935 1.05698 3.75649 0.644304C3.34363 0.231631 2.78474 -0.000132534 2.201 5.68597e-08ZM16.201 5.68597e-08C15.912 5.07687e-08 15.6258 0.0569305 15.3587 0.167541C15.0917 0.278152 14.849 0.440276 14.6447 0.644658C14.4403 0.84904 14.2782 1.09168 14.1675 1.35871C14.0569 1.62575 14 1.91196 14 2.201C14 2.49004 14.0569 2.77625 14.1675 3.04329C14.2782 3.31032 14.4403 3.55296 14.6447 3.75734C14.849 3.96172 15.0917 4.12385 15.3587 4.23446C15.6258 4.34507 15.912 4.402 16.201 4.402C16.7847 4.40187 17.3445 4.16985 17.7572 3.75699C18.1699 3.34413 18.4016 2.78424 18.4015 2.2005C18.4014 1.61676 18.1693 1.05698 17.7565 0.644304C17.3436 0.231631 16.7847 -0.000132534 16.201 5.68597e-08Z"
+                                  fill="white"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </td>
+                        {/* view profile */}
+                        <tr>
                           <div
                             id="defaultModal"
+                            onClick={() => closeProfile(index)}
                             className={
                               !object.isPlayer
                                 ? "hidden"
-                                : " flex absolute right-0 mb-3 mt-3  z-50 w-[150px] h-[80px]   bg-white rounded-xl justify-center content-center items-center"
+                                : " flex  mt-3  bg-black/0 justify-center items-center"
                             }
                           >
-                            <div className="w-full ">
-                              <h5 className="text-sm text-center  mb-2 mt-3  font-medium tracking-tight font-lexend  text-[#212121] ">
-                                <NavLink to={"/userarea/playerprofile/profile"}>
-                                  <a href="userarea/playerprofile/profile">
-                                    View Profile
-                                  </a>
-                                </NavLink>
-                              </h5>
-                              <div className="border-b-2 w-full border-[#212121]/50" />
-
-                              <h5
-                                className="text-[#212121] text-center mt-3 mb-3  text-sm font-normal font-lexend cursor-pointer  "
-                                onClick={() => setopenAddsubcatmodal(false)}
-                              >
-                                <NavLink to={"chat"}>
-                                  <a href="/chat"> chat</a>
-                                </NavLink>
-                              </h5>
-                            </div>
-                          </div>
-                        </div>
-                      </tr>
-                    </tr>
-                  ))}
-                </>
-              ) : (
-                <>
-                  {staticdata === false ? (
-                    <></>
-                  ) : (
-                    // if not searched
-                    <>
-                      {staticdata.map((object, index) => (
-                        <tr className="font-dm border-[#7E7E7E] border-b text-center">
-                          <th
-                            scope="row"
-                            className="py-4 font-medium whitespace-nowrap text-white"
-                            onClick={() => closeProfile(index)}
-                          >
-                            #{index + 1}
-                          </th>
-                          <td className="py-4 ">
-                            <div
-                              className="flex gap-2 items-center ml-7"
-                              onClick={() => closeProfile(index)}
-                            >
-                              <img
-                                className=" w-10 h-10 rounded-full "
-                                src={object.image}
-                              />
-                              <p> {object.name} </p>
-                            </div>
-                          </td>
-                          <td
-                            className="py-4"
-                            onClick={() => closeProfile(index)}
-                          >
-                            {object.email}
-                          </td>
-                          <td
-                            className="py-4 "
-                            onClick={() => closeProfile(index)}
-                          >
-                            {object.phone}
-                          </td>
-                          <td
-                            className="py-4 "
-                            onClick={() => closeProfile(index)}
-                          >
-                            {object.datedjoined.split("T")[0]}
-                          </td>
-                          <td
-                            className="py-4 "
-                          >
-                            <button onClick={() => approve(object._id)} className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm">
-                              Approve
-                            </button>
-                            <button onClick={() => unapprove(object._id)} className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm">
-                              Un Approve
-                            </button>
-                          </td>
-
-                          <td>
-                            <div className="flex pl-3 gap-10 justify-center">
-                              <NavLink to={"/userarea/playerprofile/profile"}>
-                                <p className="text-blue-500">
-                                  View Attachments
-                                </p>{" "}
-                              </NavLink>
-                              <div className="mt-2">
-                                <svg
-                                  onClick={() => openProfile(index)}
-                                  width="19"
-                                  height="5"
-                                  viewBox="0 0 19 5"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M9.201 5.68597e-08C8.91196 5.07687e-08 8.62575 0.0569305 8.35871 0.167541C8.09168 0.278152 7.84904 0.440276 7.64466 0.644658C7.44028 0.84904 7.27815 1.09168 7.16754 1.35871C7.05693 1.62575 7 1.91196 7 2.201C7 2.49004 7.05693 2.77625 7.16754 3.04329C7.27815 3.31032 7.44028 3.55296 7.64466 3.75734C7.84904 3.96172 8.09168 4.12385 8.35871 4.23446C8.62575 4.34507 8.91196 4.402 9.201 4.402C9.78474 4.40187 10.3445 4.16985 10.7572 3.75699C11.1699 3.34413 11.4016 2.78424 11.4015 2.2005C11.4014 1.61676 11.1693 1.05698 10.7565 0.644304C10.3436 0.231631 9.78374 -0.000132534 9.2 5.68597e-08H9.201ZM2.201 5.68597e-08C1.91196 5.07687e-08 1.62575 0.0569305 1.35871 0.167541C1.09168 0.278152 0.84904 0.440276 0.644658 0.644658C0.440276 0.84904 0.278152 1.09168 0.167541 1.35871C0.0569305 1.62575 0 1.91196 0 2.201C0 2.49004 0.0569305 2.77625 0.167541 3.04329C0.278152 3.31032 0.440276 3.55296 0.644658 3.75734C0.84904 3.96172 1.09168 4.12385 1.35871 4.23446C1.62575 4.34507 1.91196 4.402 2.201 4.402C2.78474 4.40187 3.34452 4.16985 3.7572 3.75699C4.16987 3.34413 4.40163 2.78424 4.4015 2.2005C4.40137 1.61676 4.16935 1.05698 3.75649 0.644304C3.34363 0.231631 2.78474 -0.000132534 2.201 5.68597e-08ZM16.201 5.68597e-08C15.912 5.07687e-08 15.6258 0.0569305 15.3587 0.167541C15.0917 0.278152 14.849 0.440276 14.6447 0.644658C14.4403 0.84904 14.2782 1.09168 14.1675 1.35871C14.0569 1.62575 14 1.91196 14 2.201C14 2.49004 14.0569 2.77625 14.1675 3.04329C14.2782 3.31032 14.4403 3.55296 14.6447 3.75734C14.849 3.96172 15.0917 4.12385 15.3587 4.23446C15.6258 4.34507 15.912 4.402 16.201 4.402C16.7847 4.40187 17.3445 4.16985 17.7572 3.75699C18.1699 3.34413 18.4016 2.78424 18.4015 2.2005C18.4014 1.61676 18.1693 1.05698 17.7565 0.644304C17.3436 0.231631 16.7847 -0.000132534 16.201 5.68597e-08Z"
-                                    fill="white"
-                                  />
-                                </svg>
-                              </div>
-                            </div>
-                          </td>
-                          {/* view profile */}
-                          <tr>
                             <div
                               id="defaultModal"
-                              onClick={() => closeProfile(index)}
                               className={
                                 !object.isPlayer
                                   ? "hidden"
-                                  : " flex  mt-3  bg-black/0 justify-center items-center"
+                                  : " flex absolute right-0 mb-3 mt-3  z-50 w-[150px] h-[80px]   bg-white rounded-xl justify-center content-center items-center"
                               }
                             >
+                              <div className="w-full ">
+                                <h5 className="text-sm text-center  mb-2 mt-3  font-medium tracking-tight font-lexend  text-[#212121] ">
+                                  <NavLink
+                                    to={"/userarea/playerprofile/profile"}
+                                  >
+                                    <a href="userarea/playerprofile/profile">
+                                      View Profile
+                                    </a>
+                                  </NavLink>
+                                </h5>
+                                <div className="border-b-2 w-full border-[#212121]/50" />
+
+                                <h5
+                                  className="text-[#212121] text-center mt-3 mb-3  text-sm font-normal font-lexend cursor-pointer  "
+                                  onClick={() => setopenAddsubcatmodal(false)}
+                                >
+                                  <NavLink to={"chat"}>
+                                    <a href="/chat"> chat</a>
+                                  </NavLink>
+                                </h5>
+                              </div>
+                            </div>
+                          </div>
+                        </tr>
+                      </tr>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    {staticdata === false ? (
+                      <></>
+                    ) : (
+                      // if not searched
+                      <>
+                        {staticdata.map((object, index) => (
+                          <tr className="font-dm border-[#7E7E7E] border-b text-center">
+                            <th
+                              scope="row"
+                              className="py-4 font-medium whitespace-nowrap text-white"
+                              onClick={() => closeProfile(index)}
+                            >
+                              #{index + 1}
+                            </th>
+                            <td className="py-4 ">
+                              <div
+                                className="flex gap-2 items-center ml-7"
+                                onClick={() => closeProfile(index)}
+                              >
+                                <img
+                                  className=" w-10 h-10 rounded-full "
+                                  src={object.image}
+                                />
+                                <p> {object.name} </p>
+                              </div>
+                            </td>
+                            <td
+                              className="py-4"
+                              onClick={() => closeProfile(index)}
+                            >
+                              {object.email}
+                            </td>
+                            <td
+                              className="py-4 "
+                              onClick={() => closeProfile(index)}
+                            >
+                              {object.phone}
+                            </td>
+                            <td
+                              className="py-4 "
+                              onClick={() => closeProfile(index)}
+                            >
+                              {object.datedjoined.split("T")[0]}
+                            </td>
+                            <td className="py-4 ">
+                              <button
+                                onClick={() => approve(object._id)}
+                                className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => unapprove(object._id)}
+                                className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
+                              >
+                                Un Approve
+                              </button>
+                            </td>
+
+                            <td>
+                              <div className="flex pl-3 gap-10 justify-center">
+                                <NavLink to={"/userarea/playerprofile/profile"}>
+                                  <p className="text-blue-500">
+                                    View Attachments
+                                  </p>{" "}
+                                </NavLink>
+                                <div className="mt-2">
+                                  <svg
+                                    onClick={() => openProfile(index)}
+                                    width="19"
+                                    height="5"
+                                    viewBox="0 0 19 5"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M9.201 5.68597e-08C8.91196 5.07687e-08 8.62575 0.0569305 8.35871 0.167541C8.09168 0.278152 7.84904 0.440276 7.64466 0.644658C7.44028 0.84904 7.27815 1.09168 7.16754 1.35871C7.05693 1.62575 7 1.91196 7 2.201C7 2.49004 7.05693 2.77625 7.16754 3.04329C7.27815 3.31032 7.44028 3.55296 7.64466 3.75734C7.84904 3.96172 8.09168 4.12385 8.35871 4.23446C8.62575 4.34507 8.91196 4.402 9.201 4.402C9.78474 4.40187 10.3445 4.16985 10.7572 3.75699C11.1699 3.34413 11.4016 2.78424 11.4015 2.2005C11.4014 1.61676 11.1693 1.05698 10.7565 0.644304C10.3436 0.231631 9.78374 -0.000132534 9.2 5.68597e-08H9.201ZM2.201 5.68597e-08C1.91196 5.07687e-08 1.62575 0.0569305 1.35871 0.167541C1.09168 0.278152 0.84904 0.440276 0.644658 0.644658C0.440276 0.84904 0.278152 1.09168 0.167541 1.35871C0.0569305 1.62575 0 1.91196 0 2.201C0 2.49004 0.0569305 2.77625 0.167541 3.04329C0.278152 3.31032 0.440276 3.55296 0.644658 3.75734C0.84904 3.96172 1.09168 4.12385 1.35871 4.23446C1.62575 4.34507 1.91196 4.402 2.201 4.402C2.78474 4.40187 3.34452 4.16985 3.7572 3.75699C4.16987 3.34413 4.40163 2.78424 4.4015 2.2005C4.40137 1.61676 4.16935 1.05698 3.75649 0.644304C3.34363 0.231631 2.78474 -0.000132534 2.201 5.68597e-08ZM16.201 5.68597e-08C15.912 5.07687e-08 15.6258 0.0569305 15.3587 0.167541C15.0917 0.278152 14.849 0.440276 14.6447 0.644658C14.4403 0.84904 14.2782 1.09168 14.1675 1.35871C14.0569 1.62575 14 1.91196 14 2.201C14 2.49004 14.0569 2.77625 14.1675 3.04329C14.2782 3.31032 14.4403 3.55296 14.6447 3.75734C14.849 3.96172 15.0917 4.12385 15.3587 4.23446C15.6258 4.34507 15.912 4.402 16.201 4.402C16.7847 4.40187 17.3445 4.16985 17.7572 3.75699C18.1699 3.34413 18.4016 2.78424 18.4015 2.2005C18.4014 1.61676 18.1693 1.05698 17.7565 0.644304C17.3436 0.231631 16.7847 -0.000132534 16.201 5.68597e-08Z"
+                                      fill="white"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                            </td>
+                            {/* view profile */}
+                            <tr>
                               <div
                                 id="defaultModal"
+                                onClick={() => closeProfile(index)}
                                 className={
                                   !object.isPlayer
                                     ? "hidden"
-                                    : " flex absolute right-0 mb-3 mt-3  z-50 w-[150px] h-[80px]   bg-white rounded-xl justify-center content-center items-center"
+                                    : " flex  mt-3  bg-black/0 justify-center items-center"
                                 }
                               >
-                                <div className="w-full ">
-                                  <h5 className="text-sm text-center  mb-2 mt-3  font-medium tracking-tight font-lexend  text-[#212121] ">
-                                    <NavLink
-                                      to={"/userarea/playerprofile/profile"}
-                                    >
-                                      <a href="userarea/playerprofile/profile">
-                                        Remove Account
-                                      </a>
-                                    </NavLink>
-                                  </h5>
+                                <div
+                                  id="defaultModal"
+                                  className={
+                                    !object.isPlayer
+                                      ? "hidden"
+                                      : " flex absolute right-0 mb-3 mt-3  z-50 w-[150px] h-[80px]   bg-white rounded-xl justify-center content-center items-center"
+                                  }
+                                >
+                                  <div className="w-full ">
+                                    <h5 className="text-sm text-center  mb-2 mt-3  font-medium tracking-tight font-lexend  text-[#212121] ">
+                                      <NavLink
+                                        to={"/userarea/playerprofile/profile"}
+                                      >
+                                        <a href="userarea/playerprofile/profile">
+                                          Remove Account
+                                        </a>
+                                      </NavLink>
+                                    </h5>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
+                            </tr>
                           </tr>
-                        </tr>
-                      ))}
-                    </>
-                  )}
-                </>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )
+              ) : (
+                <tr>
+                  <td className="text-right">
+                    <div className="flex justify-center mt-3 w-full h-96">
+                      <p className="text-[#818181] font-dm font-normal text-lg">
+                        No Data Found
+                      </p>
+                    </div>
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>

@@ -3,8 +3,9 @@ import ItemsRightSidebar from "./ItemsRightSideBar";
 import Header from "../../Components/Header";
 import "../../styles/font.css";
 import axios from "../../axios";
-import { Checkbox, Select } from "antd";
+import { Checkbox, message, Select } from "antd";
 import { Option } from "antd/es/mentions";
+import { Link } from "react-router-dom";
 
 export default function AddItems() {
   const [name, setName] = useState("");
@@ -84,6 +85,10 @@ export default function AddItems() {
 
   // sending request
   const addItem = async () => {
+    if(!name || !price || !quantity || !image || !category){
+      setError("All fields are required");
+      return;
+    }
     await axios
       .post("https://football-backend-updated.herokuapp.com/item/CreateItem", {
         productname: name,
@@ -95,11 +100,13 @@ export default function AddItems() {
         coverphoto: url,
       })
       .then((res) => {
+        message.success("Item Added Successfully");
         console.log(res.data.data)
         setError(false);
         setItemAdded(true);
       })
       .catch((error) => {
+        message.error("Item Not Added");
         setError(error.response.data);
         console.log(error);
       });
@@ -286,12 +293,14 @@ export default function AddItems() {
                       {/* Cancel and additem button */}
                       <div className="flex mt-7 mr-2">
                         <div className="flex-1">
+                          <Link to={"/allItems"}>
                           <button
                             type="submit"
                             className=" font-dm items-center w-full font-lexend py-2   mt-3  text-sm font-normal bg-white rounded-[4px] "
                           >
                             Cancel
                           </button>
+                          </Link>
                         </div>
                         <div className="flex-1 ">
                           <button

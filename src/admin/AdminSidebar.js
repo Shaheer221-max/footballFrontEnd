@@ -462,7 +462,11 @@ export default function Sidebar() {
                     </svg>
                   </NavLink>
                 </li>
-                <li onClick={() => setdrop(false)}>
+                <li onClick={() => 
+                  {
+                    localStorage.removeItem("token")
+                    setdrop(false)
+                  }}>
                   <NavLink
                     to={"/"}
                     className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"

@@ -1,60 +1,92 @@
 import React from "react";
-import DashboardSidebar from "./dashboardRightSidebar";
 import Header from "../../Components/Header";
 import "../../styles/font.css";
-import Download from "../../assets/Download.png";
 import axios from "axios";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+
+// Import React Icons
+import { CiLocationOn } from "react-icons/ci";
 
 export default function Orders() {
   // chart
-  const staticdata = [
-    {
-      id: 25,
-    },
-    {
-      id: 21,
-    },
-    {
-      id: 30,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-  ];
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   // Get All Orders
   const [orders, setOrders] = React.useState([]);
+  const [newFolder, setNewFolder] = React.useState(false);
+  const [name, setName] = React.useState(false);
+  const [email, setEmail] = React.useState(false);
+  const [itemName, setItemName] = React.useState(false);
+  const [price, setPrice] = React.useState(false);
+  const [address, setAddress] = React.useState(false);
+  const [image, setImage] = React.useState(false);
+  const [productImage, setProductImage] = React.useState(false);
+  const [orderDate, setOrderDate] = React.useState(false);
+  const [quantity, setquantity] = React.useState(false);
+  const [pQuantity, setPQuantity] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+  const [searchOrder, setSearchOrder] = React.useState("");
+
+  const getOrderData = (val) => {
+    console.log(val);
+    setNewFolder(true);
+    setName(val?.refOfCustomer?.name);
+    setEmail(val?.refOfCustomer?.email);
+    setImage(val?.refOfCustomer?.image);
+    setItemName(val?.refOfProduct?.productname);
+    setPrice(val?.price);
+    setAddress(val?.deliveryAddress);
+    setProductImage(val?.refOfProduct?.coverphoto);
+    setOrderDate(val?.createdAt);
+    setquantity(val?.quantity);
+    setPQuantity(val?.refOfProduct?.quantity);
+  };
 
   const getOrders = async () => {
     try {
-      const response = await axios.get("https://football-backend-updated.herokuapp.com/AdminOrderNotification/getNotification");
-      console.log(response.data.data)
+      const response = await axios.get(
+        "https://football-backend-updated.herokuapp.com/AdminOrderNotification/getNotification"
+      );
+      console.log(response.data.data);
       setOrders(response.data.data);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   React.useEffect(() => {
     getOrders();
   }, []);
+
+  const searching = (search) => {
+    setSearch(search);
+    console.log(
+      orders.filter((val) =>
+        val.refOfCustomerNotification.refOfCustomer.name
+          .toUpperCase()
+          .startsWith(search.toUpperCase())
+      )
+    );
+    setSearchOrder(
+      orders.filter((val) =>
+        val.refOfCustomerNotification.refOfCustomer.name
+          .toUpperCase()
+          .startsWith(search.toUpperCase())
+      )
+    );
+  };
 
   return (
     <>
@@ -96,6 +128,7 @@ export default function Orders() {
                       className="bg-[#212121]  text-white  text-sm rounded-lg block w-full pl-10 p-2.5   border-gray-600 placeholder-gray-400  placeholder-lexend text-lexend focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Search Orders"
                       required=""
+                      onChange={(e) => searching(e.target.value)}
                     />
                   </div>
                   <button
@@ -106,7 +139,7 @@ export default function Orders() {
                   </button>
                 </form>
               </div>
-              <div className="flex-1 grow-0">
+              {/* <div className="flex-1 grow-0">
                 <button
                   type="submit"
                   className="  items-center py-2 px-5 ml-4 text-sm font-normal bg-[#E7E7E7] rounded-[4px] "
@@ -137,7 +170,7 @@ export default function Orders() {
                 >
                   Done
                 </button>
-              </div>
+              </div> */}
             </div>
 
             {/* Latest Orders  */}
@@ -145,6 +178,9 @@ export default function Orders() {
               <table className=" w-full text-md text-center justify-items-center text-white items-center">
                 <thead className=" text-base font-sm text-[#7E7E7E] border-b border-[#7E7E7E]  border-b">
                   <tr className="text-center ">
+                    <th scope="col" className="py-3 ">
+                      Order Id
+                    </th>
                     <th scope="col" className="py-3 ">
                       Date
                     </th>
@@ -157,11 +193,17 @@ export default function Orders() {
                     <th scope="col" className="py-3 pl-2">
                       Item
                     </th>
+                    {/* <th scope="col" className="py-3 pl-2">
+                      Size
+                    </th>
+                    <th scope="col" className="py-3 pl-2">
+                      Color
+                    </th> */}
                     <th scope="col" className="py-3 pl-2">
                       Qty
                     </th>
                     <th scope="col" className="py-3">
-                      Invoice
+                      Receipt
                     </th>
                     <th scope="col" className="py-3 pl-1">
                       Status
@@ -169,38 +211,238 @@ export default function Orders() {
                   </tr>
                 </thead>
 
-                {orders.map((val, ind) => (
-                  <tbody>
-                    <tr className="text-center border-b border-[#7E7E7E] justify-items-center">
-                      <th
-                        scope="row"
-                        className="py-4 px-3 font-medium whitespace-nowrap text-white"
-                      >
-                        {val.refOfCustomerNotification.createdAt.split("T")[0]}
-                      </th>
-                      <td className="py-4 pl-4 ">
-                        <div className="flex gap-2 justify-center">{val.refOfCustomerNotification.refOfCustomer.name}</div>
-                      </td>
-                      <td className="py-4 ">£{val?.refOfCustomerNotification?.price}</td>
-                      <td className="py-4 ">{val?.refOfCustomerNotification?.refOfProduct?.productname}</td>
-                      <td className="py-4 ">{val?.refOfCustomerNotification?.quantity}</td>
-                      <td className="py-4 mx-auto">
-                        <div>
-                          <img className="mx-auto" src={Download} />
-                        </div>
-                      </td>
-                      <td className="py-4 ">
-                        <button
-                          className=" text-white bg-green-500 m-4 text-sm  text-lexend w-40  justify-center focus:outline-none font-normal rounded-[4px]  px-4 py-2 text-center inline-flex items-center"
-                          type="button"
+                {search === "" ? (
+                  orders.length > 0 ? (
+                    orders.map((val, ind) => (
+                      <tbody>
+                        <tr className="text-center border-b border-[#7E7E7E] justify-items-center">
+                          <td className="py-4 ">
+                            {val?.refOfCustomerNotification?._id.slice(20)}
+                          </td>
+                          <th
+                            scope="row"
+                            className="py-4 px-3 font-medium whitespace-nowrap text-white"
+                          >
+                            {
+                              val.refOfCustomerNotification.createdAt.split(
+                                "T"
+                              )[0]
+                            }
+                          </th>
+                          <td className="py-4 pl-4 ">
+                            <div className="flex gap-2 justify-center">
+                              {val.refOfCustomerNotification.refOfCustomer.name}
+                            </div>
+                          </td>
+                          <td className="py-4 ">
+                            £{val?.refOfCustomerNotification?.price}
+                          </td>
+                          <td className="py-4 ">
+                            {
+                              val?.refOfCustomerNotification?.refOfProduct
+                                ?.productname
+                            }
+                          </td>
+                          {/* <td className="py-4 ">{val?.refOfCustomerNotification?.refOfProduct?.size}</td> */}
+                          {/* <td className="py-4 ">{val?.refOfCustomerNotification?.refOfProduct?.color}</td> */}
+                          <td className="py-4 ">
+                            {val?.refOfCustomerNotification?.quantity}
+                          </td>
+                          <td className="py-4 mx-auto">
+                            <div>
+                              <button
+                                onClick={() => {
+                                  getOrderData(val.refOfCustomerNotification);
+                                }}
+                                className="bg-blue-500 rounded-md pl-3 pr-3 pt-1 pb-1"
+                              >
+                                View
+                              </button>
+                            </div>
+                          </td>
+                          <td className="py-4 ">
+                            {val?.refOfCustomerNotification?.status ===
+                            "Pending" ? (
+                              <button
+                                className=" text-black bg-white m-4 text-sm  text-lexend w-40  justify-center focus:outline-none font-normal rounded-[4px]  px-4 py-2 text-center inline-flex items-center"
+                                type="button"
+                                id="basic-button"
+                                aria-controls={open ? "basic-menu" : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? "true" : undefined}
+                                onClick={handleClick}
+                              >
+                                {val?.refOfCustomerNotification?.status}
+                              </button>
+                            ) : val?.refOfCustomerNotification?.status ===
+                              "Cancelled" ? (
+                              <button
+                                className=" text-white bg-red-500 m-4 text-sm  text-lexend w-40  justify-center focus:outline-none font-normal rounded-[4px]  px-4 py-2 text-center inline-flex items-center"
+                                type="button"
+                                id="basic-button"
+                                aria-controls={open ? "basic-menu" : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? "true" : undefined}
+                                onClick={handleClick}
+                              >
+                                {val?.refOfCustomerNotification?.status}
+                              </button>
+                            ) : (
+                              <button
+                                className=" text-white bg-green-500 m-4 text-sm  text-lexend w-40  justify-center focus:outline-none font-normal rounded-[4px]  px-4 py-2 text-center inline-flex items-center"
+                                type="button"
+                                id="basic-button"
+                                aria-controls={open ? "basic-menu" : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? "true" : undefined}
+                                onClick={handleClick}
+                              >
+                                {val?.refOfCustomerNotification?.status}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      </tbody>
+                    ))
+                  ) : (
+                    <div className="flex justify-center items-center">
+                      <h1 className="text-white text-2xl font-bold">
+                        No Orders
+                      </h1>
+                    </div>
+                  )
+                ) : orders.length > 0 ? (
+                  orders.map((val, ind) => (
+                    <tbody>
+                      <tr className="text-center border-b border-[#7E7E7E] justify-items-center">
+                        <td className="py-4 ">
+                          {val?.refOfCustomerNotification?._id.slice(20)}
+                        </td>
+                        <th
+                          scope="row"
+                          className="py-4 px-3 font-medium whitespace-nowrap text-white"
                         >
-                          {val?.refOfCustomerNotification?.status}
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                ))}
+                          {
+                            val.refOfCustomerNotification.createdAt.split(
+                              "T"
+                            )[0]
+                          }
+                        </th>
+                        <td className="py-4 pl-4 ">
+                          <div className="flex gap-2 justify-center">
+                            {val.refOfCustomerNotification.refOfCustomer.name}
+                          </div>
+                        </td>
+                        <td className="py-4 ">
+                          £{val?.refOfCustomerNotification?.price}
+                        </td>
+                        <td className="py-4 ">
+                          {
+                            val?.refOfCustomerNotification?.refOfProduct
+                              ?.productname
+                          }
+                        </td>
+                        {/* <td className="py-4 ">{val?.refOfCustomerNotification?.refOfProduct?.size}</td> */}
+                        {/* <td className="py-4 ">{val?.refOfCustomerNotification?.refOfProduct?.color}</td> */}
+                        <td className="py-4 ">
+                          {val?.refOfCustomerNotification?.quantity}
+                        </td>
+                        <td className="py-4 mx-auto">
+                          <div>
+                            <button
+                              onClick={() => {
+                                getOrderData(val.refOfCustomerNotification);
+                              }}
+                              className="bg-blue-500 rounded-md pl-3 pr-3 pt-1 pb-1"
+                            >
+                              View
+                            </button>
+                          </div>
+                        </td>
+                        <td className="py-4 ">
+                          {val?.refOfCustomerNotification?.status ===
+                          "Pending" ? (
+                            <button
+                              className=" text-black bg-white m-4 text-sm  text-lexend w-40  justify-center focus:outline-none font-normal rounded-[4px]  px-4 py-2 text-center inline-flex items-center"
+                              type="button"
+                              id="basic-button"
+                              aria-controls={open ? "basic-menu" : undefined}
+                              aria-haspopup="true"
+                              aria-expanded={open ? "true" : undefined}
+                              onClick={handleClick}
+                            >
+                              {val?.refOfCustomerNotification?.status}
+                            </button>
+                          ) : val?.refOfCustomerNotification?.status ===
+                            "Cancelled" ? (
+                            <button
+                              className=" text-white bg-red-500 m-4 text-sm  text-lexend w-40  justify-center focus:outline-none font-normal rounded-[4px]  px-4 py-2 text-center inline-flex items-center"
+                              type="button"
+                              id="basic-button"
+                              aria-controls={open ? "basic-menu" : undefined}
+                              aria-haspopup="true"
+                              aria-expanded={open ? "true" : undefined}
+                              onClick={handleClick}
+                            >
+                              {val?.refOfCustomerNotification?.status}
+                            </button>
+                          ) : (
+                            <button
+                              className=" text-white bg-green-500 m-4 text-sm  text-lexend w-40  justify-center focus:outline-none font-normal rounded-[4px]  px-4 py-2 text-center inline-flex items-center"
+                              type="button"
+                              id="basic-button"
+                              aria-controls={open ? "basic-menu" : undefined}
+                              aria-haspopup="true"
+                              aria-expanded={open ? "true" : undefined}
+                              onClick={handleClick}
+                            >
+                              {val?.refOfCustomerNotification?.status}
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  ))
+                ) : (
+                  <div className="flex justify-center mt-3 w-full h-96">
+                    <p className="text-[#818181] font-dm font-normal text-lg">
+                      Loading ...
+                    </p>
+                  </div>
+                )}
               </table>
+
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem onClick={handleClose}>
+                  <FormControlLabel
+                    value="pending"
+                    label="Pending"
+                    control={<Radio size="small" />}
+                  />
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <FormControlLabel
+                    value="delivered"
+                    control={<Radio size="small" />}
+                    label="Delivered"
+                  />
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <FormControlLabel
+                    value="cancelled"
+                    control={<Radio size="small" />}
+                    label="Cancelled"
+                  />
+                </MenuItem>
+              </Menu>
             </div>
             {/* Side bar */}
           </div>
@@ -208,8 +450,131 @@ export default function Orders() {
           {/*skill cards */}
           <div className=" xl:w-4/12 border-[#7E7E7E]">
             <div className="ml-10 mr-10  2xl:grid 2xl:grid-cols-1 ">
-              return <DashboardSidebar />;
+              {/* return <DashboardSidebar />; */}
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="defaultModal"
+        className={
+          !newFolder
+            ? "hidden"
+            : " flex absolute top-0 right-0 left-0 z-50 w-full h-full  bg-black/70  bg-opacity-5 justify-center items-center"
+        }
+      >
+        <div className="relative w-full max-w-lg  ">
+          <div className="relative bg-[#212121] rounded-2xl py-2">
+            <div
+              className="flex align-middle border-b pb-3"
+              style={{ borderSpacing: 20 }}
+            >
+              <h5 className="text-white pl-3">Order Receipt</h5>
+              <button
+                onClick={() => !setNewFolder(false)}
+                type="button"
+                className="text-gray-400 pr-3 bg-white bg-transparent rounded-full p-0.5 ml-auto flex items-center "
+              >
+                <svg
+                  aria-hidden="true"
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+
+            
+              <>
+                <div
+                  className="justify-center p-3 border-b border-dashed"
+                  style={{ borderSpacing: 40 }}
+                >
+                  <h3 className="text-sm text-left font-lexend font-bold text-white p-3.5">
+                    Ordered By
+                  </h3>
+                  <div className="flex ml-3">
+                    <img
+                      src={image}
+                      className="w-10 h-10 rounded-full"
+                      alt=""
+                    />
+                    <div className="ml-3">
+                      <p className="text-white text-xs pb-2">{name}</p>
+                      <p className="text-gray-500 text-xs">{email}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between p-3 border-b border-dashed">
+                  <div>
+                    <h3 className="text-sm text-left font-lexend font-bold text-white p-3.5">
+                      Product
+                    </h3>
+                    <div className="flex align-middle ml-3">
+                      <img
+                        src={productImage}
+                        alt=""
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div className="ml-3">
+                        <p className="text-green-500 text-xs pb-1">
+                          {itemName}
+                        </p>
+                        <p className="text-gray-500 text-xs pb-2">
+                          {pQuantity > 0 ? "In Stock" : "Out of Stock"}
+                        </p>
+                        <p className="text-white text-xs">$ {price}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-3.5">
+                    <p className="text-white text-sm">Quantity</p>
+                    <p className="text-gray-500 bg-black pl-2 pr-2 mt-3 rounded-md inline">
+                      {quantity}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="justify-center p-3 border-b border-dashed">
+                  <h3 className="text-sm text-left font-lexend font-bold text-white p-3.5">
+                    Delivery Address
+                  </h3>
+                  <div className="flex align-middle ml-3">
+                    <div className="bg-black p-3">
+                      <CiLocationOn className="text-white" />
+                    </div>
+                    {/* <img src={image} alt="" /> */}
+                    <div className="ml-1 p-3">
+                      <p className="text-white text-xs">{address}</p>
+                      {/* <p>{email}</p> */}
+                    </div>
+                  </div>
+                  <div className="ml-3 mt-3">
+                    <p className="text-white text-sm pb-2">Date Ordered</p>
+                    <p className="text-green-500 text-xs">
+                      {orderDate?.split("T")[0]}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="justify-center p-3">
+                  <div className="flex justify-between align-middle">
+                    <h3 className="ml-3 text-left font-lexend font-bold text-sm text-white">
+                      Total Payment
+                    </h3>
+                    <p className="text-white text-sm">$ {price}</p>
+                  </div>
+                </div>
+              </>
           </div>
         </div>
       </div>

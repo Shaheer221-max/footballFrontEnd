@@ -116,7 +116,7 @@ export default function PlayerProfileleftsidebar(props) {
       </div>
       <div className=" mt-[200px] 2xl:mt-[450px]">
         <NavLink
-          to={"/userarea/playerprofile/profile"}
+          to={{pathname : "/userarea/playerprofile/profile"}} state = {props?.data}
           className={({ isActive }) =>
             isActive
               ? "self-center   text-lg font-semibold whitespace-nowrap text-green-500  "
@@ -156,7 +156,8 @@ export default function PlayerProfileleftsidebar(props) {
         </NavLink>
 
         <NavLink
-          to="/userarea/playerprofile/timeline"
+          to={{pathname : "/userarea/playerprofile/timeline"}}
+          state={props?.data}
           className={({ isActive }) =>
             isActive
               ? "self-center text-lg font-semibold whitespace-nowrap  text-green-500  "

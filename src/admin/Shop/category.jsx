@@ -12,6 +12,7 @@ import {
     DeleteOutlined,
     EditOutlined
   } from '@ant-design/icons'
+import Spinner from "../Spinner";
 
 export default function Category() {
   let search;
@@ -88,6 +89,7 @@ export default function Category() {
           groupId
       )
       .then((res) => {
+        message.success("Group Deleted Successfully");
         console.log(res.data);
         message.success("Group Deleted Successfully");
         handleClose();
@@ -102,6 +104,7 @@ export default function Category() {
     await axios
         .post("https://football-backend-updated.herokuapp.com/itemcategory/CreateItemCategory/", {name: categories})
         .then((res) => {
+          message.success("Category Added Successfully");
             console.log(res.data.data);
             setActiveGroup(res.data.data);
             setNewFolder(false);  
@@ -109,6 +112,7 @@ export default function Category() {
         }
         )
         .catch((error) => {
+          message.error("Category Already Exists");
             console.log(error.response.data);
         }
         );
@@ -119,6 +123,7 @@ const category1 = async () => {
     await axios
         .put(`https://football-backend-updated.herokuapp.com/itemcategory/UpdateItemCategory/${categoryid}`, {name: categories})
         .then((res) => {
+          message.success("Category Updated Successfully");
             console.log(res.data.data);
             setActiveGroup(res.data.data);
             setNewFolder1(false);   
@@ -136,11 +141,13 @@ const deletecategory = async (id) => {
     await axios
         .delete(`https://football-backend-updated.herokuapp.com/itemcategory/DeleteItemCategory/${id}`)
         .then((res) => {
+          message.success("Category Deleted Successfully");
             console.log(res.data.data);
             setRefresh(false)
         }
         )
         .catch((error) => {
+          message.error("Category Already Exists");
             console.log(error.response.data);
         }
         );
@@ -225,7 +232,7 @@ const deletecategory = async (id) => {
         {/* Group Cards */}
         <div className="mb-9 mt-12 mx-9 font-sans grid lg:grid-cols-4 2xl:grid-cols-5 gap-5 ">
           {/* checking if searched */}
-          {staticdataCopy?.length > 0 ? (
+          {staticdataCopy.length > 0 || groups.length > 0 ? staticdataCopy?.length > 0 ? (
             <>
               {staticdataCopy.map((val, ind) => (
                 <>
@@ -246,14 +253,14 @@ const deletecategory = async (id) => {
                         </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        {/* <div className="flex items-center gap-3">
                           <button
                             type="submit"
                             className=" font-dm items-center w-40 py-1 mt-2 text-sm font-normal text-white bg-blue-500 rounded-[4px] "
                           >
                             View All Variants
                           </button>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -282,21 +289,21 @@ const deletecategory = async (id) => {
                         </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        {/* <div className="flex items-center gap-3">
                           <button
                             type="submit"
                             className=" font-dm items-center w-40 py-1 mt-2 text-sm font-normal text-white bg-blue-500 rounded-[4px] "
                           >
                             View All Variants
                           </button>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
                 </>
               ))}
             </>
-          )}
+          ): <Spinner />}
         </div>
       </div>
 

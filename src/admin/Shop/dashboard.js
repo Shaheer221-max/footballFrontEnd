@@ -27,47 +27,6 @@ ChartJS.register(
  
 
 export default function ShopDashboard() {
-
-// chart
-const staticdata = [
-    {
-      id: "25k",
-    },
-    {
-      id:"25k",
-    },
-    {
-      id: "25k",
-    },
-    {
-      id: "25k",
-    },
-    {
-      id: "25k",
-    },
-    {
-      id: "25k",
-    },
-    {
-      id:"25k",
-    },
-    {
-      id: "25k",
-    },
-    {
-      id:"25k",
-    },
-    {
-      id: "25k",
-    },
-    {
-      id: "25k",
-    },
-    {
-      id: "25k",
-    },
-  ];
-
 const labels = [
     "January",
     "February",
@@ -128,6 +87,8 @@ const labels = [
 
   // Get All Orders
   const [orders, setOrders] = React.useState([]);
+  const [item, setItems] = React.useState([]);
+  const [stock, setStock] = React.useState(0);
 
   const getOrders = async () => {
     try {
@@ -138,8 +99,22 @@ const labels = [
     }
   };
 
+  const getData = async () => {
+    await axios
+      .get("https://football-backend-updated.herokuapp.com/item/GetAllItems")
+      .then((res) => {
+        console.log(res.data.data.doc);
+        setItems(res.data.data.doc);
+        setStock(res.data.data.doc.filter((item) => item.quantity < 0).length);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
+
   React.useEffect(() => {
     getOrders();
+    getData();
   }, []);
   
 
@@ -173,10 +148,7 @@ const labels = [
                     </div>
                 <div>
                 <h5 className="m-2  text-sm text-white mt-10 text-lexend">Orders</h5>
-                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">2003</h1>
-                </div>
-                <div className="text-green-500 mt-20">
-                    +3%
+                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">{orders.length}</h1>
                 </div>
                 </div>
 {/* Sales */}
@@ -190,10 +162,10 @@ const labels = [
                     </div>
                 <div>
                 <h5 className="m-2  text-sm text-white mt-10 text-lexend">Sales</h5>
-                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">£5400</h1>
+                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">$0</h1>
                 </div>
                 <div className="text-green-500 mt-20">
-                    +3%
+                    {/* +3% */}
                 </div>
                 </div>
 {/* Profit */}
@@ -219,10 +191,10 @@ const labels = [
                     </div>
                 <div>
                 <h5 className="m-2  text-sm text-white mt-10 text-lexend">Profit</h5>
-                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">£3450</h1>
+                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">$0</h1>
                 </div>
                 <div className="text-green-500 mt-20">
-                    +3%
+                    {/* +3% */}
                 </div>
                 </div>
 {/* total products */}
@@ -239,7 +211,7 @@ const labels = [
                     </div>
                 <div>
                 <h5 className="m-2  text-sm text-white mt-10 text-lexend">Total Products</h5>
-                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">546</h1>
+                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">{item.length}</h1>
                 </div>
                 </div>
 {/* Out of stock */}
@@ -255,7 +227,7 @@ const labels = [
                     </div>
                 <div>
                 <h5 className="m-2  text-sm text-white mt-10 text-lexend">Out of Stock</h5>
-                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">32</h1>
+                <h1 className="m-2  text-2xl text-white font-bold text-lexend mt-3">{stock}</h1>
                 </div>
                 </div>
             </div>
@@ -337,7 +309,7 @@ const labels = [
           {/*skill cards */}
           <div className=" xl:w-4/12 border-[#7E7E7E]">
             <div className="ml-10 mr-10  2xl:grid 2xl:grid-cols-1 ">
-                return <DashboardSidebar />;
+                {/* return <DashboardSidebar />; */}
             </div>
           </div>
         </div>

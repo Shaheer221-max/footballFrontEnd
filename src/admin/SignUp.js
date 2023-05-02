@@ -14,6 +14,7 @@ export default function SignUp() {
   const [phone, setPhone] = useState(false);
   const [error, setError] = useState(false);
   const [link, setLink] = useState("");
+  const [refresh, setRefresh] = useState(false);
 
   const { currentUser, setUser } = useContext(AuthContext);
   const [admin, setadmin] = useState(false);
@@ -44,9 +45,9 @@ export default function SignUp() {
     setPassword(event.target.value);
   };
   const createAdmin = async () => {
-    console.log(admin)
+      setRefresh(true);
       await axios
-        .post("/users/signup", {
+        .post("https://football-backend-updated.herokuapp.com/users/signup", {
           password: pass,
           confirmPassword: pass,
           name: name,
@@ -55,22 +56,15 @@ export default function SignUp() {
           role: admin ? "Admin" : "Coach",
         })
         .then((response) => {
+          setRefresh(false);
           console.log(response.data)
           // window.location.assign("/");
-          setLink("/");
+          // setLink("/");
         })
         .catch((error) => {
           setError(error.response.data);
           setLink("");
         });
-  };
-
-  const handleFailure = (result) => {
-    alert(result);
-  };
-
-  const handleLogin = (googleData) => {
-    console.log(googleData);
   };
 
   return (

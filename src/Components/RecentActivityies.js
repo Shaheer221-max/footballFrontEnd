@@ -1,41 +1,27 @@
-import React, { useState, useEffect, useContext } from "react";
-import pfp from "../assets/pfp.png";
-import pic1 from "../assets/pic1.png"
-import "../styles/font.css"
-import axios from '../axios';
-import Moment from 'react-moment';
-import { AuthContext } from "../admin/ActiveUser"
+import React, { useState, useEffect } from "react";
+import "../styles/font.css";
+import axios from "../axios";
+import { Link } from "react-router-dom";
 export default function RecentActivityies(props) {
   const [post, SetPost] = useState(false);
-  const [recent, setRecent] = useState(false);
-  const {id, setActiveId } = useContext(AuthContext);
-  
-
 
   // getting all posts
   const memberName = async () => {
-    let email = {
-      email : id
-    }
-      let res = await axios.get('/post/getrecentposts', {params:{data:email}})
-      .then ( (res) => {
-        
-        if (res.data.data !== res.data.data.Prototype){
-          let member = (res.data.data);
-          SetPost(member.reverse());
-         console.log(post)
-        }
-        }
+    await axios
+      .get(
+        "https://football-backend-updated.herokuapp.com/newsfeed/GetAllNewsFeed"
       )
-      .catch((error) => {
-          console.log(error);
+      .then((res) => {
+        SetPost(res.data.data.reverse().slice(0, 5));
+        console.log(res.data.data.reverse().slice(0, 5));
       })
-    
-    
-  }
-  useEffect (()=>{  
-  // memberName()
-  },[])
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    memberName();
+  }, []);
 
   return (
     <>
@@ -43,58 +29,62 @@ export default function RecentActivityies(props) {
         <h4 className="self-center text-lg font-normal font-lexend whitespace-nowrap text-white  ">
           Recent Activity
         </h4>
-        {props.All === true ? (
-        <a className="text-sm text-gray-500 ml-auto font-lexend">All</a>
-        ) : (
-              <div></div>
-            )}
       </div>
-      <div className="">
-        {post === false ? (<></>): (<>
-          {post.map((val, ind) => (
+      <div className="cursor-pointer">
+        {post === false ? (
+          <></>
+        ) : (
           <>
-
-            
-            <div className="flex gap-2 mt-5 ">
-            <div className="flex items-center">
-              {val.post.sender_img?(<>
-                <img
-                className=" w-8 h-8 rounded-full shadow-lg"
-                src={val.post.sender_img}
-                alt="Bonnie image"
-              />
-              </>):(<>
-              <div className="w-8 h-8 rounded-full shadow-lg bg-white"></div>
-              </>)}
-              
-            </div>
-            <div className="ml-1">
-              <div className="flex gap-1 items-center">
-                <h6 className=" font-medium whitespace-nowrap text-sm font-lexend text-white  ">
-                  {val.post.name}
-                </h6>
-                <p className="text-xs font-lexend text-gray-500 ">Posted </p>
-              </div>
-              <p className="text-xs font-lexend text-gray-500 "><Moment fromNow>{val.post.date}</Moment></p>
-            </div>
-            {props.Preview === true ? (
-              <div className="flex items-center">
-              <img
-                className="ml-[25px] w-8 h-8 rounded-2 shadow-lg"
-                src={pic1}
-                alt="Bonnie image"
-              />
-            </div>
-            ) : (
-              <div></div>
-            )}
-           
-          </div>
+            {post.map((val, ind) => (
+              <>
+                <Link to={{ pathname: "/single" }} state={val}>
+                  <div className="flex gap-2 mt-5 ">
+                    <div className="flex items-center">
+                      {val?.refOfUser?.image ? (
+                        <>
+                          <img
+                            className=" w-8 h-8 rounded-full shadow-lg"
+                            src={val?.refOfUser?.image}
+                            alt="Bonnie image"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-8 h-8 rounded-full shadow-lg bg-white"></div>
+                        </>
+                      )}
+                    </div>
+                    <div className="ml-1">
+                      <div className="flex gap-1 items-center">
+                        <h6 className=" font-medium whitespace-nowrap text-sm font-lexend text-white  ">
+                          {val?.refOfUser?.name}
+                        </h6>
+                        {/* <p className="text-white">{val.image}</p> */}
+                        <p className="text-xs font-lexend text-gray-500 ">
+                          Posted{" "}
+                        </p>{" "}
+                        {val?.image !== "false" ? (
+                          <p className="text-gray-500 text-xs font-lexend">
+                            Image
+                          </p>
+                        ) : (
+                          <p className="text-gray-500 text-xs font-lexend">
+                            a status
+                          </p>
+                        )}
+                      </div>
+                      <p className="text-xs font-lexend text-gray-500 ">
+                        {/* {moment(val?.time).fromNow()} */}
+                        {/* {moment(val?.time).fromNow()} */}
+                        {/* <Moment fromNow>{val?.time}</Moment> */}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </>
+            ))}
           </>
-          
-          
-        ))}</>)}
-        
+        )}
       </div>
     </>
   );

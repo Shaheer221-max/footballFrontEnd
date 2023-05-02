@@ -1,39 +1,174 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../Components/Header";
-import pfp from "../assets/pfp.png";
-import "../styles/font.css"
+import ReactPaginate from "react-paginate";
+import "../styles/font.css";
+import axios from "axios";
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
+import { message } from "antd";
+
 export default function PlayerareaSkill() {
-  const staticdata = [
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-    {
-      id: 1,
-    },
-  ];
   const date = new Date();
   const month = date.toLocaleString("default", { month: "short" });
   const year = date.getFullYear();
   const day = date.getDate();
 
+  // Get All Players
+
+  const [players, setPlayers] = React.useState([]);
+  const [filtered, setFiltered] = React.useState([]);
+
+  const getPlayers = async () => {
+    await axios
+      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .then((res) => {
+        console.log(res.data.data);
+        setPlayers(res.data.data);
+      });
+  };
+  React.useEffect(() => {
+    getPlayers();
+  }, []);
+
+  const [search, setSearch] = React.useState("");
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
+  React.useEffect(() => {
+    console.log(players);
+    if (search === "") {
+      setFiltered(players);
+    } else {
+      const filtered = players.filter((player) => {
+        return player.name.toLowerCase().includes(search.toLowerCase());
+      });
+      setFiltered(filtered);
+    }
+  }, [search, players]);
+
+  // Get All Skills
+  const [skills, setSkills] = React.useState([]);
+  const [skill, setSkill] = React.useState();
+
+  const getSkills = async () => {
+    await axios
+      .get("https://football-backend-updated.herokuapp.com/skill/GetAllSkills")
+      .then((res) => {
+        console.log(res.data.data.doc);
+        setSkills(res.data.data.doc);
+      });
+  };
+
+  React.useEffect(() => {
+    getSkills();
+  }, []);
+
+  // Pagination
+  const [itemOffset, setItemOffset] = useState(0);
+  const endOffset = itemOffset + 5;
+  console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+  const currentItems = filtered.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(filtered.length / 5);
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * 5) % filtered.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset);
+  };
+
+  const addEvaluation = async (id) => {
+    if (evaluations.length > 0) {
+      message.error("You have already evaluated this player today");
+      return;
+    }
+    const data = {
+      refOfPlayer: id,
+      refOfSkill: skill,
+      scores: score,
+      date: new Date().toISOString().split("T")[0],
+      isMarked: true,
+    };
+    console.log(data);
+    await axios
+      .post(
+        "https://football-backend-updated.herokuapp.com/evaluation/Evaluate",
+        data
+      )
+      .then((res) => {
+        message.success("Evaluation Added Successfully");
+        console.log(res.data);
+      })
+      .catch((err) => {
+        message.error("Error");
+        console.log(err);
+      });
+  };
+
+  // Get All SubSkills
+  const [subSkills, setSubSkills] = React.useState([]);
+
+  const getSubSkills = async () => {
+    await axios
+      .get(
+        `https://football-backend-updated.herokuapp.com/skill/GetAllSubSkillsOfSkill/${skill}`
+      )
+      .then((res) => {
+        console.log("Skill: ", res?.data?.data[0]?.subskills);
+        setSubSkills(res?.data?.data[0]?.subskills);
+      });
+  };
+
+  React.useEffect(() => {
+    getSubSkills();
+  }, [skill]);
+
+  const handleSkill = (e) => {
+    console.log("Skill: ", e.target.value);
+    setSkill(e.target.value);
+  };
+
+  const [score, setScore] = React.useState([]);
+  const handleScore = (e, ind, id) => {
+    setId(id);
+    console.log("Score: ", e.target.value);
+    const newScore = [...score];
+    // Converting string to number
+    newScore[ind] = parseInt(e.target.value);
+    // Converting string to number
+    setScore(newScore);
+    console.log("New Score: ", newScore);
+  }
+
+  // Get All Evaluations
+  const [evaluations, setEvaluations] = React.useState([]);
+  const [id, setId] = React.useState();
+
+  const getEvaluations = async () => {
+    await axios
+      .get(
+        `https://football-backend-updated.herokuapp.com/evaluation/ViewEvaluationsByDateOfPlayer/${id}&${new Date().toISOString().split('T')[0]}`
+      )
+      .then((res) => {
+        console.log(res.data.data);
+        setEvaluations(res.data.data);
+      });
+  };
+
+  React.useEffect(() => {
+    getEvaluations();
+  }, [id]);
+
+
   return (
     <>
       <div className="flex-col w-full ">
-        {/* Page Header */}
         <Header title={"Players Area"} />
-        {/* Title Of the Page */}
         <h4 className="font-lexend self-center text-xl font-medium whitespace-nowrap text-white mx-9 mt-8 mb-[26] ">
           Skills Evaluations
         </h4>
@@ -61,6 +196,7 @@ export default function PlayerareaSkill() {
                 className=" font-dm text-sm rounded-lg  block w-full pl-10 p-2.5  bg-[#212121] border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Search Players"
                 required=""
+                onChange={handleSearch}
               />
             </div>
             <button
@@ -70,51 +206,22 @@ export default function PlayerareaSkill() {
               Search
             </button>
           </form>
-          <div className="font-dm gap-4 ml-[280px] pl-4">
-          <button
-            className="text-white bg-green-500 ml-auto  focus:outline-none font-normal rounded-[4px] text-sm px-4 py-2 text-center inline-flex items-center"
-            type="button"
-          >
-            Mental Skills
-            <svg
-              className="ml-2 w-4 h-4"
-              aria-hidden="true"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M19 9l-7 7-7-7"
-              ></path>
-            </svg>
-          </button>
+          <div className="font-dm gap-4 ml-auto pl-4">
+            {/* Display Skills in the Button */}
 
-          <button
-            href="/playerarea/addskill"
-            className="text-white bg-green-500 ml-2   focus:outline-none font-normal rounded-[4px] text-sm px-4 py-2 text-center inline-flex items-center"
-            type="button"
-          >
-            Group
-            <svg
-              className="ml-2 w-4 h-4"
-              aria-hidden="true"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+            <select
+              onChange={handleSkill}
+              className="bg-green-500 p-2 rounded-md text-white"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M19 9l-7 7-7-7"
-              ></path>
-            </svg>
-          </button></div>
+              {skills.map((skill) => {
+                return (
+                  <option value={skill._id} key={skill._id}>
+                    {skill.skillname}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
         </div>
         {/* Header Of Table  */}
         <div className="flex items-center  mx-10 my-5 font-dm">
@@ -122,7 +229,7 @@ export default function PlayerareaSkill() {
             {month} {day},{year}
           </label>
           <svg
-          className=""
+            className=""
             width="24"
             height="27"
             viewBox="0 0 27 29"
@@ -158,151 +265,108 @@ export default function PlayerareaSkill() {
               strokeLinejoin="round"
             />
           </svg>
-
-          <button
-            type="button"
-            className="text-black bg-white ml-9 font-dm  font-normal rounded-[4px] text-base px-9 py-[6px] mr-2 "
-          >
-            Mark Done
-          </button>
-          
         </div>
         {/* Table Of user  */}
         <div className="overflow-x-auto relative mx-10 my-5 font-dm rounded-xl">
           <table className="w-full text-sm text-left  text-gray-400 bg-gradient-to-r from-[#212A39]/100 to-[#3A3A3A]/20 ">
             <thead className="text-sm font-normal  font-dm  text-[#ffffff]/80   border-b">
               <tr className="text-center  ">
-                <th scope="col" className="pt-5 pb-3 px-6">
+                <th scope="col" className="pt-5 pb-3 px-6 text-left">
                   Player Name
                 </th>
+                {subSkills.map((subSkill) => {
+                  return (
+                    <th scope="col" className="pt-5 pb-3 px-6">
+                      {subSkill.subskillname}
+                    </th>
+                  );
+                })}
                 <th scope="col" className="pt-5 pb-3 px-6">
-                  Confidence
-                </th>
-                <th scope="col" className="pt-5 pb-3 px-6">
-                  Commitment
-                </th>
-                <th scope="col" className="pt-5 pb-3 px-6">
-                  Control
-                </th>
-                <th scope="col" className="pt-5 pb-3 px-6">
-                  Concentration
-                </th>
-                <th scope="col" className="pt-5 pb-3 px-6">
-                  Communication
-                </th>
-                <th scope="col" className="pt-5 pb-3 px-6">
-                  Comment
+                  Action
                 </th>
               </tr>
             </thead>
             <tbody>
-              {staticdata.map((val, ind) => (
+              {filtered.length > 0 ? (
+                filtered.map((val, ind) => (
+                  <tr className=" font-dm border-b  border-gray-700 text-center">
+                    <th
+                      scope="row"
+                      className="py-4 px-6 font-medium  whitespace-nowrap text-white"
+                    >
+                      <div className=" font-dm flex gap-2 items-center">
+                        <img
+                          className=" w-12 h-12 rounded-full"
+                          src={val.image}
+                          alt="Bonnie image"
+                        />
+                        {val.name}
+                      </div>
+                    </th>
+                    {subSkills.map((subSkill, ind) => {
+                      return (
+                        <td className="py-4 px-6">
+                          <select
+                            onChange={(e) => handleScore(e, ind, val.id)}
+                            className="bg-[#0C0E14] p-0.5 text-white"
+                          >
+                            <option value={5}>5</option>
+                            <option value={4}>4</option>
+                            <option value={3}>3</option>
+                            <option value={2}>2</option>
+                            <option value={1}>1</option>
+                          </select>
+                        </td>
+                      );
+                    })}
+                    <td>
+                      <button
+                        type="button"
+                        className="text-black bg-white ml-9 font-dm  font-normal rounded-[4px] text-base px-9 py-[6px] mr-2 "
+                        onClick={() => addEvaluation(val.id)}
+                      >
+                        Mark Done
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr className=" font-dm border-b  border-gray-700 text-center">
-                  <th
-                    scope="row"
-                    className="py-4 px-6 font-medium  whitespace-nowrap text-white"
-                  >
-                    <div className=" font-dm flex gap-2 items-center">
-                      <img
-                        className=" w-12 h-12 rounded-full"
-                        src={pfp}
-                        alt="Bonnie image"
-                      />
-                      Shaheer
-                    </div>
-                  </th>
-                  <td className="py-4 px-6">
-                    <select className="bg-[#0C0E14] p-0.5 text-white">
-                      <option>5</option>
-                      <option>4</option>
-                      <option>3</option>
-                      <option>2</option>
-                      <option>1</option>
-                    </select>
-                  </td>
-                  <td className="py-4 px-6">
-                    <select className="bg-[#0C0E14] p-0.5 text-white">
-                      <option>5</option>
-                      <option>4</option>
-                      <option>3</option>
-                      <option>2</option>
-                      <option>1</option>
-                    </select>
-                  </td>
-                  <td className="py-4 px-6">
-                    <select className="bg-[#0C0E14] p-0.5 text-white">
-                      <option>5</option>
-                      <option>4</option>
-                      <option>3</option>
-                      <option>2</option>
-                      <option>1</option>
-                    </select>
-                  </td>
-                  <td className="py-4 px-6">
-                    <select className="bg-[#0C0E14] p-0.5 text-white">
-                      <option>5</option>
-                      <option>4</option>
-                      <option>3</option>
-                      <option>2</option>
-                      <option>1</option>
-                    </select>
-                  </td>
-                  <td className="py-4 px-6">
-                    <select className="bg-[#0C0E14] p-0.5 text-white">
-                      <option>5</option>
-                      <option>4</option>
-                      <option>3</option>
-                      <option>2</option>
-                      <option>1</option>
-                    </select>
-                  </td>
-                  <td>
-                    <textarea
-                      cols="40"
-                      className="block p-2.5 w-full text-sm text-white bg-[#0C0E14] rounded-[4px] placeholder:text-gray-400 "
-                      placeholder="Add comment"
-                    ></textarea>
+                  <td className="py-4 px-6 font-medium  whitespace-nowrap text-white">
+                    No Data Found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
         {/* pagination */}
-        <div className="flex items-center justify-end font-lexend">
-          <h4 className="self-center text-xl font-normal whitespace-nowrap text-white mr-4 my-5 ">
-            Page
-          </h4>
-          <svg
-            width="11"
-            height="19"
-            viewBox="0 0 11 19"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10.3725 0.3675C9.8825 -0.1225 9.0925 -0.1225 8.6025 0.3675L0.2925 8.6775C-0.0975 9.0675 -0.0975 9.6975 0.2925 10.0875L8.6025 18.3975C9.0925 18.8875 9.8825 18.8875 10.3725 18.3975C10.8625 17.9075 10.8625 17.1175 10.3725 16.6275L3.1325 9.3775L10.3825 2.1275C10.8625 1.6475 10.8625 0.8475 10.3725 0.3675Z"
-              fill="#7E7E7E"
-            />
-          </svg>
-          <h4 className="self-center text-xl font-normal whitespace-nowrap text-white ml-3 mr-4 my-5 ">
-            1
-          </h4>
-          <svg
-            width="11"
-            height="19"
-            viewBox="0 0 11 19"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0.369687 0.3675C0.859687 -0.1225 1.64969 -0.1225 2.13969 0.3675L10.4497 8.6775C10.8397 9.0675 10.8397 9.6975 10.4497 10.0875L2.13969 18.3975C1.64969 18.8875 0.859687 18.8875 0.369687 18.3975C-0.120313 17.9075 -0.120313 17.1175 0.369687 16.6275L7.60969 9.3775L0.359689 2.1275C-0.120311 1.6475 -0.120313 0.8475 0.369687 0.3675Z"
-              fill="white"
-            />
-          </svg>
-          <h4 className="self-center text-xl font-normal whitespace-nowrap text-white mx-4 my-5 ">
-            out of 22
-          </h4>
+        {/* pagination */}
+        <div className="text-white justify-end flex">
+          <ReactPaginate
+            activeClassName={"item active "}
+            breakClassName={"item break-me "}
+            breakLabel={"..."}
+            containerClassName={"pagination"}
+            disabledClassName={"disabled-page"}
+            marginPagesDisplayed={2}
+            nextClassName={"item next "}
+            nextLabel={
+              <MdOutlineKeyboardArrowRight
+                style={{ fontSize: 28, width: 150 }}
+              />
+            }
+            onPageChange={handlePageClick}
+            pageCount={pageCount}
+            pageClassName={"item pagination-page "}
+            pageRangeDisplayed={5}
+            previousClassName={"item previous"}
+            previousLabel={
+              <MdOutlineKeyboardArrowLeft
+                style={{ fontSize: 28, width: 150 }}
+              />
+            }
+          />
         </div>
       </div>
     </>

@@ -1,32 +1,47 @@
-import React from "react";
-import pfp from "../assets/pfp.png";
-import pic3 from "../assets/pic3.png";
+import React, { useContext } from "react";
 import "../styles/font.css";
-import { useState, useContext, useEffect } from "react";
-import { AuthContext } from "../admin/ActiveUser";
+import "../styles/background.css";
+import { useState, useEffect } from "react";
 import axios from "../axios";
 import Moment from "react-moment";
-import { fetchPostData } from "../redux/actions/user";
 
-import { Dropdown } from "antd";
-import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Dropdown, message } from "antd";
+import { useSelector } from "react-redux";
+import Spinner from "../admin/Spinner";
+import { AuthContext } from "../admin/ActiveUser";
+import moment from "moment";
 
 export default function TimelinePost(props) {
   const [post, SetPost] = useState([]);
   const [likeId, setLikeId] = useState(false);
-  const { group, setActiveGroup } = useContext(AuthContext);
-  const { id, setActiveId } = useContext(AuthContext);
   const [likes, setLikes] = useState(false);
-  const [comment, setComment] = useState(false);
+  const [like, setLike] = useState([]);
+  const [comment, setComment] = useState([]);
   const [postId, setPostId] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [load, setLoad] = useState([]);
+  const [likeLoading, setLikeLoading] = useState(false);
+  const [commentLoading, setCommentLoading] = useState(false);
 
   const { user } = useSelector((state) => state);
 
-  const handleCommentChange = (event) => {
-    setComment(event.target.value);
-    console.log(comment);
+  const handleClick = (index) => {
+    const newCommentsOpen = [...load];
+    newCommentsOpen[index] = !load[index];
+    setLoad(newCommentsOpen);
+  };
+
+  const handleChange1 = (index, event) => {
+    const newComments = [...comment];
+    newComments[index] = event.target.value;
+    setComment(newComments);
+  };
+
+  const [replies, setReply] = useState([]);
+  const handleChange2 = (index, event) => {
+    const newComments = [...comment];
+    newComments[index] = event.target.value;
+    setReply(newComments);
   };
 
   // getting all posts
@@ -36,8 +51,8 @@ export default function TimelinePost(props) {
         "https://football-backend-updated.herokuapp.com/newsfeed/GetAllNewsFeed"
       )
       .then((res) => {
-        SetPost(res.data.data);
-        console.log(res.data.data);
+        SetPost(res.data.data.reverse());
+        console.log("All News Feed: ", res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -47,55 +62,15 @@ export default function TimelinePost(props) {
     memberName();
   }, [refresh, user]);
 
-  // get comments
-  const getComment = async (val) => {
-    // let data = { type: "newsfeed", refOfPost: val._id };
-    // let likes, isLiked, comment;
-    // let res = await axios
-    //   .get("/likes/getLikes", { params: { data: data } })
-    //   .then((res) => {
-    //     likes = res.data.data;
-    //   });
-    // let res2 = await axios
-    //   .get("/comment/getcomment", { params: { data: data } })
-    //   .then((res2) => {
-    //     comment = res2.data.data;
-    //   });
-    // // res = await axios.get('/likes/getLikes',{params:{data:data}})
-    // // .then((res) => {
-    // //   likes = res.data.data
-    // //   })
-    // //console.log(val)
-    // data = { type: "newsfeed", UserRef: id, refOfPost: val._id };
-    // let response = await axios
-    //   .get("/likes/personComment", { params: { data: data } })
-    //   .then((response) => {
-    //     isLiked = response.data.data;
-    //     console.log("isliked", isLiked);
-    //   });
-    // const posts = {
-    //   post: val,
-    //   likes: {
-    //     likes: likes,
-    //     isLiked: isLiked,
-    //   },
-    //   comment: comment,
-    // };
-    // setLikes(posts);
-    // // if()
-    // //arr = [...post]
-    // arr.push(posts);
-    // SetPost(arr);
-    // console.log("likes", likes, "posts", arr);
-  };
-
   const addLike = async (val) => {
+    setLikeLoading(true);
     await axios
       .post("https://football-backend-updated.herokuapp.com/like/PostLike", {
         refOfNewsfeed: val._id,
-        refOfUser: user.userId,
+        refOfUser: user.user.id,
       })
       .then((response) => {
+        setLikeLoading(false);
         setLikes(true);
         setLikeId(response.data.data.doc._id);
         memberName();
@@ -103,32 +78,75 @@ export default function TimelinePost(props) {
   };
 
   const deleteLike = async (val) => {
+    setLikeLoading(true);
     await axios
       .post(`https://football-backend-updated.herokuapp.com/like/DeleteLike`, {
         refOfNewsfeed: val._id,
-        refOfUser: user.userId,
+        refOfUser: user.user.id,
       })
       .then((response) => {
+        setLikeLoading(false);
         console.log("like removed");
         setLikes(false);
         memberName();
       });
   };
 
-  const AddComment = async (val) => {
-    console.log("in add comment", val, comment);
+  const AddComment = async (val, ind) => {
+    console.log("in add comment", val, comment[ind]);
     setRefresh(true);
-    let response = await axios
-      .post("https://football-backend-updated.herokuapp.com/comment/PostComment", {
-        refOfNewsfeed: val._id,
-        comment: comment,
-        refOfUser: user.userId,
-      })
+    setCommentLoading(true);
+    await axios
+      .post(
+        "https://football-backend-updated.herokuapp.com/comment/PostComment",
+        {
+          refOfNewsfeed: val._id,
+          comment: comment[ind],
+          refOfUser: user.user.id,
+        }
+      )
       .then((response) => {
+        setCommentLoading(false);
+        message.success("Comment Added");
         setRefresh(false);
+        setComment("");
         console.log("commented");
         // memberName();
       });
+  };
+
+  // Reply Comment
+  const ReplyComment = async (val, ind) => {
+    console.log("in reply comment", val, replies[ind]);
+    setRefresh(true);
+    setCommentLoading(true);
+    await axios
+      .post(
+        `https://football-backend-updated.herokuapp.com/comment/AddReplyToComment/${val._id}`,
+        {
+          text: replies[ind],
+          refOfUser: user.user.id,
+        }
+      )
+      .then((response) => {
+        setCommentLoading(false);
+        message.success("Reply Added");
+        setReply("");
+        setRefresh(false);
+        setComment("");
+        console.log("commented");
+        console.log(response.data);
+        // memberName();
+      });
+  };
+
+  const [load1, setLoad1] = useState([]);
+  // When i click on reply button it will show the input field
+  const reply = (index) => {
+    console.log("in reply", index);
+    const newCommentsOpen = [...load1];
+    newCommentsOpen[index] = !load1[index];
+    setLoad1(newCommentsOpen);
   };
 
   // delete Post
@@ -136,11 +154,35 @@ export default function TimelinePost(props) {
     setRefresh(true);
     console.log("in delete post", postId);
     await axios
-      .delete(`/newsfeed/DeleteNewsFeed/${postId}`)
+      .delete(
+        `https://football-backend-updated.herokuapp.com/newsfeed/DeleteNewsFeed/${postId}`
+      )
       .then((response) => {
         setRefresh(false);
+        message.success("Post Deleted");
         console.log("post deleted");
         // memberName();
+      });
+  };
+
+  const sharePost = async (val) => {
+    setRefresh(true);
+    console.log("in share post", val);
+    await axios
+      .post(
+        "https://football-backend-updated.herokuapp.com/newsfeed/ShareNewsFeed",
+        {
+          refOfUser: user.user.id,
+          status: val.status,
+          image: val.image,
+          video: val.video,
+          refOfGroup: val.refOfGroup,
+        }
+      )
+      .then(() => {
+        message.success("Post Shared");
+        setRefresh(false);
+        console.log("post shared");
       });
   };
 
@@ -151,16 +193,278 @@ export default function TimelinePost(props) {
     },
   ];
 
+  const hiddenFileInputphoto = React.useRef(null);
+  const hiddenFileInputvideo = React.useRef(null);
+  const [postt, setpostt] = useState("");
+  const [img, setimg] = useState(false);
+  const [vid, setvid] = useState(false);
+  const [posts, setPost] = useState(false);
+  const { id, setActiveId } = useContext(AuthContext);
+  const [Activemage, setActiveImage] = useState(false);
+  const [selected, setSelected] = useState(false);
+  const [name, setName] = useState(false);
+  // const [refresh, setRefresh] = useState(false);
+  const [video, setVideo] = useState(false);
+  const [postLoading, setPostLoading] = useState(false);
+  const token = localStorage.getItem("token");
+
+  // const {user} = useSelector((state) => state);
+
+  const getData = async () => {
+    await axios
+      .get("https://football-backend-updated.herokuapp.com/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data.data.doc.id);
+        setActiveId(res.data.data.doc.id);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
+
+  React.useEffect(() => {
+    getData();
+  }, [refresh]);
+
+  const date = new Date();
+  const handleClickphoto = (event) => {
+    hiddenFileInputphoto.current.click();
+  };
+  const handleClickvideo = (event) => {
+    hiddenFileInputvideo.current.click();
+  };
+  const handleChangephoto = (event) => {
+    setName(event.target.files[0].name);
+    const data = new FormData();
+    data.append("file", event.target.files[0]);
+    data.append("upload_preset", "player_image");
+    data.append("height", 300); // set height
+    data.append("width", 500);
+    //data.append("cloud_name","dyapmvalo");
+    axios
+      .post("https://api.cloudinary.com/v1_1/dyapmvalo/image/upload", data)
+      .then((res) => {
+        setimg(res.data.url);
+        setvid(false);
+        setSelected(true);
+        console.log(res.data.url);
+      })
+      .catch((err) => {
+        console.log("Image not Selected");
+      });
+  };
+  const handleChangevideo = (event) => {
+    setName(event.target.files[0].name);
+    setVideo(event.target.files[0]);
+  };
+
+  const handlePostChange = (event) => {
+    setpostt(event.target.value);
+  };
+
+  const sendPost = async () => {
+    if (postt === "" && !img && !video) {
+      message.error("Post not Uploaded");
+      return;
+    }
+    setPostLoading(true);
+    setRefresh(true);
+    if (video) {
+      const data = new FormData();
+      data.append("file", video);
+      data.append("upload_preset", "player_image");
+      data.append("refOfUser", user.user.id);
+      data.append("status", postt);
+      await axios
+        .post(
+          "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+          data
+        )
+        .then((res) => {
+          setRefresh(false);
+          console.log(res.data);
+          setPostLoading(false);
+          message.success("Post Uploaded");
+          console.log("post send");
+          setpostt("");
+        })
+        .catch((error) => {
+          console.log(error);
+          message.error("Post not Uploaded");
+        });
+    } else {
+      setRefresh(true);
+      await axios
+        .post(
+          "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+          {
+            refOfUser: user.user.id,
+            status: postt,
+            image: img,
+          }
+        )
+        .then((res) => {
+          setpostt("");
+          setRefresh(false);
+          setPostLoading(false);
+          console.log(res.data);
+          message.success("Post Uploaded");
+          console.log("post send");
+        })
+        .catch((error) => {
+          console.log(error);
+          message.error("Post not Uploaded");
+        });
+    }
+  };
+
   return (
     <div className="">
+      <div className="mx-[22px] ">
+        <div className=" px-7 pt-8 pb-6 font-lexend lg:w-full 2xl:w-[500px] min-w-sm text-center bg-[#212121] rounded-lg  ">
+          <div className=" gap-5 flex mt-2">
+            {user.user ? (
+              <>
+                <img
+                  className=" w-10 h-10 rounded-full "
+                  src={user?.user.image}
+                  alt="Bonnie image"
+                />
+              </>
+            ) : (
+              <>
+                <div className=" w-10 h-10 rounded-full bg-white"></div>
+              </>
+            )}
+
+            <input
+              type="text"
+              className="w-full bg-[#1A1A1A] font-lexend  placeholder-lexend text-white text-sm font-normal rounded-lg block  pl-7 py-2.5  placeholder-gray-400 "
+              placeholder="Post something"
+              required=""
+              onChange={handlePostChange}
+              value={postt}
+            />
+          </div>
+          {selected ? (
+            <div>
+              <p className="text-white text-sm text-left ml-10 pl-5 pt-2"></p>
+            </div>
+          ) : (
+            <></>
+          )}
+          <div className="mt-5">
+            <div className="flex ml-14 ">
+              <button
+                onClick={handleClickphoto}
+                className="inline-flex ml-1   py-2 px-4 text-sm font-normal text-white bg-[#191919] rounded-2xl "
+              >
+                <svg
+                  className="mr-3"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15 0H3C2.20435 0 1.44129 0.316071 0.87868 0.87868C0.316071 1.44129 0 2.20435 0 3V15C0 15.7956 0.316071 16.5587 0.87868 17.1213C1.44129 17.6839 2.20435 18 3 18H15C15.7956 18 16.5587 17.6839 17.1213 17.1213C17.6839 16.5587 18 15.7956 18 15V3C18 2.20435 17.6839 1.44129 17.1213 0.87868C16.5587 0.316071 15.7956 0 15 0ZM3 2H15C15.2652 2 15.5196 2.10536 15.7071 2.29289C15.8946 2.48043 16 2.73478 16 3V11.36L12.8 8.63C12.3042 8.22204 11.6821 7.99899 11.04 7.99899C10.3979 7.99899 9.7758 8.22204 9.28 8.63L2 14.7V3C2 2.73478 2.10536 2.48043 2.29289 2.29289C2.48043 2.10536 2.73478 2 3 2Z"
+                    fill="#D5D5D5"
+                  />
+                  <path
+                    d="M5 7C5.82843 7 6.5 6.32843 6.5 5.5C6.5 4.67157 5.82843 4 5 4C4.17157 4 3.5 4.67157 3.5 5.5C3.5 6.32843 4.17157 7 5 7Z"
+                    fill="#D5D5D5"
+                  />
+                </svg>
+                Photo
+              </button>
+              <input
+                type="file"
+                ref={hiddenFileInputphoto}
+                onChange={handleChangephoto}
+                style={{ display: "none" }}
+              />
+              <button
+                onClick={handleClickvideo}
+                className="inline-flex  py-2 ml-[15px] px-4 text-sm font-normal text-white bg-[#191919] rounded-2xl"
+              >
+                <svg
+                  className="mr-3"
+                  width="22"
+                  height="18"
+                  viewBox="0 0 22 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M22 3.58826V14.4157C21.999 15.366 21.6195 16.2771 20.9449 16.949C20.2702 17.621 19.3555 17.999 18.4014 18H3.6025C2.64738 17.999 1.73167 17.6206 1.0563 16.9479C0.380922 16.2752 0.00103987 15.3631 0 14.4117V3.58826C0.00103987 2.63691 0.380922 1.72483 1.0563 1.05212C1.73167 0.379416 2.64738 0.00103576 3.6025 0H18.3975C19.3526 0.00103576 20.2683 0.379416 20.9437 1.05212C21.6191 1.72483 21.999 2.63691 22 3.58826ZM10.0179 13.1596L14.5711 10.4204C14.8199 10.2706 15.0257 10.0593 15.1686 9.80707C15.3115 9.5548 15.3865 9.27007 15.3865 8.98043C15.3865 8.6908 15.3115 8.40607 15.1686 8.1538C15.0257 7.90153 14.8199 7.69026 14.5711 7.54043L10.0179 4.84044C9.76205 4.68729 9.47 4.60456 9.17157 4.60069C8.87314 4.59682 8.57903 4.67196 8.31931 4.81842C8.05959 4.96488 7.84357 5.17741 7.69335 5.43428C7.54312 5.69116 7.46407 5.98316 7.46429 6.28043V11.7391C7.46147 12.0373 7.53956 12.3307 7.6903 12.5883C7.84105 12.8459 8.05886 13.0581 8.32071 13.2026C8.5737 13.345 8.85908 13.4204 9.14964 13.4217C9.45786 13.4162 9.75847 13.3255 10.0179 13.1596V13.1596ZM9.20857 6.18261L13.7618 8.92174C13.7789 8.93176 13.7931 8.94605 13.8029 8.96321C13.8128 8.98037 13.818 8.9998 13.818 9.01956C13.818 9.03933 13.8128 9.05876 13.8029 9.07592C13.7931 9.09308 13.7789 9.10737 13.7618 9.11739L9.20857 11.8565C9.18978 11.8684 9.16791 11.8745 9.14567 11.8741C9.12342 11.8738 9.10177 11.8669 9.08339 11.8544C9.06501 11.842 9.0507 11.8244 9.04222 11.8039C9.03375 11.7834 9.03149 11.7609 9.03571 11.7391V6.28043C9.03483 6.25965 9.0399 6.23905 9.05033 6.22104C9.06077 6.20302 9.07614 6.18833 9.09464 6.1787C9.11266 6.17388 9.13163 6.17388 9.14964 6.1787C9.1691 6.17271 9.19009 6.17411 9.20857 6.18261ZM4.32143 7.04348V4.69565C4.32143 4.48809 4.23865 4.28903 4.0913 4.14226C3.94395 3.9955 3.7441 3.91304 3.53571 3.91304C3.32733 3.91304 3.12748 3.9955 2.98013 4.14226C2.83278 4.28903 2.75 4.48809 2.75 4.69565V7.04348C2.75 7.25104 2.83278 7.4501 2.98013 7.59687C3.12748 7.74363 3.32733 7.82609 3.53571 7.82609C3.7441 7.82609 3.94395 7.74363 4.0913 7.59687C4.23865 7.4501 4.32143 7.25104 4.32143 7.04348Z"
+                    fill="#1DB954"
+                  />
+                </svg>
+                Video
+              </button>
+              <input
+                type="file"
+                ref={hiddenFileInputvideo}
+                onChange={handleChangevideo}
+                style={{ display: "none" }}
+              />
+              <button
+                onClick={sendPost}
+                className="inline-flex  py-2 px-7 ml-auto text-sm font-normal text-white bg-green-500 rounded-[4px] "
+              >
+                {postLoading ? (
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    ></path>
+                  </svg>
+                ) : (
+                  "Post"
+                )}
+              </button>
+            </div>
+          </div>
+          {img ? (
+            <div className="text-white mt-5">
+              <img src={img} alt="" className="w-full h-full" />
+            </div>
+          ) : null}
+          {name && !img ? (
+            <div className="text-white mt-5">
+              <p>{name}</p>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
       <div className=" mx-[22px] my-10  ">
-        {post ? (
+        {post.length > 0 ? (
           <>
             {post.map((val, ind) => {
               return (
                 <>
                   {/* if post img */}
-                  <div className="mt-5 px-4 pb-2 font-lexend lg:w-full 2xl:w-[880px] min-w-sm text-center bg-[#212121] rounded-lg  ">
+                  <div className="mt-5 px-4 pb-2 font-lexend lg:w-full 2xl:w-[500px] min-w-sm text-center bg-[#212121] rounded-lg  ">
                     <div className="flex items-center gap-2  mb-8 ml-4">
                       <img
                         className=" mt-[34px] w-9 h-9 rounded-full "
@@ -169,12 +473,20 @@ export default function TimelinePost(props) {
                       />
 
                       <div className="mt-[31px]">
-                        <p className="font-lexend font-normal text-left text-xs text-gray-400">
-                          {val?.refOfUser?.email}
-                        </p>
-                        <div className="flex font-lexend mt-1  items-center gap-4">
+                        <div className="flex align-middle">
+                          {/* <p className="font-lexend font-normal text-left text-xs text-gray-400">
+                            {val?.refOfUser?.email}
+                          </p> */}
                           <h5 className="text-base  font-normal tracking-tight text-white">
-                            {val?.status}
+                            {val?.refOfUser?.name}
+                          </h5>
+                          <div className="inline-flex font-dm ml-3 items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
+                            {val?.refOfUser?.role}
+                          </div>
+                        </div>
+                        <div className="flex font-lexend mt-1  items-center gap-4">
+                          <h5 className="text-xs  font-normal tracking-tight text-white">
+                            {val?.time?.split('T')[1].slice(3, 8)}
                           </h5>
 
                           <svg
@@ -187,8 +499,8 @@ export default function TimelinePost(props) {
                             <circle cx="4.5" cy="4.5" r="4.5" fill="#1DB954" />
                           </svg>
 
-                          <h5 className=" text-sm font-light tracking-tight text-white">
-                            {/* <Moment fromNow>{val.post.post.date}</Moment> */}
+                          <h5 className=" text-xs font-light tracking-tight text-white">
+                            {moment(val?.time).format('dddd, MMMM Do YYYY')}
                           </h5>
                         </div>
                       </div>
@@ -228,23 +540,25 @@ export default function TimelinePost(props) {
                       <></>
                     )}
 
-                    {val.image ? (
+                    {val.image === "false" ? (
+                      <></>
+                    ) : (
                       <>
                         <img
                           className="mt-5 px-2 w-full rounded-md"
                           src={val.image}
+                          style={{ height: "300px", width: "500px" }}
                         />
                       </>
-                    ) : (
-                      <></>
                     )}
 
                     {val.video ? (
                       <>
-                        <div className="mt-5 pr-12 px-2 ml-2  w-full">
+                        <div className="mt-5 pr-12 px-2 ml-2  w-full h-24">
                           <video
-                            className="mt-5 px-2 w-full rounded-md"
+                            className="mt-5 px-2 w-full rounded-md h-24"
                             controls
+                            style={{ height: "300px" }}
                           >
                             <source src={val.video} type="video/mp4" />
                           </video>
@@ -255,8 +569,8 @@ export default function TimelinePost(props) {
                     )}
 
                     <div className="flex gap-2 mt-3 py-5 ml-6 border-b border-grey-500">
-                      {val.Like.some(
-                        (value) => value.refOfUser._id == user.userId
+                      {val?.Like?.some(
+                        (value) => value.refOfUser._id == user.user.id
                       ) ? (
                         <>
                           <div onClick={() => deleteLike(val)}>
@@ -266,7 +580,9 @@ export default function TimelinePost(props) {
                               viewBox="0 0 32 29"
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
-                              className="cursor-pointer"
+                              className={
+                                likeLoading ? "animate-pulse" : "cursor-pointer"
+                              }
                             >
                               <path
                                 d="M32 9.13888C32 4.26329 28.0476 0.310926 23.1729 0.310926C20.2136 0.310926 17.6022 1.77181 16 4.00475C14.3987 1.77181 11.7864 0.310926 8.82796 0.310926C3.95236 0.310926 0 4.26329 0 9.13888C0 9.82952 0.0876713 10.4987 0.237965 11.1437C1.46447 18.7586 9.931 26.7939 16 29C22.0681 26.7939 30.5364 18.7586 31.7602 11.1437C31.9123 10.4987 32 9.82952 32 9.13888Z"
@@ -288,7 +604,9 @@ export default function TimelinePost(props) {
                               viewBox="0 0 32 29"
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
-                              className="cursor-pointer"
+                              className={
+                                likeLoading ? "animate-pulse" : "cursor-pointer"
+                              }
                             >
                               <path
                                 d="M32 9.13888C32 4.26329 28.0476 0.310926 23.1729 0.310926C20.2136 0.310926 17.6022 1.77181 16 4.00475C14.3987 1.77181 11.7864 0.310926 8.82796 0.310926C3.95236 0.310926 0 4.26329 0 9.13888C0 9.82952 0.0876713 10.4987 0.237965 11.1437C1.46447 18.7586 9.931 26.7939 16 29C22.0681 26.7939 30.5364 18.7586 31.7602 11.1437C31.9123 10.4987 32 9.82952 32 9.13888Z"
@@ -300,7 +618,7 @@ export default function TimelinePost(props) {
                       )}
 
                       <h5 className="text-base pr-4 font-bold tracking-tight text-white">
-                        {val.Like.length}
+                        {val?.Like?.length}
                       </h5>
                       <svg
                         width="20"
@@ -308,17 +626,21 @@ export default function TimelinePost(props) {
                         viewBox="0 0 30 30"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        className={
+                          commentLoading ? "animate-pulse" : "cursor-pointer"
+                        }
                       >
                         <path
                           d="M15 0C11.0231 0.00448626 7.21043 1.58628 4.39835 4.39835C1.58628 7.21043 0.00448626 11.0231 0 15V27.65C0.000713846 28.2731 0.248539 28.8704 0.689107 29.3109C1.12967 29.7515 1.727 29.9993 2.35005 30H15C18.9782 30 22.7936 28.4196 25.6066 25.6066C28.4196 22.7936 30 18.9782 30 15C30 11.0218 28.4196 7.20644 25.6066 4.3934C22.7936 1.58035 18.9782 0 15 0ZM7.79971 17.4002C7.4437 17.4002 7.09569 17.2946 6.79968 17.0968C6.50367 16.899 6.27296 16.6179 6.13672 16.289C6.00049 15.9601 5.96484 15.5982 6.03429 15.249C6.10375 14.8998 6.27518 14.5791 6.52692 14.3274C6.77865 14.0756 7.09938 13.9042 7.44855 13.8347C7.79771 13.7653 8.15963 13.8009 8.48854 13.9372C8.81744 14.0734 9.09857 14.3041 9.29635 14.6001C9.49414 14.8961 9.59971 15.2441 9.59971 15.6002C9.59971 16.0775 9.41006 16.5354 9.0725 16.8729C8.73493 17.2105 8.2771 17.4001 7.79971 17.4001V17.4002ZM14.9997 17.4002C14.6437 17.4002 14.2957 17.2946 13.9997 17.0968C13.7037 16.899 13.473 16.6179 13.3367 16.289C13.2005 15.9601 13.1648 15.5982 13.2343 15.249C13.3037 14.8998 13.4752 14.5791 13.7269 14.3274C13.9787 14.0756 14.2994 13.9042 14.6485 13.8347C14.9977 13.7653 15.3596 13.8009 15.6885 13.9372C16.0174 14.0734 16.2986 14.3041 16.4964 14.6001C16.6941 14.8961 16.7997 15.2441 16.7997 15.6002C16.7997 16.0775 16.6101 16.5354 16.2725 16.8729C15.9349 17.2105 15.4771 17.4001 14.9997 17.4001V17.4002ZM22.1997 17.4002C21.8437 17.4002 21.4957 17.2946 21.1997 17.0968C20.9037 16.899 20.673 16.6179 20.5367 16.289C20.4005 15.9601 20.3648 15.5982 20.4343 15.249C20.5037 14.8998 20.6752 14.5791 20.9269 14.3274C21.1787 14.0756 21.4994 13.9042 21.8485 13.8347C22.1977 13.7653 22.5596 13.8009 22.8885 13.9372C23.2174 14.0734 23.4986 14.3041 23.6964 14.6001C23.8941 14.8961 23.9997 15.2441 23.9997 15.6002C23.9997 16.0775 23.8101 16.5354 23.4725 16.8729C23.1349 17.2105 22.6771 17.4001 22.1997 17.4001V17.4002Z"
                           fill="white"
                         />
                       </svg>
-                      <Link to={{pathname : "/comments"}} state = {val.Comment}>
-                        <h5 className="text-base font-bold tracking-tight text-white">
-                          {val.Comment.length} Comments
-                        </h5>
-                      </Link>
+                      <h5
+                        onClick={() => handleClick(ind)}
+                        className="text-base cursor-pointer font-bold tracking-tight text-white"
+                      >
+                        {val?.Comment?.length} Comments
+                      </h5>
                       <svg
                         className="ml-auto"
                         width="20"
@@ -332,9 +654,14 @@ export default function TimelinePost(props) {
                           fill="white"
                         />
                       </svg>
-                      <h5 className="text-base font-bold tracking-tight text-white">
-                        Share
-                      </h5>
+                      <div className="relative">
+                        <h5
+                          onClick={() => sharePost(val)}
+                          className="text-base font-bold tracking-tight text-white cursor-pointer"
+                        >
+                          Share
+                        </h5>
+                      </div>
                     </div>
 
                     <div className=" flex gap-4 pl-4 mt-4 mb-4">
@@ -356,11 +683,18 @@ export default function TimelinePost(props) {
                         className="w-full bg-[#1A1A1A]  text-white text-sm rounded-2xl block  pl-10 p-2.5  dark:placeholder-gray-400 "
                         placeholder="write comment"
                         required=""
-                        onChange={handleCommentChange}
+                        onChange={(e) => handleChange1(ind, e)}
+                        // Submit on Enter
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            AddComment(val, ind);
+                          }
+                        }}
+                        value={comment[ind] || ""}
                       />
                       <div
                         className="mt-[10px]"
-                        onClick={() => AddComment(val)}
+                        onClick={() => AddComment(val, ind)}
                       >
                         <svg
                           width="24"
@@ -368,6 +702,7 @@ export default function TimelinePost(props) {
                           viewBox="0 0 24 22"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
+                          className="cursor-pointer"
                         >
                           <path
                             d="M2.48647 12.7028L9.95408 11.2092C10.6209 11.076 10.6209 10.8592 9.95408 10.726L2.48647 9.23244C2.04167 9.14364 1.60847 8.71004 1.51967 8.26564L0.0260634 0.798029C-0.107537 0.130828 0.285664 -0.179173 0.903665 0.106027L23.6913 10.6232C24.1029 10.8132 24.1029 11.122 23.6913 11.312L0.903665 21.8293C0.285664 22.1145 -0.107537 21.8045 0.0260634 21.1373L1.51967 13.6696C1.60847 13.2252 2.04167 12.7916 2.48647 12.7028Z"
@@ -376,13 +711,115 @@ export default function TimelinePost(props) {
                         </svg>
                       </div>
                     </div>
+
+                    {load[ind] ? (
+                      val.Comment.map((val, ind) => {
+                        return (
+                          <>
+                            <div className="flex align-middle mb-3 ml-4">
+                              <img
+                                src={val?.refOfUser?.image}
+                                className="rounded-full w-10 h-10 mr-3"
+                                alt=""
+                              />
+                              <div className="text-gray-400 pl-4 bg-[#1A1A1A] p-2 rounded-2xl w-full text-left font-lexend text-sm">
+                                <div className="flex align-middle">
+                                  <p className="text-md text-white mb-2">
+                                    {val?.refOfUser?.name}
+                                  </p>
+                                  <div className="inline-flex font-dm ml-3 items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
+                                    {val?.refOfUser?.role}
+                                  </div>
+                                </div>
+                                <p>{val?.comment}</p>
+                              </div>
+                            </div>
+                            <div className="flex ml-[68px] mb-5 text-white text-xs font-font-lexend">
+                              <p className="mr-5 ml-5">{moment(val?.createdDate).format('dddd, MMMM Do YYYY')}</p>
+                              <button className="btn text-xs">Like</button>
+                              <button
+                                onClick={() => reply(ind)}
+                                className="ml-5"
+                              >
+                                Reply
+                              </button>
+                            </div>
+                            {val?.replies?.map((val, ind) => {
+                              return (
+                                <>
+                                  <div className="flex align-middle mb-3 ml-20">
+                                    <img
+                                      src={val?.refOfUser?.image}
+                                      className="rounded-full w-7 h-7 mr-3"
+                                      alt=""
+                                    />
+                                    <div className="text-gray-400 pl-4 bg-[#1A1A1A] p-2 rounded-2xl w-full text-left font-lexend text-xs">
+                                      <div className="flex align-middle">
+                                      <p className="text-md text-white mb-2">
+                                        {val?.refOfUser?.name}
+                                      </p>
+                                      <div className="inline-flex font-dm ml-3 items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
+                                        {val?.refOfUser?.role}
+                                      </div>
+                                      </div>
+                                      <p className="text-xs">{val?.text}</p>
+                                    </div>
+                                  </div>
+                                </>
+                              );
+                            })}
+
+                            {load1[ind] ? (
+                              <div className="flex gap-4 pl-4 mt-4 mb-4">
+                                <input
+                                  type="text"
+                                  className="w-3/4 ml-auto bg-[#1A1A1A]  text-white text-sm rounded-2xl block  pl-10 p-2.5  dark:placeholder-gray-400 "
+                                  placeholder="write Reply"
+                                  required=""
+                                  onChange={(e) => handleChange2(ind, e)}
+                                  // Submit on Enter
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      ReplyComment(val, ind);
+                                    }
+                                  }}
+                                  value={replies[ind] || ""}
+                                />
+                                <div
+                                  className="mt-[10px]"
+                                  onClick={() => ReplyComment(val, ind)}
+                                >
+                                  <svg
+                                    width="24"
+                                    height="22"
+                                    viewBox="0 0 24 22"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="cursor-pointer"
+                                  >
+                                    <path
+                                      d="M2.48647 12.7028L9.95408 11.2092C10.6209 11.076 10.6209 10.8592 9.95408 10.726L2.48647 9.23244C2.04167 9.14364 1.60847 8.71004 1.51967 8.26564L0.0260634 0.798029C-0.107537 0.130828 0.285664 -0.179173 0.903665 0.106027L23.6913 10.6232C24.1029 10.8132 24.1029 11.122 23.6913 11.312L0.903665 21.8293C0.285664 22.1145 -0.107537 21.8045 0.0260634 21.1373L1.51967 13.6696C1.60847 13.2252 2.04167 12.7916 2.48647 12.7028Z"
+                                      fill="white"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                            ) : (
+                              <></>
+                            )}
+                          </>
+                        );
+                      })
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </>
               );
             })}
           </>
         ) : (
-          <></>
+          <Spinner />
         )}
       </div>
     </div>

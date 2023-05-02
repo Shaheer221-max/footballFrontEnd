@@ -23,7 +23,6 @@ import CoachSidebar from "../Components/Sidebar";
 import SignUp from "./SignUp";
 import Files from "./Files";
 import EditItem from "./Shop/EditItem";
-import GroupTimeline from "../Components/GroupTimeline";
 import Comments from "../Components/Comments";
 import Notifications from "../Components/Notifications";
 
@@ -48,6 +47,14 @@ import AdminAddSkill from "./AdminAddSkill";
 import Category from "./Shop/category";
 import Settings from "../Components/Settings";
 import VerificationCenterCoach from "./VerificationCenter(Coach)";
+import SinglePost from "../Components/SinglePost";
+import SinglePostMain from "./SinglePostMain";
+import CoachGroup from "./CoachGroups";
+import CoachSelectedgroups from "./CoachSelectedGroup";
+import Parents from "../pages/Parents";
+import EditDrill from "../pages/EditDrill";
+import CoachProfile from "./CoachProfile";
+import UserAreaLeft from "./2-UserArea(Left)";
 
 export const AuthContext = React.createContext();
 
@@ -81,6 +88,7 @@ function AuthProvider({ children }) {
   };
 
   const current = localStorage.getItem("current");
+  const token = localStorage.getItem("token");
   return (
     <>
       <AuthContext.Provider value={value}>
@@ -98,6 +106,11 @@ function AuthProvider({ children }) {
                     exact
                     path="/userarea/coach"
                     element={<UserAreaCoach />}
+                  />
+                  <Route
+                    exact
+                    path="/userarea/left"
+                    element={<UserAreaLeft />}
                   />
                   <Route
                     exact
@@ -137,6 +150,11 @@ function AuthProvider({ children }) {
                   />
                   <Route
                     exact
+                    path="/userarea/coachprofile/profile"
+                    element={<CoachProfile />}
+                  />
+                  <Route
+                    exact
                     path="/userarea/playerprofile/timeline"
                     element={<PlayerTimeline />}
                   />
@@ -149,14 +167,22 @@ function AuthProvider({ children }) {
                   />
                   <Route
                     exact
+                    path="/selectgroup/groups/:id"
+                    element={<Selectedgroup />}
+                  />
+                  <Route
+                    exact
                     path="/selectgroup/addgroups"
                     element={<AddGroups />}
                   />
                   <Route exact path="/chat" element={<Chats />} />
                   <Route exact path="/chat/:id" element={<Chats />} />
-                  <Route exact path="/chat/group" element={<GroupChat />} />
+                  <Route exact path="/chat/group/:id" element={<GroupChat />} />
                   <Route exact path="/clubhub" element={<ClubHub />} />
+                  <Route exact path="/clubhub/:id" element={<ClubHub />} />
                   <Route exact path="/setting" element={<Settings />} />
+                  <Route exact path="/notifications" element={<Notifications />} />
+                  <Route exact path="/single" element={<SinglePostMain />} />
                   <Route
                     exact
                     path="ShopDashboard"
@@ -199,6 +225,16 @@ function AuthProvider({ children }) {
                   />
                   <Route
                     exact
+                    path="/playerarea/parents"
+                    element={<Parents />}
+                  />
+                  <Route
+                    exact
+                    path="/userarea"
+                    element={<CoachPlayerareaPlayers />}
+                  />
+                  <Route
+                    exact
                     path="/playerarea/skill"
                     element={<CoachAddSkill />}
                   />
@@ -222,11 +258,21 @@ function AuthProvider({ children }) {
                     path="/traningdrill/uploaddrills"
                     element={<CoachUploadingDrill />}
                   />
+                  <Route
+                    exact
+                    path="/traningdrill/edit/:id"
+                    element={<EditDrill />}
+                  />
 
                   <Route
                     exact
                     path="/playerprofile/profile"
                     element={<CoachPlayerprofile />}
+                  />
+                  <Route
+                    exact
+                    path="/userarea/playerprofile/profile"
+                    element={<Playerprofile />}
                   />
                   <Route
                     exact
@@ -244,7 +290,8 @@ function AuthProvider({ children }) {
                     path="/selectgroup/groups"
                     element={<CoachSelectedgroup />}
                   />
-                  <Route exact path="/selectedGroup" element={<Groups />} />
+                  <Route exact path="/selectedGroup" element={<CoachGroup />} />
+                  <Route exact path="/selectGroup" element={<CoachGroup />} />
                   <Route
                     exact
                     path="/newsfeed/groups"
@@ -260,8 +307,10 @@ function AuthProvider({ children }) {
                     path="/newsfeed/addgroups"
                     element={<CoachAddGroups />}
                   />
-                  <Route exact path="/chat" element={<Chats />} />
+                  <Route exact path="/chat" element={<CoachChat />} />
+                  <Route exact path="/chat/:id" element={<CoachChat />} />
                   <Route exact path="/chat/group" element={<GroupChat />} />
+                  <Route exact path="/chat/group/:id" element={<GroupChat />} />
                   <Route
                     exact
                     path="/addskillpage2"
@@ -272,6 +321,12 @@ function AuthProvider({ children }) {
                     path="/categories"
                     element={<CoachCategories />}
                   />
+                  <Route
+                    exact
+                    path="/setting"
+                    element={<Settings />}
+                  />
+                <Route exact path="/single" element={<SinglePostMain />} />
                 </Route>
               </>
             )}

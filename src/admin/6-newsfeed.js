@@ -6,7 +6,6 @@ import Header from "../Components/Header";
 import MoreProfiles from "../Components/MoreProfiles";
 import RecentActivityies from "../Components/RecentActivityies";
 import TimelinePost from "../Components/TimelinePost";
-import UploadPostOntimeline from "../Components/UploadPostOntimeline";
 import { useState } from "react";
 
 export default function NewsFeed() {
@@ -26,7 +25,7 @@ export default function NewsFeed() {
 
           {/* center Post */}
           <div className=" w-full scrollbar mt-10">
-            <UploadPostOntimeline newsfeed={true} name={name} image={pic} />
+            {/* <UploadPostOntimeline newsfeed={true} name={name} image={pic} /> */}
             <TimelinePost newsfeed={true} />
           </div>
 

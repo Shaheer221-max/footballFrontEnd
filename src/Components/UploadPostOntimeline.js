@@ -4,6 +4,7 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../admin/ActiveUser";
 import axios from "../axios";
 import { useSelector } from "react-redux";
+import { message } from "antd";
 
 export default function UploadPostOntimeline(props) {
   const hiddenFileInputphoto = React.useRef(null);
@@ -18,6 +19,8 @@ export default function UploadPostOntimeline(props) {
   const [selected, setSelected] = useState(false);
   const [name, setName] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [video, setVideo] = useState(false);
+  const [postLoading, setPostLoading] = useState(false);
   const token = localStorage.getItem("token");
 
   const {user} = useSelector((state) => state);
@@ -54,6 +57,8 @@ export default function UploadPostOntimeline(props) {
     const data = new FormData();
     data.append("file", event.target.files[0]);
     data.append("upload_preset", "player_image");
+    data.append('height', 300); // set height
+    data.append('width', 500);
     //data.append("cloud_name","dyapmvalo");
     axios
       .post("https://api.cloudinary.com/v1_1/dyapmvalo/image/upload", data)
@@ -69,113 +74,74 @@ export default function UploadPostOntimeline(props) {
   };
   const handleChangevideo = (event) => {
     setName(event.target.files[0].name);
-    console.log(event.target.files[0].name)
-    const data = new FormData();
-    data.append("file", event.target.files[0]);
-    data.append("upload_preset", "player_image");
-    //data.append("cloud_name","dyapmvalo");
-    axios
-      .post("https://api.cloudinary.com/v1_1/dyapmvalo/video/upload", data)
-      .then((res) => {
-        setvid(res.data.url);
-        setimg(false);
-        setSelected(true);
-        console.log(res.data.url);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setVideo(event.target.files[0]);
   };
 
   const handlePostChange = (event) => {
     setpostt(event.target.value);
   };
 
-  const fillingarray = () => {
-    let posts = {
-      newpost: postt,
-      video_url: vid,
-      image_active: props.image,
-      image: img,
-      date: date,
-      name: props.name,
-      email: id,
-      likes: 0,
-      comments: false,
-    };
-    setPost(posts);
-    if (post.newpost || post.video_url || post.image) {
-      console.log("in condition", post);
-      sendPost();
-      console.log(post);
-      setpostt(false);
-      setimg(false);
-      setvid(false);
-      setSelected(false);
-    }
-  };
-
-  // sending post
   const sendPost = async () => {
-    console.log(vid)
-    if (vid) {
-      let res = await axios
-        .post("https://football-backend-updated.herokuapp.com/newsfeed/PostVideoFeed", { refOfUser: user.userId, video: vid })
+    if(postt === '' && !img && !video){
+      message.error("Post not Uploaded");
+      return;
+    }
+    setPostLoading(true);
+    if (video) {
+      const data = new FormData();
+      data.append("file", video);
+      data.append("upload_preset", "player_image");
+      data.append("refOfUser", user.user.id);
+      data.append("status", postt);
+      await axios
+        .post(
+          "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+          data
+        )
         .then((res) => {
           console.log(res.data);
+          setPostLoading(false);
+          message.success("Post Uploaded");
           console.log("post send");
-          setpostt(false);
-          setimg(false);
-          setvid(false);
-          setPost(false);
         })
         .catch((error) => {
           console.log(error);
+          message.error("Post not Uploaded");
         });
-    } else {
-      if(postt !== '') {
-        let res = await axios
-        .post("https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed", { refOfUser: user.userId, status: postt })
-        .then((res) => {
-          console.log(res.data);
-          console.log("post send");
-          setpostt(false);
-          setimg(false);
-          setvid(false);
-          setPost(false);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      }
-      else {
-        let res = await axios
-        .post("https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed", { refOfUser: user.userId, image: img })
-        .then((res) => {
-          console.log(res.data);
-          console.log("post send");
-          setpostt(false);
-          setimg(false);
-          setvid(false);
-          setPost(false);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      }
+    }
+    else {
+      await axios
+      .post(
+        "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+        {
+          refOfUser: user.user.id,
+          status: postt,
+          image: img,
+        }
+      )
+      .then((res) => {
+        setPostLoading(false);
+        console.log(res.data);
+        message.success("Post Uploaded");
+        console.log("post send");
+      })
+      .catch((error) => {
+        console.log(error);
+        message.error("Post not Uploaded");
+      });
     }
   };
 
   return (
     <>
       <div className="mx-[22px] ">
-        <div className=" px-7 pt-8 pb-6 font-lexend lg:w-full 2xl:w-[880px] min-w-sm text-center bg-[#212121] rounded-lg  ">
+        <div className=" px-7 pt-8 pb-6 font-lexend lg:w-full 2xl:w-[500px] min-w-sm text-center bg-[#212121] rounded-lg  ">
           <div className=" gap-5 flex mt-2">
-            {Activemage ? (
+            {user.user ? (
               <>
                 <img
                   className=" w-10 h-10 rounded-full "
-                  src={Activemage}
+                  src={user?.user.image}
                   alt="Bonnie image"
                 />
               </>
@@ -196,7 +162,7 @@ export default function UploadPostOntimeline(props) {
           {selected ? (
             <div>
               <p className="text-white text-sm text-left ml-10 pl-5 pt-2">
-                Sajjad
+                
               </p>
             </div>
           ) : (
@@ -261,11 +227,45 @@ export default function UploadPostOntimeline(props) {
               <button
                 onClick={sendPost}
                 className="inline-flex  py-2 px-7 ml-auto text-sm font-normal text-white bg-green-500 rounded-[4px] "
+                
               >
-                Post
+                {postLoading ? (
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    ></path>
+                    </svg>
+                    ) : 'Post'}
+              
               </button>
             </div>
           </div>
+          {img ? (
+            <div className="text-white mt-5">
+              <img src={img} alt="" className="w-full h-full" />
+            </div>
+          ) : null}
+          {name && !img ? (
+            <div className="text-white mt-5">
+              <p>{name}</p>
+            </div>
+          ) : null}
         </div>
       </div>
     </>

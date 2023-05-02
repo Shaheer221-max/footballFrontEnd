@@ -4,19 +4,19 @@ import "../styles/font.css";
 import axios from "../axios";
 import { AuthContext } from "./ActiveUser";
 import { useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { message } from "antd";
 
 export default function AddGroups() {
   const [players, setPlayers] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [coach, setCoach] = useState(false);
-  const [url, setUrl] = useState(false);
+  const [url, setUrl] = useState("");
   const [image, setImage] = useState(false);
-  const [name, setName] = useState(false);
+  const [name, setName] = useState("");
   const [error, setError] = useState(false);
   const [search, setSearch] = useState(false);
   const hiddenFileInput = React.useRef(null);
-  const [searchMember, setSearchMember] = useState(false);
   const [arrayCopy, setArrayCopy] = useState(false);
   const [arrayCopyAdmin, setArrayCopyAdmin] = useState(false);
   const [arrayCopyCoach, setArrayCopyCoach] = useState(false);
@@ -29,6 +29,28 @@ export default function AddGroups() {
   const [loading, setLoading] = useState(false);
 
   const { user } = useSelector((state) => state);
+  console.log(user);
+
+  const token = localStorage.getItem("token");
+  const getData = async () => {
+    await axios
+      .get("https://football-backend-updated.herokuapp.com/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data.data.doc.id);
+        setActiveId(res.data.data.doc.id);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const handleClick = (event) => {
     hiddenFileInput.current.click();
@@ -49,7 +71,7 @@ export default function AddGroups() {
         setLoading(false);
       })
       .catch((err) => {
-        setError("Image not Selected");
+        message.error("Image Not Uploaded");
       });
   };
 
@@ -69,7 +91,7 @@ export default function AddGroups() {
     console.log(arrayCopyAdmin);
     handleCoachSearch();
   };
-  
+
   const handleCoachSearch = (event) => {
     setArrayCopyCoach([...coach.filter(checkNames)]);
     console.log(arrayCopyCoach);
@@ -86,32 +108,73 @@ export default function AddGroups() {
     getUsers();
   }, []);
 
+  const [check, setCheck] = useState(false);
+  const handleCheck = (event) => {
+    setCheck(event.target.checked);
+  };
+
+  const navigate = useNavigate();
+
   const createGroup = async () => {
-    await axios
-      .post("/group/CreateGroup", {
-        title: name,
-        image: url,
-        refOfUser: user.userId,
-      })
-      .then((res) => {
-        console.log(res.data.data);
-        setGroupId(res.data.data.doc._id);
-        setGroupAdded(true);
-        setError(false);
-      })
-      .catch((error) => {
-        setError(error.response.data);
-        console.log(error);
-      });
+    if (name === "" || url === "") {
+      message.error("Please Enter Group Name");
+      return;
+    }
+    console.log(mem);
+
+    if (check === true) {
+      await axios
+        .post(
+          "https://football-backend-updated.herokuapp.com/group/CreateGroup",
+          {
+            title: name,
+            image: url,
+            refOfUser: user.user.id,
+            Members: mem,
+          }
+        )
+        .then((res) => {
+          navigate("/selectedGroup");
+          setGroupId(res.data.data.groupchat._id);
+          setGroupAdded(true);
+          setError(false);
+        })
+        .catch((error) => {
+          // message.error("Group Not Created");
+          setError(error.response.data);
+          console.log(error);
+        });
+    } else {
+      await axios
+        .post(
+          "https://football-backend-updated.herokuapp.com/group/CreateGroupOnly",
+          {
+            title: name,
+            image: url,
+            refOfUser: user.user.id,
+            Members: mem,
+          }
+        )
+        .then((res) => {
+          setGroupAdded(true);
+          setError(false);
+          navigate("/selectedGroup");
+        })
+        .catch((error) => {
+          // message.error("Group Not Created");
+          setError(error.response.data);
+          console.log(error);
+        });
+    }
   };
 
   // Get All Users
   const getUsers = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllUsers")
+      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
       .then((res) => {
-        console.log(res.data.data.doc);
-        setUsers(res.data.data.doc);
+        console.log(res.data.data);
+        setUsers(res.data.data);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -120,33 +183,47 @@ export default function AddGroups() {
 
   // adding members in the group
   const addmembers = async (index, id) => {
+    console.log(mem);
     setMem([...mem, id]);
+    if (groupId === undefined) {
+      // message.error("Please Create Group First");
+      return;
+    }
     await axios
       .post(
         `https://football-backend-updated.herokuapp.com/group/AddMember/${id}&${groupId}`
       )
       .then((res) => {
+        message.success("Member Added Successfully");
         console.log(res.data);
       })
       .catch((error) => {
+        message.error("Member Not Added");
         console.log(error.response.data);
       });
   };
 
   // removing members from the group
-  const removemember = async(index, id) => {
+  const removemember = async (index, id) => {
     // Remove Id from mem array
     const newMem = mem.filter((item) => item !== id);
     setMem(newMem);
-    console.log(id)
+
+    if (groupId === undefined) {
+      // message.error("Please Create Group First");
+      return;
+    }
+    console.log(id);
     await axios
       .post(
         `https://football-backend-updated.herokuapp.com/group/RemoveMember/${id}&${groupId}`
       )
       .then((res) => {
+        message.success("Member Removed Successfully");
         console.log(res.data);
       })
       .catch((error) => {
+        message.error("Member Not Removed");
         console.log(error.response.data);
       });
   };
@@ -198,6 +275,17 @@ export default function AddGroups() {
                 />
               </div>
             </div>
+
+            <div className="flex items-center mt-9">
+              <input
+                type="checkbox"
+                className="form-checkbox h-5 w-5 text-white"
+                onChange={handleCheck}
+              />
+              <label className="ml-2 text-white text-sm font-lexend">
+                Group Chat
+              </label>
+            </div>
             {error ? (
               <div>
                 <p className="text-red-600 text-lg text-left">{error}!</p>
@@ -216,12 +304,12 @@ export default function AddGroups() {
 
             <div className="mt-10 space-x-4">
               <NavLink to={"/selectgroup"}>
-              <button
-                type="submit"
-                className="inline-flex items-center py-2 px-8  text-sm font-normal text-black bg-white rounded-[4px] "
-              >
-                Cancel
-              </button>
+                <button
+                  type="submit"
+                  className="inline-flex items-center py-2 px-8  text-sm font-normal text-black bg-white rounded-[4px] "
+                >
+                  Cancel
+                </button>
               </NavLink>
               <button
                 type="submit"
@@ -281,37 +369,38 @@ export default function AddGroups() {
                           </h4>
                         </div>
                       </div>
-                      { !mem.includes(val._id) ? (
-                      <button onClick={() => addmembers(index, val._id)}>
-                        <svg
-                          className="ml-auto flex-1"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M9 0C4.02912 0 0 4.02912 0 9C0 13.9709 4.02912 18 9 18C13.9709 18 18 13.9709 18 9C18 4.02912 13.9709 0 9 0ZM13.68 9.72H9.72V13.68C9.72 13.871 9.64414 14.0541 9.50912 14.1891C9.37409 14.3241 9.19096 14.4 9 14.4C8.80904 14.4 8.62591 14.3241 8.49088 14.1891C8.35586 14.0541 8.28 13.871 8.28 13.68V9.72H4.32C4.12904 9.72 3.94591 9.64414 3.81088 9.50912C3.67586 9.37409 3.6 9.19096 3.6 9C3.6 8.80904 3.67586 8.62591 3.81088 8.49088C3.94591 8.35586 4.12904 8.28 4.32 8.28H8.28V4.32C8.28 4.12904 8.35586 3.94591 8.49088 3.81088C8.62591 3.67586 8.80904 3.6 9 3.6C9.19096 3.6 9.37409 3.67586 9.50912 3.81088C9.64414 3.94591 9.72 4.12904 9.72 4.32V8.28H13.68C13.871 8.28 14.0541 8.35586 14.1891 8.49088C14.3241 8.62591 14.4 8.80904 14.4 9C14.4 9.19096 14.3241 9.37409 14.1891 9.50912C14.0541 9.64414 13.871 9.72 13.68 9.72Z"
-                            fill="#FF7878"
-                          />
-                        </svg>
-                      </button>) : (
-                      <button onClick={() => removemember(index, val._id)}>
-                        <svg
-                          className="ml-auto flex-1"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 18 18"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M9 0C4.0275 0 0 4.0275 0 9C0 13.9725 4.0275 18 9 18C13.9725 18 18 13.9725 18 9C18 4.0275 13.9725 0 9 0ZM13.5 9.9H4.5V8.1H13.5V9.9Z"
-                            fill="#1DB954"
-                          />
-                        </svg>
-                      </button>
+                      {!mem.includes(val._id) ? (
+                        <button onClick={() => addmembers(index, val._id)}>
+                          <svg
+                            className="ml-auto flex-1"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M9 0C4.02912 0 0 4.02912 0 9C0 13.9709 4.02912 18 9 18C13.9709 18 18 13.9709 18 9C18 4.02912 13.9709 0 9 0ZM13.68 9.72H9.72V13.68C9.72 13.871 9.64414 14.0541 9.50912 14.1891C9.37409 14.3241 9.19096 14.4 9 14.4C8.80904 14.4 8.62591 14.3241 8.49088 14.1891C8.35586 14.0541 8.28 13.871 8.28 13.68V9.72H4.32C4.12904 9.72 3.94591 9.64414 3.81088 9.50912C3.67586 9.37409 3.6 9.19096 3.6 9C3.6 8.80904 3.67586 8.62591 3.81088 8.49088C3.94591 8.35586 4.12904 8.28 4.32 8.28H8.28V4.32C8.28 4.12904 8.35586 3.94591 8.49088 3.81088C8.62591 3.67586 8.80904 3.6 9 3.6C9.19096 3.6 9.37409 3.67586 9.50912 3.81088C9.64414 3.94591 9.72 4.12904 9.72 4.32V8.28H13.68C13.871 8.28 14.0541 8.35586 14.1891 8.49088C14.3241 8.62591 14.4 8.80904 14.4 9C14.4 9.19096 14.3241 9.37409 14.1891 9.50912C14.0541 9.64414 13.871 9.72 13.68 9.72Z"
+                              fill="#FF7878"
+                            />
+                          </svg>
+                        </button>
+                      ) : (
+                        <button onClick={() => removemember(index, val._id)}>
+                          <svg
+                            className="ml-auto flex-1"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 18 18"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M9 0C4.0275 0 0 4.0275 0 9C0 13.9725 4.0275 18 9 18C13.9725 18 18 13.9725 18 9C18 4.0275 13.9725 0 9 0ZM13.5 9.9H4.5V8.1H13.5V9.9Z"
+                              fill="#1DB954"
+                            />
+                          </svg>
+                        </button>
                       )}
                     </div>
                   );

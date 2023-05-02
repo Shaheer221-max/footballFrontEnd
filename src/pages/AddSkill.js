@@ -1,9 +1,10 @@
 import React from "react";
 import Header from "../Components/Header";
 import "../styles/font.css"
-import { skillsdata } from "../Components/Skills";
 import AddSubSkill from "../Components/AddSubSkill1";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import Spinner from "../admin/Spinner";
 
 export default function AddSkill() {
   const [skills, setSkills] = React.useState([]);
@@ -20,32 +21,42 @@ export default function AddSkill() {
   return (
     <>
       <div className="flex-col w-full">
-        {/* Page Header */}
         <Header title={"Players Area"} />
-        {/* Title Of the Page */}
         <div className="flex justify-between mx-9 mt-8 mb-[51px]">
           <h4 className="font-lexend self-center text-xl font-semibold whitespace-nowrap text-white   ">
             Skills Evaluations
           </h4>
-          <a
-            href="/playerarea/addskill"
+         <Link to = "/playerarea/addskill">
+         <a
+            href=""
             className="text-white font-light bg-green-500 font-dm  focus:outline-none  rounded-[4px] text-base px-5 py-2 text-center inline-flex items-center"
             type="button"
           >
             Go to evaluation
           </a>
+         </Link>
         </div>
 
         {/* Cards oF CAtogerys  */}
         <div className="m-8  grid lg:grid-cols-5 2xl:grid-cols-5  sm:gap-4 lg:gap-4 2xl:gap-y-8">
-          {skills.map((val, ind) => {
-            return (
-              <AddSubSkill
-                key={ind}
-                data={val}
-              />
-            );
-          })}
+          {
+          
+            skills.length > 0 ? (
+              skills.map((val, ind) => {
+                return (
+                  <AddSubSkill
+                    key={ind}
+                    data={val}
+                  />
+                );
+              })
+            ) : (
+              <div className="flex justify-center items-center">
+                <Spinner />
+              </div>
+            )
+          
+          }
         </div>
       </div>
     </>

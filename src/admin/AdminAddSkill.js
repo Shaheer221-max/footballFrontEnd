@@ -5,11 +5,13 @@ import { skillsdata } from "../Components/Skills";
 import AddSubSkill from "../Components/AddSubSkill";
 import { NavLink } from "react-router-dom";
 import axios from "../axios";
+import Spinner from "./Spinner";
+import { message } from "antd";
 
 export default function AdminAddSkill() {
   const [addschedule, setschedule] = useState(false);
   const [skills, setSkills] = useState([]);
-  const [url, setUrl] = useState(false);
+  const [url, setUrl] = useState('');
   const [image, setImage] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -44,16 +46,25 @@ export default function AdminAddSkill() {
   const addSkill = async (e) => {
     e.preventDefault();
     setRefresh(true);
+    if(skill === "" || url === ""){
+      message.error("Please Fill All Fields");
+      return;
+    }
     const res = await axios.post(
       "https://football-backend-updated.herokuapp.com/skill/CreateSkill",
       {
         skillname: skill,
         skillicon: url,
       }
-    );
-    console.log(res.data);
-    setRefresh(false);
-    setschedule(false);
+    ).then((res) => {
+      message.success("Skill Added Successfully");
+      console.log(res.data);
+      setRefresh(false);
+      setschedule(false);
+    }).catch((err) => {
+      message.error("Something Went Wrong");
+      console.log(err);
+    });
   };
 
   const getData = async () => {
@@ -79,7 +90,7 @@ export default function AdminAddSkill() {
         {/* Title Of the Page */}
         <div className="flex justify-between mx-9 mt-8 mb-[51px]">
           <h4 className="font-lexend self-center text-xl font-semibold whitespace-nowrap text-white   ">
-            All Skillssss
+            All Skills
           </h4>
           {/* <NavLink to="/playerarea/addskill"> */}
           <button
@@ -174,7 +185,7 @@ export default function AdminAddSkill() {
 
         {/* Cards oF CAtogerys  */}
         <div className="m-8  grid lg:grid-cols-5 2xl:grid-cols-5  sm:gap-4 lg:gap-4 2xl:gap-y-8">
-          {skills.map((val, ind) => {
+          {skills.length > 0 ? skills.map((val, ind) => {
             return (
               <AddSubSkill
                 key={ind}
@@ -182,7 +193,7 @@ export default function AdminAddSkill() {
                 refreshData = {refreshData}
               />
             );
-          })}
+          }): <Spinner />}
         </div>
       </div>
     </>

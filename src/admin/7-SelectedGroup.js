@@ -11,6 +11,7 @@ import UploadGroupPost from "../Components/UploadGroupPost";
 
 export default function Selectedgroup() {
   const location = useLocation();
+  console.log(location.state)
 
   return (
     <div className="flex-col w-full ">
@@ -24,7 +25,7 @@ export default function Selectedgroup() {
 
         {/* center Post */}
         <div className=" w-full scrollbar  mt-10">
-          <UploadGroupPost newsfeed={location.state} />
+          {/* <UploadGroupPost newsfeed={location.state} /> */}
           <GroupTimeline newsfeed={false} data={location.state} />
         </div>
 

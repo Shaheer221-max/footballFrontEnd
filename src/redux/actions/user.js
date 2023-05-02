@@ -39,6 +39,15 @@ export const LogoutUser = () => {
     };
 }
 
+// Get User
+
+export const GetUser = (user) => {
+    return {
+        type: actionTypes.GET_USER,
+        payload: user,
+    }
+}
+
 // Get All Players
 
 export function fetchData() {
@@ -83,3 +92,5 @@ export function fetchPostData() {
         });
     };
   }
+
+  

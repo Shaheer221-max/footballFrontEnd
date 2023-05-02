@@ -11,6 +11,7 @@ const initialState = {
     players: [],
     coaches: [],
     posts: [],
+    socket: {},
 };
 
 const userReducer = (state = initialState, action) => {
@@ -106,6 +107,19 @@ const userReducer = (state = initialState, action) => {
                 loading: false,
                 error: action.payload,
             };
+
+        case actionTypes.GET_USER:
+            return {
+                ...state,
+                user: action.payload,
+            };
+
+        case actionTypes.SOCKET:
+            return {
+                ...state,
+                socket: action.payload,
+            };
+            
             
 
         default:

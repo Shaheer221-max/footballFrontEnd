@@ -1,5 +1,8 @@
+import { message } from "antd";
 import axios from "axios";
 import React from "react";
+import { useSelector } from "react-redux";
+import { Link, NavLink } from "react-router-dom";
 import videoicon from "../assets/videoicon.png";
 import DrillCard from "../Components/DrillCard";
 import Header from "../Components/Header";
@@ -9,7 +12,10 @@ export default function UploadingDrill() {
   const [description, setDescription] = React.useState("");
   const [url, setUrl] = React.useState("");
   const [category, setCategory] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   // onciick button uppload video
+
+  const { user } = useSelector((state) => state.user);
 
   const hiddenFileInput = React.useRef(null);
   const handleClick = (event) => {
@@ -18,7 +24,6 @@ export default function UploadingDrill() {
   const handleChange = (event) => {
     const fileUploaded = event.target.files[0];
     setUrl(fileUploaded);
-    console.log(fileUploaded);
   };
 
   const [drills, setDrills] = React.useState([]);
@@ -29,8 +34,8 @@ export default function UploadingDrill() {
     const response = await axios.get(
       "https://football-backend-updated.herokuapp.com/videocategory/GetAllVideoCategories"
     );
-    console.log(response.data.data.doc);
-    setDrills(response.data.data.doc);
+    console.log(response.data.data);
+    setDrills(response.data.data);
   };
   React.useEffect(() => {
     getDrills();
@@ -39,30 +44,41 @@ export default function UploadingDrill() {
   // Add Drill
   const addDrill = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData();
     formData.append("file", url);
     formData.append("drilltitle", title);
     formData.append("description", description);
     formData.append("refOfVideoCat", category);
-    formData.append("refOfUser", "60f1b1b0b0b2a00015b0b1a2");
-    console.log("second");
-    const response = await axios.post("/drill/UploadDrill", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    console.log(response.data);
-    setRefresh(response.data);
+    formData.append("refOfUser", user._id);
+    await axios
+      .post(
+        "https://football-backend-updated.herokuapp.com/drill/UploadDrill",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+      .then((response) => {
+        setLoading(false);
+        message.success("Drill Uploaded Successfully");
+        console.log(response.data);
+        setRefresh(response.data);
+      })
+      .catch((err) => {
+        message.error("Error in Uploading Drill");
+        console.log(err);
+      });
   };
 
   return (
     <>
       <div className="flex-col w-full">
-        {/* Page Header */}
         <Header title={"Training Drills"} />
 
         <div className="flex  divide-x xl:w-full ">
-          {/* Upload Of user  */}
           <div>
             <h4 className="self-center font-lexend text-xl font-medium whitespace-nowrap text-white  mt-8 mb-12 ml-8">
               Uploading Drill
@@ -112,6 +128,10 @@ export default function UploadingDrill() {
                   <p className="mb-3 mt-[10px] font-light xl:text-base text-sm  text-gray-400">
                     Mp4,webm formats are supported
                   </p>
+
+                  <p className="font-light xl:text-base text-sm  text-gray-400">
+                    {url?.name}
+                  </p>
                 </div>
               </div>
             </div>
@@ -121,20 +141,32 @@ export default function UploadingDrill() {
               className="bg-[#212121]   text-gray-400 xl:text-base text-sm rounded-lg block  pl-6 p-2.5 mx-8 my-5"
               onChange={(e) => setCategory(e.target.value)}
             >
-              {drills.map((drill) => {
+              {drills?.map((drill) => {
                 return <option value={drill._id}>{drill.title}</option>;
               })}
             </select>
             <div>
-              <button className="inline-flex font-lexend items-center py-2 px-8 ml-8 2xl:py-3 2xl:px-10 text-sm font-normal text-black bg-white rounded-[4px] ">
-                Cancel
-              </button>
-              <button
-                onClick={addDrill}
-                className="inline-flex font-lexend items-center py-2 2xl:py-3 2xl:px-10 px-8 ml-[16px] text-sm font-normal  text-black bg-green-500 rounded-[4px] "
-              >
-                Upload
-              </button>
+              <NavLink to={"/traningdrill"}>
+                <button className="inline-flex font-lexend items-center py-2 px-8 ml-8 2xl:py-3 2xl:px-10 text-sm font-normal text-black bg-white rounded-[4px] ">
+                  Cancel
+                </button>
+              </NavLink>
+              <Link to={"/traningdrill"}>
+                <button
+                  onClick={addDrill}
+                  className="inline-flex font-lexend items-center py-2 2xl:py-3 2xl:px-10 px-8 ml-[16px] text-sm font-normal  text-black bg-green-500 rounded-[4px] "
+                >
+                  {
+                    loading ? (
+                      <div className="flex items-center justify-center">
+                        <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
+                      </div>
+                    ) : (
+                      "Upload"
+                    )
+                  }
+                </button>
+              </Link>
             </div>
           </div>
 

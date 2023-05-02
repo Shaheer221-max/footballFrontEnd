@@ -1,24 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Calendar from "react-calendar";
 import Header from "../Components/Header";
 import "../styles/font.css";
 import "react-calendar/dist/Calendar.css";
-import pfp from "../assets/pfp.png";
 import "../styles/Dashboard.css";
 import "../styles/background.css";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import axios from "../axios";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { io } from "socket.io-client";
 
-import { Dropdown } from "antd";
+import { Dropdown, Popconfirm } from "antd";
 import { useSelector } from "react-redux";
+
+import { message } from "antd";
+import Spinner from "./Spinner";
+
+// React Icons
+import { MdDelete } from "react-icons/md";
+import moment from "moment";
+
+import { useDispatch } from "react-redux";
+import getAge from "get-age";
 
 export default function Dashboard() {
   const [openAddsubcatmodal, setopenAddsubcatmodal] = useState(false);
   const [opendeletemodal, setopendeletemodal] = useState(false);
   const [addschedule, setschedule] = useState(false);
-  const [scheduleId, setscheduleId] = useState(false);
   const [event, setevent] = useState(false);
   const [day, setDay, DayRef] = useState(false);
   const [month, setMonth] = useState(false);
@@ -33,7 +42,12 @@ export default function Dashboard() {
   var currentyear = new Date().getFullYear();
   var year = currentyear + 7;
 
+  const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state);
+  console.log("Admin: ", user);
+
+  const socket = useRef();
 
   const items = [
     {
@@ -106,25 +120,33 @@ export default function Dashboard() {
   };
 
   const setOfDay = async (day) => {
-    setRefresh(false);
     await axios
       .post(
         "https://football-backend-updated.herokuapp.com/event/CreateOffday",
         {
-          date: `${day}-${month}-${yearr}`,
+          date: date,
         }
       )
       .then((res) => {
+        message.success("Offday Added");
         console.log(res.data);
         setevent(false);
         setschedule(false);
-        setError(false);
-        setRefresh(true);
       })
       .catch((error) => {
+        message.error("Offday Not Added");
         setError(error.response.data);
         console.log(error.response.data);
       });
+  };
+
+  const [offDays, setOffDay] = useState([]);
+
+  const tileClassName = ({ date }) => {
+    const apiDatesSet = new Set(
+      offDays.map((apiDate) => new Date(apiDate).toDateString())
+    );
+    return apiDatesSet.has(date.toDateString()) ? "highlight" : "";
   };
 
   const data = async () => {
@@ -133,7 +155,24 @@ export default function Dashboard() {
       .then((res) => {
         console.log(res.data.data.doc);
         if (res.data.data !== res.data.data.Prototype) {
-          SetAllGetEvents(res.data.data.doc);
+          SetAllGetEvents(
+            res.data.data.doc.filter((data) => data.offDay == false)
+          );
+          SetAllGetEvents(
+            res.data.data.doc
+              .filter((data) => data.offDay == false)
+              .sort((a, b) => {
+                return new Date(a.date) - new Date(b.date);
+              })
+          );
+          // Set only dates not other data
+          setOffDay(
+            res.data.data.doc
+              .filter((data) => data.offDay == true)
+              .map((data) => {
+                return new Date(data.date);
+              })
+          );
         }
       })
       .catch((error) => {
@@ -143,16 +182,23 @@ export default function Dashboard() {
 
   const eventsceduling = async () => {
     setRefresh(false);
+    if (date === "" || title === "" || description === "") {
+      message.error("Please fill all fields");
+      return;
+    }
+    console.log(date);
     await axios
       .post(
         "https://football-backend-updated.herokuapp.com/event/CreateEvent",
         {
-          date: `${day}-${month}-${yearr}`,
+          // date: `${day}-${month}-${yearr}`,
+          date: date,
           title: title,
           description: description,
         }
       )
       .then((res) => {
+        message.success("Event Added");
         setRefresh(true);
         console.log(res.data);
         setevent(false);
@@ -160,39 +206,15 @@ export default function Dashboard() {
         setError(false);
       })
       .catch((error) => {
+        message.error("Something went wrong");
         setError(error.response.data);
         console.log(error.response.data);
       });
   };
-  const handlingevent = () => {
-    if (error) {
-      console.log("error true", error);
-      console.log("event false", event);
-      setevent(false);
-      console.log("event false", event);
-    } else if (!error) {
-      console.log("error false", error);
-      console.log("event false", event);
-      setevent(true);
-      console.log("event true", event);
-    }
-  };
-
-  const dataobject2 = [
-    { ind: 1 },
-    { ind: 1 },
-    { ind: 1 },
-    { ind: 1 },
-    { ind: 1 },
-    { ind: 1 },
-    { ind: 1 },
-    { ind: 1 },
-    { ind: 1 },
-    { ind: 1 },
-  ];
 
   const onChange = (date) => {
-    setschedule(true);
+    // setschedule(true);
+    setevent(true);
     setDate(date);
   };
 
@@ -200,23 +222,85 @@ export default function Dashboard() {
     data();
   }, [refresh]);
 
-  const deleteSchedule = async () => {
+  const deleteSchedule = async (id) => {
     setRefresh(false);
     await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/event/DeleteEvent/${scheduleId}`
+        `https://football-backend-updated.herokuapp.com/event/DeleteEvent/${id}`
       )
       .then((res) => {
+        message.success("Event Deleted");
         setRefresh(true);
         console.log(res.data);
+      })
+      .catch((error) => {
+        message.error("Something went wrong");
+        console.log(error.response.data);
+      });
+  };
+
+  const [player, setPlayer] = useState();
+
+  const item = [
+    {
+      key: "1",
+      label: (
+        <Link
+          to={{ pathname: "/userarea/playerprofile/profile" }}
+          state={player}
+        >
+          <button>View Profile</button>
+        </Link>
+      ),
+    },
+    // {
+    //   key: "2",
+    //   label: (
+    //     <button>
+    //       Remove from Dashboard
+    //     </button>
+    //   ),
+    // },
+  ];
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  useEffect(() => {
+    socket.current = io(`https://footballsocketioforchat.herokuapp.com`);
+    const obj = { current: socket.current };
+    console.log("Socket: ", obj);
+    dispatch({ type: "SOCKET", payload: obj });
+  }, []);
+
+  useEffect(() => {
+    socket.current.emit("addUser", user?.user?._id);
+  }, []);
+
+  // Get Top Prospect
+
+  const [topProspect, setTopProspect] = useState([]);
+  const getTopProspect = async () => {
+    await axios
+      .get(
+        `https://football-backend-updated.herokuapp.com/evaluation/GetTopProspects`
+      )
+      .then((res) => {
+        console.log(res.data.data);
+        setTopProspect(res.data.data);
       })
       .catch((error) => {
         console.log(error.response.data);
       });
   };
 
+  // Get Top Prospect
+  React.useEffect(() => {
+    getTopProspect();
+  }, []);
+
   return (
     <>
+      {contextHolder}
       <div className="flex-col w-full  ">
         {/* Page Header */}
         <Header title={"Dashboard"} />
@@ -233,7 +317,8 @@ export default function Dashboard() {
                 calendarType="Arabic"
                 onChange={onChange}
                 value={date}
-                
+                minDate={new Date()}
+                tileClassName={tileClassName}
               />
             </div>
             {/* Cards Upcoming schedule */}
@@ -252,46 +337,47 @@ export default function Dashboard() {
               >
                 <MenuItem onClick={deleteSchedule}>Delete Schedule</MenuItem>
               </Menu>
-              {getEvents?.map((val, ind) => (
-                <div
-                  key={ind}
-                  className="schedule flex py-1 pr-[0px] w-full h-full  rounded-xl   shadow-md bg-gray-800 "
-                  style={{ width: "100%" }}
-                >
-                  <div className=" border-4 rounded-r-full  border-green-500 mr-5 my-4"></div>
-                  <div>
-                    <h5 className="mb-2 mt-3 text-[16px] leading-5 lexend font-normal text-white">
-                      {val.title}
-                    </h5>
+              {getEvents.length > 0 ? (
+                getEvents?.map((val, ind) => (
+                  <div
+                    key={ind}
+                    className="schedule flex py-1 pr-[0px] w-full h-full  rounded-xl relative  shadow-md bg-gray-800 "
+                    style={{ width: "100%" }}
+                  >
+                    <div className=" border-4 rounded-r-full  border-green-500 mr-5 my-4"></div>
+                    <div>
+                      <h5 className="mb-2 mt-3 text-[16px] leading-5 lexend font-normal text-white">
+                        {val.title}
+                      </h5>
 
-                    <p className="lexend text-white mt-2 mb-3 font-light text-sm ">
-                      {val.description}
-                    </p>
-                    <div className="flex mb-4 gap-36 items-center mt-2">
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <svg
-                          width="20px"
-                          height="20px"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
+                      <p className="lexend text-white mt-2 mb-3 font-light text-sm ">
+                        {val.description}
+                      </p>
+                      <div className="flex mb-4 gap-36 items-center mt-2">
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
                         >
-                          <path
-                            d="M17 2H16V1C16 0.4 15.6 0 15 0C14.4 0 14 0.4 14 1V2H6V1C6 0.4 5.6 0 5 0C4.4 0 4 0.4 4 1V2H3C1.3 2 0 3.3 0 5V6H20V5C20 3.3 18.7 2 17 2ZM0 17C0 18.7 1.3 20 3 20H17C18.7 20 20 18.7 20 17V8H0V17ZM15 10C15.6 10 16 10.4 16 11C16 11.6 15.6 12 15 12C14.4 12 14 11.6 14 11C14 10.4 14.4 10 15 10ZM15 14C15.6 14 16 14.4 16 15C16 15.6 15.6 16 15 16C14.4 16 14 15.6 14 15C14 14.4 14.4 14 15 14ZM10 10C10.6 10 11 10.4 11 11C11 11.6 10.6 12 10 12C9.4 12 9 11.6 9 11C9 10.4 9.4 10 10 10ZM10 14C10.6 14 11 14.4 11 15C11 15.6 10.6 16 10 16C9.4 16 9 15.6 9 15C9 14.4 9.4 14 10 14ZM5 10C5.6 10 6 10.4 6 11C6 11.6 5.6 12 5 12C4.4 12 4 11.6 4 11C4 10.4 4.4 10 5 10ZM5 14C5.6 14 6 14.4 6 15C6 15.6 5.6 16 5 16C4.4 16 4 15.6 4 15C4 14.4 4.4 14 5 14Z"
-                            fill="#1DB954"
-                          />
-                        </svg>
-                        <p className="text-[15px] leading-5 lexend  font-light ml-3   text-gray-400">
-                          {val.date.split("T")[0]}
-                        </p>
-                      </div>
-                      <Dropdown
+                          <svg
+                            width="20px"
+                            height="20px"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M17 2H16V1C16 0.4 15.6 0 15 0C14.4 0 14 0.4 14 1V2H6V1C6 0.4 5.6 0 5 0C4.4 0 4 0.4 4 1V2H3C1.3 2 0 3.3 0 5V6H20V5C20 3.3 18.7 2 17 2ZM0 17C0 18.7 1.3 20 3 20H17C18.7 20 20 18.7 20 17V8H0V17ZM15 10C15.6 10 16 10.4 16 11C16 11.6 15.6 12 15 12C14.4 12 14 11.6 14 11C14 10.4 14.4 10 15 10ZM15 14C15.6 14 16 14.4 16 15C16 15.6 15.6 16 15 16C14.4 16 14 15.6 14 15C14 14.4 14.4 14 15 14ZM10 10C10.6 10 11 10.4 11 11C11 11.6 10.6 12 10 12C9.4 12 9 11.6 9 11C9 10.4 9.4 10 10 10ZM10 14C10.6 14 11 14.4 11 15C11 15.6 10.6 16 10 16C9.4 16 9 15.6 9 15C9 14.4 9.4 14 10 14ZM5 10C5.6 10 6 10.4 6 11C6 11.6 5.6 12 5 12C4.4 12 4 11.6 4 11C4 10.4 4.4 10 5 10ZM5 14C5.6 14 6 14.4 6 15C6 15.6 5.6 16 5 16C4.4 16 4 15.6 4 15C4 14.4 4.4 14 5 14Z"
+                              fill="#1DB954"
+                            />
+                          </svg>
+                          <p className="text-[15px] leading-5 lexend  font-light ml-3   text-gray-400">
+                            {val.date.split("T")[0]}
+                          </p>
+                        </div>
+                        {/* <Dropdown
                         menu={{
                           items,
                         }}
@@ -318,11 +404,26 @@ export default function Dashboard() {
                             />
                           </svg>
                         </button>
-                      </Dropdown>
+                      </Dropdown> */}
+
+                        <Popconfirm
+                          title="Delete Schedule"
+                          description="Are you sure to delete this Schedule?"
+                          okText="Yes"
+                          cancelText="No"
+                          onConfirm={() => deleteSchedule(val._id)}
+                          className="ml-auto absolute right-5"
+                          okButtonProps={{ className: "bg-red-500" }}
+                        >
+                          <MdDelete className="ml-auto text-2xl text-red-500 cursor-pointer" />
+                        </Popconfirm>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <Spinner />
+              )}
             </div>
           </div>
 
@@ -332,70 +433,82 @@ export default function Dashboard() {
               Top Prospects
             </h4>
             <div className="grid grid-cols-2 gap-3.5  ">
-              {dataobject2.map((val, ind) => (
-                <div
-                  key={ind}
-                  className="prospects flex p-3 max-w-sm font-lexend w-full h-full  rounded-lg border  shadow-md  bg-gray-800 border-gray-700 "
-                >
-                  <div className="w-full">
-                    <div className="flex ">
-                      <img
-                        className=" w-12 h-12 rounded-full "
-                        src={pfp}
-                        alt="Bonnie image"
-                      />
-                      <div className="ml-4">
-                        <h5 className="text-xl font-medium tracking-tight  text-white font-lexend">
-                          Whiteman
-                        </h5>
-                        <p className="text-[#7e7e7e] mt-1 text-base font-light font-lexend  ">
-                          whiteman@gmail.com
-                        </p>
-                      </div>
-                      <svg
-                        onClick={() => setopenAddsubcatmodal(true)}
-                        className="ml-auto cursor-pointer"
-                        width="6"
-                        height="25"
-                        viewBox="0 0 6 25"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M6 12.5003C6 12.1077 5.9224 11.7188 5.77164 11.356C5.62087 10.9932 5.3999 10.6636 5.12132 10.3859C4.84274 10.1082 4.51203 9.88799 4.14805 9.73771C3.78407 9.58744 3.39397 9.51009 3 9.51009C2.60603 9.51009 2.21593 9.58744 1.85195 9.73771C1.48797 9.88799 1.15726 10.1082 0.87868 10.3859C0.600105 10.6636 0.379125 10.9932 0.228361 11.356C0.0775971 11.7188 4.24432e-07 12.1077 4.07267e-07 12.5003C0.000181094 13.2934 0.316424 14.0539 0.879161 14.6146C1.4419 15.1752 2.20503 15.4901 3.00068 15.4899C3.79633 15.4897 4.55932 15.1745 5.1218 14.6136C5.68428 14.0527 6.00018 13.292 6 12.499L6 12.5003ZM6 2.99025C6 2.59756 5.9224 2.20872 5.77164 1.84593C5.62087 1.48313 5.3999 1.15349 5.12132 0.875823C4.84274 0.598153 4.51203 0.377893 4.14805 0.227619C3.78407 0.0773449 3.39397 -1.13913e-07 3 -1.31134e-07C2.60603 -1.48355e-07 2.21593 0.0773448 1.85195 0.227619C1.48797 0.377893 1.15726 0.598152 0.878681 0.875822C0.600105 1.15349 0.379126 1.48313 0.228362 1.84593C0.0775975 2.20872 8.40131e-07 2.59756 8.22967e-07 2.99025C0.00018151 3.78331 0.316425 4.54382 0.879162 5.10447C1.4419 5.66512 2.20503 5.97999 3.00068 5.97981C3.79633 5.97963 4.55932 5.66442 5.1218 5.10351C5.68428 4.5426 6.00018 3.78331 6 2.99025ZM6 22.0104C6 21.6178 5.9224 21.2289 5.77164 20.8661C5.62087 20.5033 5.3999 20.1737 5.12132 19.896C4.84274 19.6183 4.51203 19.3981 4.14805 19.2478C3.78407 19.0975 3.39396 19.0202 3 19.0202C2.60603 19.0202 2.21593 19.0975 1.85195 19.2478C1.48797 19.3981 1.15726 19.6183 0.87868 19.896C0.600104 20.1737 0.379125 20.5033 0.228361 20.8661C0.0775967 21.2289 8.73244e-09 21.6177 -8.43228e-09 22.0104C0.000180678 22.8035 0.316424 23.564 0.879161 24.1247C1.4419 24.6853 2.20503 25.0002 3.00068 25C3.79633 24.9998 4.55932 24.6846 5.1218 24.1237C5.68428 23.5628 6.00018 22.8035 6 22.0104Z"
-                          fill="white"
+              {topProspect?.map((val, ind) => {
+                return (
+                  <div
+                    key={ind}
+                    className="prospects flex p-3 max-w-sm font-lexend w-full h-full  rounded-lg border  shadow-md  bg-gray-800 border-gray-700 "
+                  >
+                    <div className="w-full">
+                      <div className="flex ">
+                        <img
+                          className=" w-12 h-12 rounded-full "
+                          src={val?.refOfPlayer?.image}
+                          alt="Bonnie image"
                         />
-                      </svg>
-                    </div>
-                    <div className="flex gap-3 mt-9 items-center">
-                      <div className="ml-2">
-                        <h5 className="text-sm font-light leading-5 tracking-tight text-white ">
-                          Age
-                        </h5>
-                        <p className=" text-sm font-light text-center text-[#7e7e7e] ">
-                          12
-                        </p>
+                        <div className="ml-4">
+                          <h5 className="text-xl font-medium tracking-tight  text-white font-lexend">
+                            {val.refOfPlayer?.name}
+                          </h5>
+                          <p className="text-[#7e7e7e] mt-1 text-base font-light font-lexend  ">
+                            {val?.refOfPlayer?.email}
+                          </p>
+                        </div>
+                        <Dropdown
+                          menu={{
+                            items: item,
+                          }}
+                          placement="bottomRight"
+                          trigger="click"
+                        >
+                          <svg
+                            onClick={() => setPlayer(val?.refOfPlayer)}
+                            className="ml-auto cursor-pointer"
+                            width="6"
+                            height="25"
+                            viewBox="0 0 6 25"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M6 12.5003C6 12.1077 5.9224 11.7188 5.77164 11.356C5.62087 10.9932 5.3999 10.6636 5.12132 10.3859C4.84274 10.1082 4.51203 9.88799 4.14805 9.73771C3.78407 9.58744 3.39397 9.51009 3 9.51009C2.60603 9.51009 2.21593 9.58744 1.85195 9.73771C1.48797 9.88799 1.15726 10.1082 0.87868 10.3859C0.600105 10.6636 0.379125 10.9932 0.228361 11.356C0.0775971 11.7188 4.24432e-07 12.1077 4.07267e-07 12.5003C0.000181094 13.2934 0.316424 14.0539 0.879161 14.6146C1.4419 15.1752 2.20503 15.4901 3.00068 15.4899C3.79633 15.4897 4.55932 15.1745 5.1218 14.6136C5.68428 14.0527 6.00018 13.292 6 12.499L6 12.5003ZM6 2.99025C6 2.59756 5.9224 2.20872 5.77164 1.84593C5.62087 1.48313 5.3999 1.15349 5.12132 0.875823C4.84274 0.598153 4.51203 0.377893 4.14805 0.227619C3.78407 0.0773449 3.39397 -1.13913e-07 3 -1.31134e-07C2.60603 -1.48355e-07 2.21593 0.0773448 1.85195 0.227619C1.48797 0.377893 1.15726 0.598152 0.878681 0.875822C0.600105 1.15349 0.379126 1.48313 0.228362 1.84593C0.0775975 2.20872 8.40131e-07 2.59756 8.22967e-07 2.99025C0.00018151 3.78331 0.316425 4.54382 0.879162 5.10447C1.4419 5.66512 2.20503 5.97999 3.00068 5.97981C3.79633 5.97963 4.55932 5.66442 5.1218 5.10351C5.68428 4.5426 6.00018 3.78331 6 2.99025ZM6 22.0104C6 21.6178 5.9224 21.2289 5.77164 20.8661C5.62087 20.5033 5.3999 20.1737 5.12132 19.896C4.84274 19.6183 4.51203 19.3981 4.14805 19.2478C3.78407 19.0975 3.39396 19.0202 3 19.0202C2.60603 19.0202 2.21593 19.0975 1.85195 19.2478C1.48797 19.3981 1.15726 19.6183 0.87868 19.896C0.600104 20.1737 0.379125 20.5033 0.228361 20.8661C0.0775967 21.2289 8.73244e-09 21.6177 -8.43228e-09 22.0104C0.000180678 22.8035 0.316424 23.564 0.879161 24.1247C1.4419 24.6853 2.20503 25.0002 3.00068 25C3.79633 24.9998 4.55932 24.6846 5.1218 24.1237C5.68428 23.5628 6.00018 22.8035 6 22.0104Z"
+                              fill="white"
+                            />
+                          </svg>
+                        </Dropdown>
                       </div>
-                      <div>
-                        <h5 className="text-sm font-light leading-5 tracking-tight text-white ">
-                          Position
-                        </h5>
-                        <p className="text-sm font-light text-center text-[#7e7e7e] lexend ">
-                          Midfield
-                        </p>
-                      </div>
-                      <div>
-                        <h5 className="text-sm font-light tracking-tight text-white ">
-                          Avg Marks
-                        </h5>
-                        <p className=" text-sm text-center font-light text-[#7e7e7e] font-lexend ">
-                          4.7
-                        </p>
+                      <div className="flex gap-3 mt-9 items-center">
+                        <div className="ml-2">
+                          <h5 className="text-sm font-light leading-5 tracking-tight text-white ">
+                            Age
+                          </h5>
+                          <p className=" text-sm font-light text-center text-[#7e7e7e] ">
+                            {val?.dateOfBirth
+                              ? getAge(val?.dateOfBirth?.split("T")[0])
+                              : "N/A"}
+                          </p>
+                        </div>
+                        <div>
+                          <h5 className="text-sm font-light leading-5 tracking-tight text-white ">
+                            Position
+                          </h5>
+                          <p className="text-sm font-light text-center text-[#7e7e7e] lexend ">
+                            {val?.refOfPlayer?.position}
+                          </p>
+                        </div>
+                        <div>
+                          <h5 className="text-sm font-light tracking-tight text-white ">
+                            Avg Marks
+                          </h5>
+                          <p className=" text-sm text-center font-light text-[#7e7e7e] font-lexend ">
+                            {Math.round(val?.avgScore)}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -414,7 +527,7 @@ export default function Dashboard() {
           className={
             !openAddsubcatmodal
               ? "hidden"
-              : " flex absolute top-[60px] right-[600px]  z-50 w-52 h-24   bg-white rounded-xl justify-center content-center items-center"
+              : " flex relative top-[60px] right-[600px]  z-50 w-52 h-24   bg-white rounded-xl justify-center content-center items-center"
           }
         >
           <div className="w-full">
@@ -566,7 +679,7 @@ export default function Dashboard() {
                 Set of Day
               </button>
               <button
-                onClick={handlingevent}
+                onClick={setevent}
                 className="inline-flex font-lexend mb-12 items-center py-2.5 px-8  text-sm font-normal bg-white rounded-[4px] m-2"
               >
                 Set Event
@@ -642,6 +755,12 @@ export default function Dashboard() {
                 className="inline-flex font-lexend mb-12 items-center py-2.5 px-8  text-sm font-normal text-white bg-green-500 rounded-[4px] m-2"
               >
                 Set Event
+              </button>
+              <button
+                onClick={setOfDay}
+                className="inline-flex font-lexend mb-12 items-center py-2.5 px-8  text-sm font-normal text-black bg-white rounded-[4px] m-2"
+              >
+                Set Off Day
               </button>
             </div>
           </div>

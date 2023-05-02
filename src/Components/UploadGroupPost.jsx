@@ -4,13 +4,15 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../admin/ActiveUser";
 import axios from "../axios";
 import { useSelector } from "react-redux";
+import { message } from "antd";
 
 export default function UploadGroupPost(props) {
-    console.log('first', props)
+  console.log("first", props);
   const hiddenFileInputphoto = React.useRef(null);
   const hiddenFileInputvideo = React.useRef(null);
-  const [postt, setpostt] = useState('');
+  const [postt, setpostt] = useState("");
   const [img, setimg] = useState(false);
+  const [video, setVideo] = useState(false);
   const [vid, setvid] = useState(false);
   const [post, setPost] = useState(false);
   const { group, setActiveGroup } = useContext(AuthContext);
@@ -19,9 +21,10 @@ export default function UploadGroupPost(props) {
   const [selected, setSelected] = useState(false);
   const [name, setName] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [postLoading, setPostLoading] = useState(false);
   const token = localStorage.getItem("token");
 
-  const {user} = useSelector((state) => state);
+  const { user } = useSelector((state) => state);
 
   const getData = async () => {
     await axios
@@ -69,23 +72,8 @@ export default function UploadGroupPost(props) {
       });
   };
   const handleChangevideo = (event) => {
+    setVideo(event.target.files[0]);
     setName(event.target.files[0].name);
-    console.log(event.target.files[0].name)
-    const data = new FormData();
-    data.append("file", event.target.files[0]);
-    data.append("upload_preset", "player_image");
-    //data.append("cloud_name","dyapmvalo");
-    axios
-      .post("https://api.cloudinary.com/v1_1/dyapmvalo/video/upload", data)
-      .then((res) => {
-        setvid(res.data.url);
-        setimg(false);
-        setSelected(true);
-        console.log(res.data.url);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const handlePostChange = (event) => {
@@ -94,65 +82,70 @@ export default function UploadGroupPost(props) {
 
   // sending post
   const sendPost = async () => {
-    console.log(vid)
-    if (vid) {
-      let res = await axios
-        .post("https://football-backend-updated.herokuapp.com/newsfeed/PostVideoFeed", { refOfUser: user.userId, video: vid, refOfGroup: props.newsfeed.val.id })
+    console.log(vid);
+    setPostLoading(true);
+    if (video) {
+      const data = new FormData();
+      data.append("file", video);
+      data.append("upload_preset", "player_image");
+      data.append("width", "500");
+      data.append("height", "300");
+      data.append("refOfUser", user.user.id);
+      data.append("refOfGroup", props.newsfeed.val.id);
+      data.append("status", postt);
+      await axios
+        .post(
+          "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+          data
+        )
         .then((res) => {
+          message.success("Post Uploaded");
+          setPostLoading(false);
           console.log(res.data);
           console.log("post send");
-          setpostt(false);
-          setimg(false);
-          setvid(false);
-          setPost(false);
+          setpostt("");
         })
         .catch((error) => {
+
+          message.error("Post not Uploaded");
           console.log(error);
         });
-    } else {
-      if(postt !== '') {
-        let res = await axios
-        .post("https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed", { refOfUser: user.userId, status: postt, refOfGroup: props.newsfeed.val.id })
-        .then((res) => {
-          console.log(res.data);
-          console.log("post send");
-          setpostt(false);
-          setimg(false);
-          setvid(false);
-          setPost(false);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      }
-      else {
-        let res = await axios
-        .post("https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed", { refOfUser: user.userId, image: img, refOfGroup: props.newsfeed.val.id })
-        .then((res) => {
-          console.log(res.data);
-          console.log("post send");
-          setpostt(false);
-          setimg(false);
-          setvid(false);
-          setPost(false);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      }
+    }
+    else {
+      await axios
+      .post(
+        "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+        {
+          refOfUser: user.user.id,
+          refOfGroup: props.newsfeed.val.id,
+          status: postt,
+          image: img,
+        }
+      )
+      .then((res) => {
+        message.success("Post Uploaded");
+        setPostLoading(false);
+        console.log(res.data);
+        console.log("post send");
+        setpostt("");
+      })
+      .catch((error) => {
+        message.error("Post not Uploaded");
+        console.log(error);
+      });
     }
   };
 
   return (
     <>
       <div className="mx-[22px] ">
-        <div className=" px-7 pt-8 pb-6 font-lexend lg:w-full 2xl:w-[880px] min-w-sm text-center bg-[#212121] rounded-lg  ">
+        <div className=" px-7 pt-8 pb-6 font-lexend lg:w-full 2xl:w-[500px] min-w-sm text-center bg-[#212121] rounded-lg  ">
           <div className=" gap-5 flex mt-2">
             <img
-                  className=" w-10 h-10 rounded-full "
-                  src={user.user.image}
-                  alt="Bonnie image"
-                />
+              className=" w-10 h-10 rounded-full "
+              src={user.user.image}
+              alt="Bonnie image"
+            />
 
             <input
               type="text"
@@ -160,10 +153,12 @@ export default function UploadGroupPost(props) {
               placeholder="Post something"
               required=""
               onChange={handlePostChange}
+              value={postt}
             />
           </div>
+
           <div className="mt-5">
-            <div className="flex ml-14 ">
+            <div className="flex">
               <button
                 onClick={handleClickphoto}
                 className="inline-flex ml-1   py-2 px-4 text-sm font-normal text-white bg-[#191919] rounded-2xl "
@@ -222,10 +217,40 @@ export default function UploadGroupPost(props) {
                 onClick={sendPost}
                 className="inline-flex  py-2 px-7 ml-auto text-sm font-normal text-white bg-green-500 rounded-[4px] "
               >
-                Post
+                {postLoading ? (
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    ></path>
+                    </svg>
+                    ) : "Post"}
               </button>
             </div>
           </div>
+          {img ? (
+            <div className="text-white mt-5">
+              <img src={img} alt="" className="w-full h-full" />
+            </div>
+          ) : null}
+          {name ? (
+            <div className="text-white mt-5">
+              <p>{name}</p>
+            </div>
+          ) : null}
         </div>
       </div>
     </>

@@ -1,10 +1,11 @@
 import React, { useContext, useReducer, useState } from "react";
 import "../styles/Login.css";
 import Hand from "../assets/Hand.png";
-import { NavLink, Routes, Route } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "./ActiveUser";
 import axios from "../axios";
 import { useDispatch, useSelector } from "react-redux";
+import { message } from "antd";
 
 export const Login = () => {
   const [pass, setPass] = useState(false);
@@ -12,10 +13,13 @@ export const Login = () => {
   const { currentUser, setUser } = useContext(AuthContext);
   const [admin, setadmin] = useState(currentUser);
   const [error, setError] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [link, setLink] = useState("");
   const [email, setEmail] = useState(false);
   const [passw, setPassword] = useState(false);
   const { id, setActiveId } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   // Dispatch Action to Redux Store
   const dispatch = useDispatch();
@@ -49,16 +53,31 @@ export const Login = () => {
   };
 
   const login = async () => {
+    setRefresh(true);
     if (admin === true) {
-      let res = await axios
-        .post(`https://football-backend-updated.herokuapp.com/users/signin`, { password: passw, email: email })
+      await axios
+        .post(`https://football-backend-updated.herokuapp.com/users/signin`, {
+          password: passw,
+          email: email,
+        })
         .then((res) => {
-          dispatch({ type: "USER_LOGIN_SUCCESS", payload: res.data });
-          console.log(res.data);
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("current", 'Admin');
-          setActiveId(email);
-          setLink("/dashboard");
+          setRefresh(false);
+          if (res.data.status === "fail") {
+            message.error(res.data.message);
+          }
+          if (res.data.status === "success") {
+            if (res?.data?.data?.user?.role === "Admin") {
+              message.success("Logged In Successfully");
+              dispatch({ type: "USER_LOGIN_SUCCESS", payload: res.data });
+              console.log(res.data);
+              localStorage.setItem("token", res.data.token);
+              localStorage.setItem("current", "Admin");
+              setActiveId(email);
+              navigate("/dashboard");
+            } else {
+              message.error("Please Login as an Admin");
+            }
+          }
         })
         .catch((error) => {
           setError(error.response.data);
@@ -66,17 +85,33 @@ export const Login = () => {
         });
     } else {
       await axios
-        .post("/users/signin", { password: passw, email: email })
+        .post("https://football-backend-updated.herokuapp.com/users/signin", {
+          password: passw,
+          email: email,
+        })
         .then((res) => {
-          dispatch({ type: "USER_LOGIN_SUCCESS", payload: res.data });
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("current", 'Coach');
-          setActiveId(email);
-          setLink("/dashboard");
+          setRefresh(false);
+          console.log(res?.data);
+          if (res?.data?.status == "fail") {
+            message.error(res?.data?.message);
+          }
+          if (res?.data?.status == "success") {
+            console.log(res?.data?.data?.user?.role);
+            if (res?.data?.data?.user?.role == "Coach") {
+              message.success("Logged In Successfully");
+              console.log("Coach Logged In");
+              navigate("/dashboard");
+              dispatch({ type: "USER_LOGIN_SUCCESS", payload: res.data });
+              localStorage.setItem("token", res.data.token);
+              localStorage.setItem("current", "Coach");
+              setActiveId(email);
+            } else {
+              message.error("Please Login as a Coach");
+            }
+          }
         })
         .catch((error) => {
           setError(error.response.data);
-          setLink("");
         });
     }
   };
@@ -161,7 +196,7 @@ export const Login = () => {
                   <input
                     type={"email"}
                     className={
-                      "text-white  font-lexend text-sm   rounded-lg border-none placeholder-[#7E7E7E] bg-[#212121]"
+                      "text-white w-full  font-lexend text-sm   rounded-lg border-none placeholder-[#7E7E7E] bg-[#212121]"
                     }
                     placeholder={"Enter your email adress"}
                     onChange={handleEmailChange}
@@ -222,25 +257,44 @@ export const Login = () => {
                       {error}
                     </p>
                   </div>
-                  <NavLink to={link}>
-                    <button
-                      className="text-white rounded-lg font-lexend bg-[#1DB954] w-full text-sm  pt-4 pb-4"
-                      onClick={login}
-                    >
-                      Login
-                    </button>
-                  </NavLink>
+                  <button
+                    className="text-white rounded-lg font-lexend bg-[#1DB954] w-full text-sm  pt-4 pb-4"
+                    onClick={login}
+                  >
+                    Login
+                  </button>
                 </>
               ) : (
                 <>
-                  <NavLink to={link}>
-                    <button
-                      className="text-white rounded-lg font-lexend bg-[#1DB954] w-full text-sm  pt-4 pb-4"
-                      onClick={login}
-                    >
-                      Login
-                    </button>
-                  </NavLink>
+                  <button
+                    className="text-white flex justify-center rounded-lg font-lexend bg-[#1DB954] w-full text-sm  pt-4 pb-4"
+                    onClick={login}
+                  >
+                    {refresh ? (
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v1a7 7 0 00-7 7h1z"
+                        ></path>
+                      </svg>
+                    ) : (
+                      "Login"
+                    )}
+                  </button>
                 </>
               )}
             </div>

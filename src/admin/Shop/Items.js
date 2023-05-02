@@ -5,6 +5,8 @@ import "../../styles/font.css";
 import Minus from "../../assets/Minus.png";
 import { NavLink } from "react-router-dom";
 import axios from "../../axios";
+import Spinner from "../Spinner";
+import { message } from "antd";
 
 export default function Items() {
   const [allItems, setAllItems] = useState([]);
@@ -16,23 +18,33 @@ export default function Items() {
   const [status, setStatus] = useState(false);
   const [price, setPrice] = useState(false);
   const [id, setId] = useState(false);
+  const [order, setOrder] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     data();
+    getOrder();
   }, [refresh]);
 
   const data = async () => {
     await axios
       .get("https://football-backend-updated.herokuapp.com/item/GetAllItems")
       .then((res) => {
-        console.log(res.data.data.doc);
-        setAllItems(res.data.data.doc);
+        console.log(res.data.data.doc.reverse());
+        setAllItems(res.data.data.doc.reverse());
       })
       .catch((error) => {
         console.log(error.response.data);
       });
   };
+
+  const getOrder = async() => {
+    const response = await axios.get("https://football-backend-updated.herokuapp.com/AdminOrderNotification/getNotification");
+    console.log(response.data.data);
+    setOrder(response.data.data);
+  };
+
+
 
   // searching
   const handleSearchChange = (event) => {
@@ -79,12 +91,14 @@ export default function Items() {
   const deleteItem = async () => {
     setRefresh(true)
     await axios
-      .delete(`/item/DeleteItem/${id}`)
+      .delete(`https://football-backend-updated.herokuapp.com/item/DeleteItem/${id}`)
       .then((res) => {
+        message.success("Item Deleted Successfully");
         console.log(res.data);
         setRefresh(false)
       })
       .catch((error) => {
+        message.error("Something went wrong");
         console.log(error.response.data);
       });
   };
@@ -205,7 +219,7 @@ export default function Items() {
                   </tr>
                 </thead>
 
-                    {searchItem !== '' ? (
+                    {searchItemCopy.length > 0 || allItems.length > 0 ? searchItem !== '' ? (
                       // if searched
                       <>
                         {searchItemCopy.map((val, ind) => (
@@ -269,7 +283,7 @@ export default function Items() {
                               )}
 
                               <td className="py-4 ">{val.quantity}</td>
-                              <td className="py-4 mx-auto">£5000.56</td>
+                              <td className="py-4 mx-auto">£ 0</td>
                               <td className="py-4 mx-auto">
                                 <NavLink
                                 to={{pathname:"/editItem"}} state={{ val }}
@@ -352,7 +366,7 @@ export default function Items() {
                               )}
 
                               <td className="py-4 ">{val.quantity}</td>
-                              <td className="py-4 mx-auto">£5000.56</td>
+                              <td className="py-4 mx-auto">£ 0</td>
                               <td className="py-4 mx-auto">
                                 <NavLink to={{pathname:"/editItem"}} state={{ val }}
                                   className={({ isActive }) =>
@@ -370,7 +384,14 @@ export default function Items() {
                           </tbody>
                         ))}
                       </>
-                    )}
+                    ): <tbody>
+                      <div className="flex justify-center mt-3 w-full h-96">
+                        <p className="text-[#818181] font-dm font-normal text-lg">
+                          Loading ....
+                        </p>
+                    </div>
+                    </tbody>
+                    }
               </table>
             </div>
             {/* Side bar */}

@@ -16,7 +16,7 @@ export default function Playerprofile() {
         <div className="flex  divide-x h-screen">
           {/* left side-bar details  */}
           <div className="w-1/4 ml-10 mr-3 mt-5">
-            <PlayerProfileleftsidebar data = {location.state.val} />
+            <PlayerProfileleftsidebar data = {location?.state?.val} />
           </div>
 
           {/* center Post */}
