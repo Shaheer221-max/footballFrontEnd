@@ -51,7 +51,7 @@ export default function AdminAddSkill() {
       return;
     }
     const res = await axios.post(
-      "https://football-backend-updated.herokuapp.com/skill/CreateSkill",
+      `${process.env.REACT_APP_API}/skill/CreateSkill`,
       {
         skillname: skill,
         skillicon: url,
@@ -69,7 +69,7 @@ export default function AdminAddSkill() {
 
   const getData = async () => {
     const res = await axios.get(
-        "https://football-backend-updated.herokuapp.com/skill/GetAllSkills"
+        `${process.env.REACT_APP_API}/skill/GetAllSkills`
     );
     console.log("Get: ", res.data.data.doc);
     setSkills(res.data.data.doc);

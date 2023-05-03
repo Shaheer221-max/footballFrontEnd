@@ -26,7 +26,7 @@ export default function UserAreaLeft() {
   // getting players from database
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         console.log(res?.data?.data);
         setTotalPlayers(res?.data?.result);
@@ -39,7 +39,7 @@ export default function UserAreaLeft() {
 
   const getParents = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllUsers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
       .then((res) => {
         setParent(
           res?.data?.data?.doc.filter((item) => item.role === "Parent")
@@ -82,7 +82,7 @@ export default function UserAreaLeft() {
   const removePlayer = async (id) => {
     await axios
       .put(
-        `https://football-backend-updated.herokuapp.com/users/updateUser/${id}`, {
+        `${process.env.REACT_APP_API}/users/updateUser/${id}`, {
           dateleft: new Date(),
         }
       )
@@ -105,7 +105,7 @@ export default function UserAreaLeft() {
 
   const getPlayersLeft = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetLeftPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetLeftPlayers`)
       .then((res) => {
         console.log(res?.data?.data);
         setPlayersLeftData(res?.data?.data);

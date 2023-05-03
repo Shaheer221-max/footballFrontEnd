@@ -28,7 +28,7 @@ export default function UploadGroupPost(props) {
 
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -95,7 +95,7 @@ export default function UploadGroupPost(props) {
       data.append("status", postt);
       await axios
         .post(
-          "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
           data
         )
         .then((res) => {
@@ -114,7 +114,7 @@ export default function UploadGroupPost(props) {
     else {
       await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+        `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
         {
           refOfUser: user.user.id,
           refOfGroup: props.newsfeed.val.id,

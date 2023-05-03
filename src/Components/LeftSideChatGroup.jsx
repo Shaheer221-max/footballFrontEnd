@@ -22,7 +22,7 @@ export default function LeftSideChatGroup(props) {
 
   const users = async () => {
     await axios.get(
-        "https://football-backend-updated.herokuapp.com/users/GetAllUsers")
+        `${process.env.REACT_APP_API}/users/GetAllUsers`)
         .then((res) => {
             console.log(res.data);
             setPlayers(res.data.data.doc);

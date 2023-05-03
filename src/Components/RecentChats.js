@@ -38,7 +38,7 @@ export default function RecentChats(props) {
     console.log("Value", val);
     const second = val?.members?.filter((val) => val._id !== id)[0].id;
     const res = await axios.get(
-      `https://football-backend-updated.herokuapp.com/conversation/find/${id}/${second}`
+      `${process.env.REACT_APP_API}/conversation/find/${id}/${second}`
     );
     localStorage.setItem("conversationId", res.data.data._id);
   };
@@ -48,7 +48,7 @@ export default function RecentChats(props) {
   const getData = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/conversation/${user?.user?.id}`
+        `${process.env.REACT_APP_API}/conversation/${user?.user?.id}`
       )
       .then((res) => {
         console.log(res.data.data);
@@ -71,7 +71,7 @@ export default function RecentChats(props) {
   const getGroupConversation = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/groupconversation/GetGroupChat/${user?.user?.id}`
+        `${process.env.REACT_APP_API}/groupconversation/GetGroupChat/${user?.user?.id}`
       )
       .then((res) => {
         console.log(res.data.data);
@@ -103,7 +103,7 @@ export default function RecentChats(props) {
 
   const getGroups = async () => {
     await axios
-      .get(`https://football-backend-updated.herokuapp.com/group/GetAllGroups`)
+      .get(`${process.env.REACT_APP_API}/group/GetAllGroups`)
       .then((res) => {
         console.log(res.data.data.doc);
         setGroups(res.data.data.doc);
@@ -115,7 +115,7 @@ export default function RecentChats(props) {
 
   const getAllUsers = async () => {
     await axios
-      .get(`https://football-backend-updated.herokuapp.com/users/GetAllUsers`)
+      .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
       .then((res) => {
         console.log(res.data.data.doc);
         // Get All Users Except Current User
@@ -131,7 +131,7 @@ export default function RecentChats(props) {
 
   const createChat = async (to) => {
     await axios
-      .post("https://football-backend-updated.herokuapp.com/conversation/", {
+      .post(`${process.env.REACT_APP_API}/conversation/`, {
         receiverId: to.id,
         senderId: user?.user?.id,
       })

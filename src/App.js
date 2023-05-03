@@ -16,7 +16,7 @@ function App() {
   const getUser = async () => {
     if (token) {
       const user = await axios.get(
-        "https://football-backend-updated.herokuapp.com/users/me",
+        `${process.env.REACT_APP_API}/users/me`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

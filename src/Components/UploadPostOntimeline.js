@@ -27,7 +27,7 @@ export default function UploadPostOntimeline(props) {
 
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -61,7 +61,7 @@ export default function UploadPostOntimeline(props) {
     data.append('width', 500);
     //data.append("cloud_name","dyapmvalo");
     axios
-      .post("https://api.cloudinary.com/v1_1/dyapmvalo/image/upload", data)
+      .post(`https://api.cloudinary.com/v1_1/dyapmvalo/image/upload`, data)
       .then((res) => {
         setimg(res.data.url);
         setvid(false);
@@ -95,7 +95,7 @@ export default function UploadPostOntimeline(props) {
       data.append("status", postt);
       await axios
         .post(
-          "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
           data
         )
         .then((res) => {
@@ -112,7 +112,7 @@ export default function UploadPostOntimeline(props) {
     else {
       await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+        `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
         {
           refOfUser: user.user.id,
           status: postt,

@@ -30,7 +30,7 @@ export default function Settings() {
     console.log(user.user, user.user.email, password, token);
     await axios
       .put(
-        `https://football-backend-updated.herokuapp.com/users/updatePassword`,
+        `${process.env.REACT_APP_API}/users/updatePassword`,
         {
           password: oldPasword,
           email: user.user.email,
@@ -61,7 +61,7 @@ export default function Settings() {
         setUrl(res.data.url);
         await axios
           .put(
-            `https://football-backend-updated.herokuapp.com/users/updateUser/${user.user._id}`,
+            `${process.env.REACT_APP_API}/users/updateUser/${user.user._id}`,
             {
               image: res.data.url,
             }
@@ -84,7 +84,7 @@ export default function Settings() {
   const changeEmail = async () => {
     await axios
       .put(
-        `https://football-backend-updated.herokuapp.com/users/updateUser/${user.user._id}`,
+        `${process.env.REACT_APP_API}/users/updateUser/${user.user._id}`,
         {
           email,
         }
@@ -106,7 +106,7 @@ export default function Settings() {
   const getUser = async () => {
     if (token) {
       const user = await axios.get(
-        "https://football-backend-updated.herokuapp.com/users/me",
+        `${process.env.REACT_APP_API}/users/me`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

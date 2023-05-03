@@ -36,7 +36,7 @@ export default function VerificationCenter() {
   const data = async () => {
     console.log("in data");
     let res = await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         console.log(res.data.data.filter((val) => val.active === "pending"));
         if (res.data.data !== res.data.data.Prototype) {
@@ -52,7 +52,7 @@ export default function VerificationCenter() {
       });
 
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllCoaches")
+      .get(`${process.env.REACT_APP_API}/users/GetAllCoaches`)
       .then((response) => {
         setCoach(response.data.data);
       })
@@ -66,7 +66,7 @@ export default function VerificationCenter() {
     console.log(id)
     axios
       .patch(
-        `https://football-backend-updated.herokuapp.com/users/updateUser/${id}`,
+        `${process.env.REACT_APP_API}/users/updateUser/${id}`,
         {
           active: "active",
         }
@@ -83,7 +83,7 @@ export default function VerificationCenter() {
   const unapprove = (id) => {
     axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/users/deleteUser/${id}`
+        `${process.env.REACT_APP_API}/users/deleteUser/${id}`
       )
       .then((response) => {
         message.success("Player Deleted");

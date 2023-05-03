@@ -19,7 +19,7 @@ export default function CoachGroupList() {
 
   const data = async () => {
     await axios
-      .get(`https://football-backend-updated.herokuapp.com/group/GetAllUserGroups/${user?._id}`)
+      .get(`${process.env.REACT_APP_API}/group/GetAllUserGroups/${user?._id}`)
       .then((res) => {
         console.log(res.data.data);
         if (res.data.data !== res.data.data.Prototype) {

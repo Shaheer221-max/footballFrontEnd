@@ -34,7 +34,7 @@ export default function EditDrill() {
   // Get All Drills
   const getDrills = async () => {
     const response = await axios.get(
-      "https://football-backend-updated.herokuapp.com/videocategory/GetAllVideoCategories"
+      `${process.env.REACT_APP_API}/videocategory/GetAllVideoCategories`
     );
     console.log(response.data.data);
     setDrills(response.data.data);
@@ -55,7 +55,7 @@ export default function EditDrill() {
     formData.append("refOfUser", user._id);
     await axios
       .put(
-        `https://football-backend-updated.herokuapp.com/drill/UpdateDrill/${id}`,
+        `${process.env.REACT_APP_API}/drill/UpdateDrill/${id}`,
         formData,
         {
           headers: {

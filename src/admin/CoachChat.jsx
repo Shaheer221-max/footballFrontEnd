@@ -39,7 +39,7 @@ export default function CoachChat() {
     }
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/groupconversation/CreateGroupChat",
+        `${process.env.REACT_APP_API}/groupconversation/CreateGroupChat`,
         {
           title: name,
           Members: members,
@@ -69,7 +69,7 @@ export default function CoachChat() {
 
   const getUser = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -122,7 +122,7 @@ export default function CoachChat() {
     console.log("first");
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/message/${params.id}`
+        `${process.env.REACT_APP_API}/message/${params.id}`
       )
       .then((res) => {
         console.log(res.data);
@@ -143,7 +143,7 @@ export default function CoachChat() {
       text: sendChat,
     });
     await axios
-      .post("https://football-backend-updated.herokuapp.com/message/", {
+      .post(`${process.env.REACT_APP_API}/message/`, {
         conversationId: params.id,
         sender: user.user._id,
         text: url ? url : sendChat,
@@ -183,7 +183,7 @@ export default function CoachChat() {
 
   const getPlayers = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         console.log("Players: ", res.data.data);
         setPlayers(res.data.data);

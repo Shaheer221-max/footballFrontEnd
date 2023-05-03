@@ -53,7 +53,7 @@ export default function AddSubSkill(props) {
     }
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/skill/AddSubSkill/${localData.data._id}`,
+        `${process.env.REACT_APP_API}/skill/AddSubSkill/${localData.data._id}`,
         {
           subskillname,
         }
@@ -83,7 +83,7 @@ export default function AddSubSkill(props) {
     }
     const res = await axios
       .put(
-        `https://football-backend-updated.herokuapp.com/skill/UpdateSubSkill/${subcatID}`,
+        `${process.env.REACT_APP_API}/skill/UpdateSubSkill/${subcatID}`,
         {
           subskillname,
         }
@@ -104,7 +104,7 @@ export default function AddSubSkill(props) {
 
   const getData = async () => {
     const res = await axios.get(
-      `https://football-backend-updated.herokuapp.com/skill/GetAllSubSkills`
+      `${process.env.REACT_APP_API}/skill/GetAllSubSkills`
     );
     console.log(res.data.data.doc);
     setsubskill(res.data.data.doc);
@@ -122,7 +122,7 @@ export default function AddSubSkill(props) {
     setRefresh(true);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/skill/RemoveSubSkill/${id}&${s_id}`
+        `${process.env.REACT_APP_API}/skill/RemoveSubSkill/${id}&${s_id}`
       )
       .then((res) => {
         message.success("Sub Skill Deleted Successfully");
@@ -141,7 +141,7 @@ export default function AddSubSkill(props) {
     setRefresh(true);
     const res = await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/skill/DeleteSkill/${localData.data._id}`
+        `${process.env.REACT_APP_API}/skill/DeleteSkill/${localData.data._id}`
       )
       .then((res) => {
         message.success("Skill Deleted Successfully");
@@ -166,7 +166,7 @@ export default function AddSubSkill(props) {
     }
     await axios
       .put(
-        `https://football-backend-updated.herokuapp.com/skill/UpdateSkill/${localData.data._id}`,
+        `${process.env.REACT_APP_API}/skill/UpdateSkill/${localData.data._id}`,
         {
           skillname: skill,
           skillicon: url,

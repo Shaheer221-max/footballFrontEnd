@@ -86,7 +86,7 @@ export default function EditItem(props) {
   // sending request
   const addItem = async () => {
     await axios
-      .put(`https://football-backend-updated.herokuapp.com/item/UpdateItem/${location.state.val._id}`, {
+      .put(`${process.env.REACT_APP_API}/item/UpdateItem/${location.state.val._id}`, {
         productname: name ? name : location.state.val.productname,
         price: price ? price : location.state.val.price,
         quantity: quantity ? quantity : location.state.val.quantity,
@@ -108,7 +108,7 @@ export default function EditItem(props) {
 
   const getGroups = async () => {
     await axios
-      .get("/itemcategory/GetAllItemCategories/")
+      .get(`${process.env.REACT_APP_API}/itemcategory/GetAllItemCategories/`)
       .then((res) => {
         console.log(res.data.data);
         setGroups(res.data.data);

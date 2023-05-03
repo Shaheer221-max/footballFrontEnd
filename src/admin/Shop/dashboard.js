@@ -92,7 +92,7 @@ const labels = [
 
   const getOrders = async () => {
     try {
-      const response = await axios.get("https://football-backend-updated.herokuapp.com/AdminOrderNotification/getNotification");
+      const response = await axios.get(`${process.env.REACT_APP_API}/AdminOrderNotification/getNotification`);
       console.log(response.data.data)
       setOrders(response.data.data);
     } catch (error) {
@@ -101,7 +101,7 @@ const labels = [
 
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/item/GetAllItems")
+      .get(`${process.env.REACT_APP_API}/item/GetAllItems`)
       .then((res) => {
         console.log(res.data.data.doc);
         setItems(res.data.data.doc);

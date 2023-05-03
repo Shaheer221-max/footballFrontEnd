@@ -21,7 +21,7 @@ export default function UserAreaCoach() {
   // getting players from database
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllCoaches")
+      .get(`${process.env.REACT_APP_API}/users/GetAllCoaches`)
       .then((res) => {
         console.log(res.data.data);
         setCoach(res.data.result);

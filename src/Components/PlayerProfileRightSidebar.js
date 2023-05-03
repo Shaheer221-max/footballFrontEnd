@@ -46,7 +46,7 @@ export default function PlayerProfileRightSidebar(props) {
 
   const getData = async () => {
     const res = await axios.get(
-      "https://football-backend-updated.herokuapp.com/users/GetAllUsers"
+      `${process.env.REACT_APP_API}/users/GetAllUsers`
     );
     console.log(
       res.data.data.doc.filter(

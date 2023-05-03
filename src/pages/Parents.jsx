@@ -15,7 +15,7 @@
 
 //   const data = async () => {
 //     await axios
-//       .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+//       .get("${process.env.REACT_APP_API}/users/GetAllPlayers")
 //       .then((res) => {
 //         console.log(res.data.data);
 //         setPlayers(res.data.data);
@@ -194,7 +194,7 @@ export default function Parents() {
   // getting players from database
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllUsers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
       .then((res) => {
         setTotalPlayers(res?.data?.result);
         setData(res?.data?.data?.doc?.filter((item) => item.role === "Parent"));
@@ -206,7 +206,7 @@ export default function Parents() {
 
   const getParents = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllUsers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
       .then((res) => {
         console.log(res?.data?.data?.doc.filter((item) => item.role === "Parent"));
         setParent(res?.data?.data?.doc.filter((item) => item.role === "Parent"));

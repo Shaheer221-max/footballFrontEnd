@@ -20,7 +20,7 @@ export default function Categories() {
     setRefresh(true);
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/videocategory/AddVideoCategory",
+        `${process.env.REACT_APP_API}/videocategory/AddVideoCategory`,
         {
           title,
         }
@@ -42,7 +42,7 @@ export default function Categories() {
   // Get All Drills
   const getDrills = async () => {
     const response = await axios.get(
-      "https://football-backend-updated.herokuapp.com/videocategory/GetAllVideoCategories"
+      `${process.env.REACT_APP_API}/videocategory/GetAllVideoCategories`
     );
     console.log(response.data.data);
     setDrills(response.data.data);
@@ -55,7 +55,7 @@ export default function Categories() {
   const deleteDrill = async (id) => {
     await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/videocategory/DeleteVideoCategory/${id}`
+        `${process.env.REACT_APP_API}/videocategory/DeleteVideoCategory/${id}`
       )
       .then((res) => {
         message.success("Category Deleted Successfully");
@@ -73,7 +73,7 @@ export default function Categories() {
     console.log(id);
     await axios
       .put(
-        `https://football-backend-updated.herokuapp.com/videocategory/EditVideoCategory/${id}`,
+        `${process.env.REACT_APP_API}/videocategory/EditVideoCategory/${id}`,
         {
           title,
         }

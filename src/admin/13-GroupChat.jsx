@@ -28,7 +28,7 @@ export default function Chat() {
 
   const getUser = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -44,7 +44,7 @@ export default function Chat() {
   const AllMessages = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/message/${params.id}`
+        `${process.env.REACT_APP_API}/message/${params.id}`
       )
       .then((res) => {
         setChat(res.data);
@@ -73,7 +73,7 @@ export default function Chat() {
 
   const getPlayers = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         setPlayers(res.data.data);
       })
@@ -121,7 +121,7 @@ const [image, setImage] = useState("");
     }
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/groupconversation/CreateGroupChat",
+        `${process.env.REACT_APP_API}/groupconversation/CreateGroupChat`,
         {
           title: name,
           Members: members,

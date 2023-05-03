@@ -28,7 +28,7 @@ export default function VerificationCenterCoach() {
   const data = async () => {
     console.log("in data");
     let res = await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllCoaches")
+      .get(`${process.env.REACT_APP_API}/users/GetAllCoaches`)
       .then((res) => {
         console.log(res.data.data);
         if (res.data.data !== res.data.data.Prototype) {
@@ -44,7 +44,7 @@ export default function VerificationCenterCoach() {
       });
 
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllCoaches")
+      .get(`${process.env.REACT_APP_API}/users/GetAllCoaches`)
       .then((response) => {
         setCoach(response.data.data);
       })
@@ -107,7 +107,7 @@ export default function VerificationCenterCoach() {
     setRefresh(true);
     axios
       .put(
-        `https://football-backend-updated.herokuapp.com/users/updateUser/${id}`,
+        `${process.env.REACT_APP_API}/users/updateUser/${id}`,
         {
           active: "active",
         }
@@ -126,7 +126,7 @@ export default function VerificationCenterCoach() {
     setRefresh(true);
     axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/users/deleteUser/${id}`
+        `${process.env.REACT_APP_API}/users/deleteUser/${id}`
       )
       .then((response) => {
         setRefresh(false);

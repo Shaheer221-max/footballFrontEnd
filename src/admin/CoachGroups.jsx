@@ -36,7 +36,7 @@ export default function CoachGroup() {
 
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -64,7 +64,7 @@ export default function CoachGroup() {
   //Get All Groups
   const getGroups = async () => {
     await axios
-      .get(`https://football-backend-updated.herokuapp.com/group/GetAllUserGroups/${user?._id}`)
+      .get(`${process.env.REACT_APP_API}/group/GetAllUserGroups/${user?._id}`)
       .then((res) => {
         console.log(res.data.data);
         setGroups(res.data.data);
@@ -83,7 +83,7 @@ export default function CoachGroup() {
     setRefresh(true);
     await axios
       .delete(
-        "https://football-backend-updated.herokuapp.com/group/DeleteGroup/" +
+        `${process.env.REACT_APP_API}/group/DeleteGroup/` +
           groupId
       )
       .then((res) => {

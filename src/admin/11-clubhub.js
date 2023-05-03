@@ -43,7 +43,7 @@ export default function Club2() {
   // getting folders from database
   const allFolders = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/club/GetFolders/")
+      .get(`${process.env.REACT_APP_API}/club/GetFolders/`)
       .then((res) => {
         setfolders(res.data.data.doc);
         console.log(res.data.data.doc.filter((item) => item._id === params.id));
@@ -63,7 +63,7 @@ export default function Club2() {
     setRefresh(true);
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/club/CreateFolder/63bae4c8ad884b20bc7f7bc9",
+        `${process.env.REACT_APP_API}/club/CreateFolder/63bae4c8ad884b20bc7f7bc9`,
         {
           foldername: folderName,
         }
@@ -129,7 +129,7 @@ export default function Club2() {
         setRefresh(true);
         await axios
           .post(
-            `https://football-backend-updated.herokuapp.com/club/AddFileInFolder/${params.id}`,
+            `${process.env.REACT_APP_API}/club/AddFileInFolder/${params.id}`,
             data
           )
           .then((res) => {
@@ -158,7 +158,7 @@ export default function Club2() {
     setRefresh(true);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/club/DeleteFolder/${id}&63bae4c8ad884b20bc7f7bc9`
+        `${process.env.REACT_APP_API}/club/DeleteFolder/${id}&63bae4c8ad884b20bc7f7bc9`
       )
       .then((res) => {
         message.success("Deleted Successfully");
@@ -177,7 +177,7 @@ export default function Club2() {
     setRefresh(true);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/club/RemoveFileFromFolder/${params.id}`,
+        `${process.env.REACT_APP_API}/club/RemoveFileFromFolder/${params.id}`,
         {
           id: val._id,
         }

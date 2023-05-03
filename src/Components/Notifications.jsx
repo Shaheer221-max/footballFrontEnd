@@ -14,7 +14,7 @@ export default function Notifications() {
 
   const getData = async () => {
     const res = await axios.get(
-      "https://football-backend-updated.herokuapp.com/notification/getNotification",
+      `${process.env.REACT_APP_API}/notification/getNotification`,
       {
         headers: {
           Authorization: `Bearer ${user.token}`,

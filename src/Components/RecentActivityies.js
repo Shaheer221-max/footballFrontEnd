@@ -9,7 +9,7 @@ export default function RecentActivityies(props) {
   const memberName = async () => {
     await axios
       .get(
-        "https://football-backend-updated.herokuapp.com/newsfeed/GetAllNewsFeed"
+        `${process.env.REACT_APP_API}/newsfeed/GetAllNewsFeed`
       )
       .then((res) => {
         SetPost(res.data.data.reverse().slice(0, 5));

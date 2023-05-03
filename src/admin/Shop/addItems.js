@@ -90,7 +90,7 @@ export default function AddItems() {
       return;
     }
     await axios
-      .post("https://football-backend-updated.herokuapp.com/item/CreateItem", {
+      .post(`${process.env.REACT_APP_API}/item/CreateItem`, {
         productname: name,
         price: price,
         quantity: quantity,
@@ -114,7 +114,7 @@ export default function AddItems() {
 
   const getGroups = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/itemcategory/GetAllItemCategories/")
+      .get(`${process.env.REACT_APP_API}/itemcategory/GetAllItemCategories/`)
       .then((res) => {
         console.log(res.data.data);
         setGroups(res.data.data);

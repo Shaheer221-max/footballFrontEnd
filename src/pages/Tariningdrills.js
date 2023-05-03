@@ -20,7 +20,7 @@ export default function Tariningdrills() {
   // Get All Drills
   const getDrills = async () => {
     const response = await axios.get(
-      "https://football-backend-updated.herokuapp.com/drill/GetAllDrills"
+      `${process.env.REACT_APP_API}/drill/GetAllDrills`
     );
     console.log(response.data.data.doc);
     setDrills(response.data.data.doc);
@@ -35,7 +35,7 @@ export default function Tariningdrills() {
   // Get All Drills
   const getCategories = async () => {
     const response = await axios.get(
-      "https://football-backend-updated.herokuapp.com/videocategory/GetAllVideoCategories"
+      `${process.env.REACT_APP_API}/videocategory/GetAllVideoCategories`
     );
     console.log(response.data.data);
     setCategories(response.data.data);
@@ -57,7 +57,7 @@ export default function Tariningdrills() {
     setRefresh(true);
     await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/drill/DeleteDrill/${id}`
+        `${process.env.REACT_APP_API}/drill/DeleteDrill/${id}`
       )
       .then((res) => {
         message.success("Drill Deleted Successfully");

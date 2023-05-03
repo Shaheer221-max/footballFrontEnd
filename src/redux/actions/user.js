@@ -53,7 +53,7 @@ export const GetUser = (user) => {
 export function fetchData() {
     return async(dispatch) => {
       dispatch({ type: 'FETCH_DATA_START' });
-      return await axios.get('https://football-backend-updated.herokuapp.com/users/GetAllPlayers')
+      return await axios.get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
         .then((response) => {
           dispatch({ type: 'FETCH_DATA_SUCCESS', payload: response.data.data });
         })
@@ -68,7 +68,7 @@ export function fetchData() {
     export function fetchCoachData() {
         return async(dispatch) => {
           dispatch({ type: 'FETCH_COACH_DATA_START' });
-          return await axios.get('https://football-backend-updated.herokuapp.com/users/GetAllCoaches')
+          return await axios.get(`${process.env.REACT_APP_API}/users/GetAllCoaches`)
             .then((response) => {
               dispatch({ type: 'FETCH_COACH_DATA_SUCCESS', payload: response.data.data });
             })
@@ -83,7 +83,7 @@ export function fetchData() {
 export function fetchPostData() {
     return async(dispatch) => {
       dispatch({ type: 'FETCH_POST_DATA_START' });
-      return await axios.get('https://football-backend-updated.herokuapp.com/newsfeed/GetAllNewsFeed')
+      return await axios.get(`${process.env.REACT_APP_API}/newsfeed/GetAllNewsFeed`)
         .then((response) => {
           dispatch({ type: 'FETCH_POST_DATA_SUCCESS', payload: response.data.data });
         })

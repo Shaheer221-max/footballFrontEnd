@@ -42,7 +42,7 @@ export default function Category() {
 
   const getData = async () => {
     await axios
-      .get("/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -66,7 +66,7 @@ export default function Category() {
   //Get All Groups
   const getGroups = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/itemcategory/GetAllItemCategories/")
+      .get(`${process.env.REACT_APP_API}/itemcategory/GetAllItemCategories/`)
       .then((res) => {
         console.log(res.data.data);
         setGroups(res.data.data);
@@ -85,7 +85,7 @@ export default function Category() {
     console.log(groupId);
     await axios
       .delete(
-        "https://football-backend-updated.herokuapp.com/group/DeleteGroup/" +
+        `${process.env.REACT_APP_API}/group/DeleteGroup/` +
           groupId
       )
       .then((res) => {
@@ -102,7 +102,7 @@ export default function Category() {
   const category = async (id) => {
     setRefresh(true)
     await axios
-        .post("https://football-backend-updated.herokuapp.com/itemcategory/CreateItemCategory/", {name: categories})
+        .post(`${process.env.REACT_APP_API}/itemcategory/CreateItemCategory/`, {name: categories})
         .then((res) => {
           message.success("Category Added Successfully");
             console.log(res.data.data);
@@ -121,7 +121,7 @@ export default function Category() {
 const category1 = async () => {
   setRefresh(true)
     await axios
-        .put(`https://football-backend-updated.herokuapp.com/itemcategory/UpdateItemCategory/${categoryid}`, {name: categories})
+        .put(`${process.env.REACT_APP_API}/itemcategory/UpdateItemCategory/${categoryid}`, {name: categories})
         .then((res) => {
           message.success("Category Updated Successfully");
             console.log(res.data.data);
@@ -139,7 +139,7 @@ const category1 = async () => {
 const deletecategory = async (id) => {
   setRefresh(true)
     await axios
-        .delete(`https://football-backend-updated.herokuapp.com/itemcategory/DeleteItemCategory/${id}`)
+        .delete(`${process.env.REACT_APP_API}/itemcategory/DeleteItemCategory/${id}`)
         .then((res) => {
           message.success("Category Deleted Successfully");
             console.log(res.data.data);

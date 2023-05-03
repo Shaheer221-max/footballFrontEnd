@@ -32,7 +32,7 @@ export default function Groups() {
 
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -60,7 +60,7 @@ export default function Groups() {
   //Get All Groups
   const getGroups = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/group/GetAllGroups/")
+      .get(`${process.env.REACT_APP_API}/group/GetAllGroups/`)
       .then((res) => {
         console.log(res.data.data);
         setGroups(res.data.data.doc);
@@ -79,7 +79,7 @@ export default function Groups() {
     setRefresh(true);
     await axios
       .delete(
-        "https://football-backend-updated.herokuapp.com/group/DeleteGroup/" +
+        `${process.env.REACT_APP_API}/group/DeleteGroup/` +
           groupId
       )
       .then((res) => {

@@ -13,7 +13,7 @@ export default function GroupList() {
 
   const getData = async () => {
     let res = await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -33,7 +33,7 @@ export default function GroupList() {
 
   const data = async () => {
     let res = await axios
-      .get("https://football-backend-updated.herokuapp.com/group/GetAllGroups/")
+      .get(`${process.env.REACT_APP_API}/group/GetAllGroups/`)
       .then((res) => {
         if (res.data.data !== res.data.data.Prototype) {
           setGroup(res.data.data.doc);

@@ -10,7 +10,7 @@ export default function AddSkill() {
   const [skills, setSkills] = React.useState([]);
   const getData = async () => {
     const res = await axios.get(
-        "https://football-backend-updated.herokuapp.com/skill/GetAllSkills"
+        `${process.env.REACT_APP_API}/skill/GetAllSkills`
     );
     console.log(res.data.data.doc);
     setSkills(res.data.data.doc);

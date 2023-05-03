@@ -38,7 +38,7 @@ export default function AllDrills() {
   // Get All Drills
   const getDrills = async () => {
     const response = await axios.get(
-      "https://football-backend-updated.herokuapp.com/drill/GetAllDrills"
+      `${process.env.REACT_APP_API}/drill/GetAllDrills`
     );
     console.log(response.data.data.doc);
     setDrills(response.data.data.doc);

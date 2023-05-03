@@ -22,7 +22,7 @@ export default function PlayerareaSkill() {
 
   const getPlayers = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         console.log(res.data.data);
         setPlayers(res.data.data);
@@ -56,7 +56,7 @@ export default function PlayerareaSkill() {
 
   const getSkills = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/skill/GetAllSkills")
+      .get(`${process.env.REACT_APP_API}/skill/GetAllSkills`)
       .then((res) => {
         console.log(res.data.data.doc);
         setSkills(res.data.data.doc);
@@ -97,7 +97,7 @@ export default function PlayerareaSkill() {
     console.log(data);
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/evaluation/Evaluate",
+        `${process.env.REACT_APP_API}/evaluation/Evaluate`,
         data
       )
       .then((res) => {
@@ -116,7 +116,7 @@ export default function PlayerareaSkill() {
   const getSubSkills = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/skill/GetAllSubSkillsOfSkill/${skill}`
+        `${process.env.REACT_APP_API}/skill/GetAllSubSkillsOfSkill/${skill}`
       )
       .then((res) => {
         console.log("Skill: ", res?.data?.data[0]?.subskills);
@@ -152,7 +152,7 @@ export default function PlayerareaSkill() {
   const getEvaluations = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/evaluation/ViewEvaluationsByDateOfPlayer/${id}&${new Date().toISOString().split('T')[0]}`
+        `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsByDateOfPlayer/${id}&${new Date().toISOString().split('T')[0]}`
       )
       .then((res) => {
         console.log(res.data.data);

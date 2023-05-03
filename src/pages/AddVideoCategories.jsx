@@ -8,14 +8,14 @@ export default function Addcategories(props) {
   const [title, setTitle] = useState('');
   const [id, setId] = useState('');
   const add = async () => {
-    const res = await axios.put(`https://football-backend-updated.herokuapp.com/videocategory/EditVideoCategory/${id}`, {
+    const res = await axios.put(`${process.env.REACT_APP_API}/videocategory/EditVideoCategory/${id}`, {
         title
     })
     console.log(res.data)
   }
 
   const deleteCategory = async (id) => {
-    const res = await axios.delete(`https://football-backend-updated.herokuapp.com/videocategory/DeleteVideoCategory/${id}`)
+    const res = await axios.delete(`${process.env.REACT_APP_API}/videocategory/DeleteVideoCategory/${id}`)
     console.log(res.data)
     }
   return (

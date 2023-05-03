@@ -28,7 +28,7 @@ export default function AddGroups() {
   const token = localStorage.getItem("token");
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -95,7 +95,7 @@ export default function AddGroups() {
     if (check === true) {  
       await axios
         .post(
-          "https://football-backend-updated.herokuapp.com/group/CreateGroup",
+          `${process.env.REACT_APP_API}/group/CreateGroup`,
           {
             title: name,
             image: url,
@@ -117,7 +117,7 @@ export default function AddGroups() {
     } else {
       await axios
         .post(
-          "https://football-backend-updated.herokuapp.com/group/CreateGroupOnly",
+          `${process.env.REACT_APP_API}/group/CreateGroupOnly`,
           {
             title: name,
             image: url,
@@ -141,7 +141,7 @@ export default function AddGroups() {
   // Get All Users
   const getUsers = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         console.log(res.data.data);
         setUsers(res.data.data);
@@ -174,7 +174,7 @@ export default function AddGroups() {
     }
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/group/AddMember/${id}&${groupId}`
+        `${process.env.REACT_APP_API}/group/AddMember/${id}&${groupId}`
       )
       .then((res) => {
         message.success("Member Added Successfully");
@@ -199,7 +199,7 @@ export default function AddGroups() {
     console.log(id);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/group/RemoveMember/${id}&${groupId}`
+        `${process.env.REACT_APP_API}/group/RemoveMember/${id}&${groupId}`
       )
       .then((res) => {
         message.success("Member Removed Successfully");

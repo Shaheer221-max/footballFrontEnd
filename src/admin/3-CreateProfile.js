@@ -80,7 +80,7 @@ export default function AddItems() {
   // Get All Users
   const getAllUsers = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllUsers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
       .then((res) => {
         setUsers(res.data.data.doc.filter((user) => user.role === "Parent"));
         console.log(res.data.data.doc.filter((user) => user.role === "Parent"));
@@ -92,7 +92,7 @@ export default function AddItems() {
 
   const createPlayer = async () => {
     await axios
-      .post("https://football-backend-updated.herokuapp.com/users/signup", {
+      .post(`${process.env.REACT_APP_API}/users/signup`, {
         email: email,
         dateOfBirth: DateOfBirth,
         position: position,

@@ -28,7 +28,7 @@ export default function Items() {
 
   const data = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/item/GetAllItems")
+      .get(`${process.env.REACT_APP_API}/item/GetAllItems`)
       .then((res) => {
         console.log(res.data.data.doc.reverse());
         setAllItems(res.data.data.doc.reverse());
@@ -39,7 +39,7 @@ export default function Items() {
   };
 
   const getOrder = async() => {
-    const response = await axios.get("https://football-backend-updated.herokuapp.com/AdminOrderNotification/getNotification");
+    const response = await axios.get(`${process.env.REACT_APP_API}/AdminOrderNotification/getNotification`);
     console.log(response.data.data);
     setOrder(response.data.data);
   };
@@ -91,7 +91,7 @@ export default function Items() {
   const deleteItem = async () => {
     setRefresh(true)
     await axios
-      .delete(`https://football-backend-updated.herokuapp.com/item/DeleteItem/${id}`)
+      .delete(`${process.env.REACT_APP_API}/item/DeleteItem/${id}`)
       .then((res) => {
         message.success("Item Deleted Successfully");
         console.log(res.data);

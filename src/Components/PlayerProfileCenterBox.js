@@ -45,7 +45,7 @@ export default function PlayerProfileCenterBox(props) {
   // Get Evaluation
   const getEvaluation = async () => {
     const response = await axios.get(
-      `https://football-backend-updated.herokuapp.com/evaluation/ViewEvaluationsOfPlayer/${location?.state._id}`
+      `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsOfPlayer/${location?.state._id}`
     );
     // Calculate Average of Evaluation
     let sum = 0;
@@ -66,7 +66,7 @@ export default function PlayerProfileCenterBox(props) {
   const [conversationId, setConversationId] = React.useState();
   const getConversations = async () => {
     const response = await axios.get(
-      `https://football-backend-updated.herokuapp.com/conversation/${location?.state._id}`
+      `${process.env.REACT_APP_API}/conversation/${location?.state._id}`
     );
     // Discard Duplicate Conversations
     const uniqueConversations = response.data.data.filter(
@@ -98,7 +98,7 @@ export default function PlayerProfileCenterBox(props) {
     if (conversations.length === 0) {
       console.log("No conversation found");
       const response = await axios.post(
-        `https://football-backend-updated.herokuapp.com/conversation/`,
+        `${process.env.REACT_APP_API}/conversation/`,
         {
           senderId: user._id,
           receiverId: location?.state._id,
@@ -188,7 +188,7 @@ export default function PlayerProfileCenterBox(props) {
   const getAttendance = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/attendance/GetAttendanceOfPlayer/${location?.state._id}`
+        `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
       )
       .then((response) => {
         setAttendanceData(response.data.data.attendance);

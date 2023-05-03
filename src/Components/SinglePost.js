@@ -33,7 +33,7 @@ export default function SinglePost() {
 
     // Call the API to persist the change
     await axios
-      .post("https://football-backend-updated.herokuapp.com/like/PostLike", {
+      .post(`${process.env.REACT_APP_API}/like/PostLike`, {
         refOfNewsfeed: val._id,
         refOfUser: user.user.id,
       })
@@ -57,7 +57,7 @@ export default function SinglePost() {
 
     // Call the API to persist the change
     await axios
-      .post(`https://football-backend-updated.herokuapp.com/like/DeleteLike`, {
+      .post(`${process.env.REACT_APP_API}/like/DeleteLike`, {
         refOfNewsfeed: val._id,
         refOfUser: user.user.id,
       })
@@ -87,7 +87,7 @@ export default function SinglePost() {
   const memberName = async () => {
     await axios
       .get(
-        "https://football-backend-updated.herokuapp.com/newsfeed/GetAllNewsFeed"
+        `${process.env.REACT_APP_API}/newsfeed/GetAllNewsFeed`
       )
       .then((res) => {
         SetPost(res.data.data.reverse());
@@ -106,7 +106,7 @@ export default function SinglePost() {
     setLikeLoading(true);
     setRefresh(true);
     await axios
-      .post("https://football-backend-updated.herokuapp.com/like/PostLike", {
+      .post(`${process.env.REACT_APP_API}/like/PostLike`, {
         refOfNewsfeed: val._id,
         refOfUser: user.user.id,
       })
@@ -125,7 +125,7 @@ export default function SinglePost() {
     setRefresh(true);
     setLikeLoading(true);
     await axios
-      .post(`https://football-backend-updated.herokuapp.com/like/DeleteLike`, {
+      .post(`${process.env.REACT_APP_API}/like/DeleteLike`, {
         refOfNewsfeed: val._id,
         refOfUser: user.user.id,
       })
@@ -145,7 +145,7 @@ export default function SinglePost() {
     setCommentLoading(true);
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/comment/PostComment",
+        `${process.env.REACT_APP_API}/comment/PostComment`,
         {
           refOfNewsfeed: val._id,
           comment: comment,
@@ -169,7 +169,7 @@ export default function SinglePost() {
     console.log("in delete post", postId);
     await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/newsfeed/DeleteNewsFeed/${postId}`
+        `${process.env.REACT_APP_API}/newsfeed/DeleteNewsFeed/${postId}`
       )
       .then((response) => {
         setRefresh(false);
@@ -184,7 +184,7 @@ export default function SinglePost() {
     console.log("in share post", val);
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/newsfeed/ShareNewsFeed",
+        `${process.env.REACT_APP_API}/newsfeed/ShareNewsFeed`,
         {
           refOfUser: user.user.id,
           status: val.status,
@@ -215,7 +215,7 @@ export default function SinglePost() {
     console.log("in get post");
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/newsfeed/GetSinglePost/${location.state._id}`
+        `${process.env.REACT_APP_API}/newsfeed/GetSinglePost/${location.state._id}`
       )
       .then((response) => {
         console.log("post", response.data.data);
@@ -244,7 +244,7 @@ export default function SinglePost() {
     setCommentLoading(true);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/comment/AddReplyToComment/${val._id}`,
+        `${process.env.REACT_APP_API}/comment/AddReplyToComment/${val._id}`,
         {
           text: replies[ind],
           refOfUser: user.user.id,

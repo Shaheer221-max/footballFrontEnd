@@ -35,7 +35,7 @@ export default function GroupChatBox(props) {
   const getCurrentConversation = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/groupconversation/GetGroupChatById/${location.state._id}`
+        `${process.env.REACT_APP_API}/groupconversation/GetGroupChatById/${location.state._id}`
       )
       .then((res) => {
         setConversation(res.data.data);
@@ -87,7 +87,7 @@ export default function GroupChatBox(props) {
     setRefresh(true);
     await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/groupconversation/DeleteGroupChat/${params.id}`
+        `${process.env.REACT_APP_API}/groupconversation/DeleteGroupChat/${params.id}`
       )
       .then((res) => {
         console.log(res.data);
@@ -132,7 +132,7 @@ export default function GroupChatBox(props) {
   const AllMessages = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/groupconversation/messages/${params.id}`
+        `${process.env.REACT_APP_API}/groupconversation/messages/${params.id}`
       )
       .then((res) => {
         console.log("All Messages: ", res.data);
@@ -200,7 +200,7 @@ export default function GroupChatBox(props) {
     });
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/groupconversation/send/${params.id}`,
+        `${process.env.REACT_APP_API}/groupconversation/send/${params.id}`,
         {
           sender: user.user._id,
           content: url ? url : sendChat,
@@ -235,7 +235,7 @@ export default function GroupChatBox(props) {
 
   const AllPlayers = async () => {
     await axios
-      .get(`https://football-backend-updated.herokuapp.com/users/GetAllPlayers`)
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         // Set Players that are not in location.state.members
         setPlayers(
@@ -263,7 +263,7 @@ export default function GroupChatBox(props) {
     setPlayers([...players, id]);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/groupconversation/AddMemberInGroupChat/${id.id}&${params.id}`
+        `${process.env.REACT_APP_API}/groupconversation/AddMemberInGroupChat/${id.id}&${params.id}`
       )
       .then((res) => {
         message.success("Member Added");
@@ -285,7 +285,7 @@ export default function GroupChatBox(props) {
     setPlayers(players.filter((item) => item._id !== id));
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/groupconversation/RemoveMemberFromGroupChat/${id}&${params.id}`
+        `${process.env.REACT_APP_API}/groupconversation/RemoveMemberFromGroupChat/${id}&${params.id}`
       )
       .then((res) => {
         setRefresh(false);
@@ -341,7 +341,7 @@ export default function GroupChatBox(props) {
     console.log("Conversation Id: ", params.id);
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/groupconversation/GetGroupChatById/${params.id}`
+        `${process.env.REACT_APP_API}/groupconversation/GetGroupChatById/${params.id}`
       )
       .then((res) => {
         setConversations(res.data.data);

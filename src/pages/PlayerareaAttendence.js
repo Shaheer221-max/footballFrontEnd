@@ -22,7 +22,7 @@ export default function PlayerareaAttendence() {
 
   const data = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         console.log(res.data.data);
         setPlayers(res.data.data);
@@ -91,7 +91,7 @@ export default function PlayerareaAttendence() {
     console.log(attendance);
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/attendance/MarkAttendance",
+        `${process.env.REACT_APP_API}/attendance/MarkAttendance`,
         {
           attendance: attendance,
           isMarked: true,
@@ -115,7 +115,7 @@ export default function PlayerareaAttendence() {
     const date = new Date().toISOString();
     await axios
       .get(
-        "https://football-backend-updated.herokuapp.com/attendance/GetAllAttendance"
+        `${process.env.REACT_APP_API}/attendance/GetAllAttendance`
       )
       .then((res) => {
         // Check if attendance is marked for today

@@ -56,7 +56,7 @@ export const Login = () => {
     setRefresh(true);
     if (admin === true) {
       await axios
-        .post(`https://football-backend-updated.herokuapp.com/users/signin`, {
+        .post(`${process.env.REACT_APP_API}/users/signin`, {
           password: passw,
           email: email,
         })
@@ -85,7 +85,7 @@ export const Login = () => {
         });
     } else {
       await axios
-        .post("https://football-backend-updated.herokuapp.com/users/signin", {
+        .post(`${process.env.REACT_APP_API}/users/signin`, {
           password: passw,
           email: email,
         })

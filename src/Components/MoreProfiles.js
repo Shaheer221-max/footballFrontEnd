@@ -15,7 +15,7 @@ export default function MoreProfiles() {
   // getting players from database
   const allPlayers = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/GetAllPlayers")
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         console.log(res.data.data);
         setPlayers(res.data.data);

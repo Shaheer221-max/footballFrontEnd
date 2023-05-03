@@ -122,7 +122,7 @@ export default function Dashboard() {
   const setOfDay = async (day) => {
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/event/CreateOffday",
+        `${process.env.REACT_APP_API}/event/CreateOffday`,
         {
           date: date,
         }
@@ -151,7 +151,7 @@ export default function Dashboard() {
 
   const data = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/event/getEvents")
+      .get(`${process.env.REACT_APP_API}/event/getEvents`)
       .then((res) => {
         console.log(res.data.data.doc);
         if (res.data.data !== res.data.data.Prototype) {
@@ -189,7 +189,7 @@ export default function Dashboard() {
     console.log(date);
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/event/CreateEvent",
+        `${process.env.REACT_APP_API}/event/CreateEvent`,
         {
           // date: `${day}-${month}-${yearr}`,
           date: date,
@@ -226,7 +226,7 @@ export default function Dashboard() {
     setRefresh(false);
     await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/event/DeleteEvent/${id}`
+        `${process.env.REACT_APP_API}/event/DeleteEvent/${id}`
       )
       .then((res) => {
         message.success("Event Deleted");
@@ -282,7 +282,7 @@ export default function Dashboard() {
   const getTopProspect = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/evaluation/GetTopProspects`
+        `${process.env.REACT_APP_API}/evaluation/GetTopProspects`
       )
       .then((res) => {
         console.log(res.data.data);

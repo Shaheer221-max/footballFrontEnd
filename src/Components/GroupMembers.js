@@ -24,11 +24,13 @@ export default function GroupMembers(props) {
 
   const token = localStorage.getItem("token");
 
+  
+
   // Get Admin of Group
   const getAdmin = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/users/singleUser/${props.data.val.refOfUser}`
+        `${process.env.REACT_APP_API}/users/singleUser/${props.data.val.refOfUser}`
       )
       .then((res) => {
         console.log(res.data);
@@ -43,7 +45,7 @@ export default function GroupMembers(props) {
 
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,7 +64,7 @@ export default function GroupMembers(props) {
   const GetGroup = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/group/GetGroup/${props.data.val._id}`
+        `${process.env.REACT_APP_API}/group/GetGroup/${props.data.val._id}`
       )
       .then((res) => {
         console.log(res.data.data.doc.Members);
@@ -87,7 +89,7 @@ export default function GroupMembers(props) {
     setRefreshIndex([...refreshIndex, ind]);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/group/RemoveMember/${id}&${groupDetail._id}`
+        `${process.env.REACT_APP_API}/group/RemoveMember/${id}&${groupDetail._id}`
       )
       .then((res) => {
         setRefresh(false);
@@ -111,7 +113,7 @@ export default function GroupMembers(props) {
     setRefreshIndex([...refreshIndex, ind]);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/group/AddMember/${id}&${groupDetail._id}`
+        `${process.env.REACT_APP_API}/group/AddMember/${id}&${groupDetail._id}`
       )
       .then((res) => {
         setRefreshIndex([]);
@@ -128,7 +130,7 @@ export default function GroupMembers(props) {
   // Get All Players in Group
   const getPlayers = async () => {
     await axios
-      .get(`https://football-backend-updated.herokuapp.com/users/GetAllPlayers`)
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         console.log(groupDetail.Members);
         SetPlayers(res.data.data);

@@ -47,7 +47,7 @@ export default function SignUp() {
   const createAdmin = async () => {
       setRefresh(true);
       await axios
-        .post("https://football-backend-updated.herokuapp.com/users/signup", {
+        .post(`${process.env.REACT_APP_API}/users/signup`, {
           password: pass,
           confirmPassword: pass,
           name: name,

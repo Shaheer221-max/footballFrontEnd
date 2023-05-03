@@ -35,7 +35,7 @@ export default function ChatBox(props) {
     setRefresh(true);
     await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/conversation/DeleteConversation/${params.id}`
+        `${process.env.REACT_APP_API}/conversation/DeleteConversation/${params.id}`
       )
       .then((res) => {
         message.success("Chat Deleted");
@@ -93,7 +93,7 @@ export default function ChatBox(props) {
   const AllMessages = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/message/${params.id}`
+        `${process.env.REACT_APP_API}/message/${params.id}`
       )
       .then((res) => {
         setChat(res.data);
@@ -173,7 +173,7 @@ export default function ChatBox(props) {
       text: sendChat,
     });
     await axios
-      .post("https://football-backend-updated.herokuapp.com/message/", {
+      .post(`${process.env.REACT_APP_API}/message/`, {
         conversationId: params.id,
         sender: user.user._id,
         text: url ? url : sendChat,
@@ -211,7 +211,7 @@ export default function ChatBox(props) {
     console.log("Conversation Id: ", params.id);
     await axios
       .post(
-        `https://football-backend-updated.herokuapp.com/conversation/conversation/${params.id}`
+        `${process.env.REACT_APP_API}/conversation/conversation/${params.id}`
       )
       .then((res) => {
         setConversation(res.data.data);

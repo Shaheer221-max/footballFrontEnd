@@ -49,7 +49,7 @@ export default function TimelinePost(props) {
   const memberName = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/newsfeed/GetGroupNewsFeed/${props.data.val.id}`
+        `${process.env.REACT_APP_API}/newsfeed/GetGroupNewsFeed/${props.data.val.id}`
       )
       .then((res) => {
         SetPost(res.data.data.reverse());
@@ -67,7 +67,7 @@ export default function TimelinePost(props) {
     console.log(val);
     setLikeLoading(true);
     await axios
-      .post("https://football-backend-updated.herokuapp.com/like/PostLike", {
+      .post(`${process.env.REACT_APP_API}/like/PostLike`, {
         refOfNewsfeed: val._id,
         refOfUser: user.user.id,
       })
@@ -83,7 +83,7 @@ export default function TimelinePost(props) {
   const deleteLike = async (val) => {
     setLikeLoading(true);
     await axios
-      .post(`https://football-backend-updated.herokuapp.com/like/DeleteLike`, {
+      .post(`${process.env.REACT_APP_API}/like/DeleteLike`, {
         refOfNewsfeed: val._id,
         refOfUser: user.user.id,
       })
@@ -100,7 +100,7 @@ export default function TimelinePost(props) {
     setRefresh(true);
     let response = await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/comment/PostComment",
+        `${process.env.REACT_APP_API}/comment/PostComment`,
         {
           refOfNewsfeed: val._id,
           comment: comment[ind],
@@ -122,7 +122,7 @@ export default function TimelinePost(props) {
     console.log("in delete post", postId);
     await axios
       .delete(
-        `https://football-backend-updated.herokuapp.com/newsfeed/DeleteNewsFeed/${postId}`
+        `${process.env.REACT_APP_API}/newsfeed/DeleteNewsFeed/${postId}`
       )
       .then((response) => {
         message.success("Post Deleted");
@@ -144,7 +144,7 @@ export default function TimelinePost(props) {
     console.log("in share post", val);
     await axios
       .post(
-        "https://football-backend-updated.herokuapp.com/newsfeed/ShareNewsFeed",
+        `${process.env.REACT_APP_API}/newsfeed/ShareNewsFeed`,
         {
           refOfUser: user.user.id,
           status: val.status,
@@ -176,7 +176,7 @@ export default function TimelinePost(props) {
 
   const getData = async () => {
     await axios
-      .get("https://football-backend-updated.herokuapp.com/users/me", {
+      .get(`${process.env.REACT_APP_API}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -244,7 +244,7 @@ export default function TimelinePost(props) {
       data.append("status", postt);
       await axios
         .post(
-          "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
           data
         )
         .then((res) => {
@@ -265,7 +265,7 @@ export default function TimelinePost(props) {
       setRefresh(true);
       await axios
         .post(
-          "https://football-backend-updated.herokuapp.com/newsfeed/PostNewsFeed",
+          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
           {
             refOfUser: user.user.id,
             refOfGroup: props.data.val.id,

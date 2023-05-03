@@ -59,7 +59,7 @@ export default function Orders() {
   const getOrders = async () => {
     try {
       const response = await axios.get(
-        "https://football-backend-updated.herokuapp.com/AdminOrderNotification/getNotification"
+        `${process.env.REACT_APP_API}/AdminOrderNotification/getNotification`
       );
       console.log(response.data.data);
       setOrders(response.data.data);

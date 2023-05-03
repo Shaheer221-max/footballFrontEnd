@@ -34,7 +34,7 @@ export default function PlayerTimeLinePost(props) {
   const memberName = async () => {
     await axios
       .get(
-        `https://football-backend-updated.herokuapp.com/newsfeed/GetAllUserPosts/${props.data._id}`
+        `${process.env.REACT_APP_API}/newsfeed/GetAllUserPosts/${props.data._id}`
       )
       .then((res) => {
         SetPost(res.data.data);
@@ -50,7 +50,7 @@ export default function PlayerTimeLinePost(props) {
 
   const addLike = async (val) => {
     await axios
-      .post("https://football-backend-updated.herokuapp.com/like/PostLike", {
+      .post(`${process.env.REACT_APP_API}/like/PostLike`, {
         refOfNewsfeed: val._id,
         refOfUser: user.user.id,
       })
@@ -63,7 +63,7 @@ export default function PlayerTimeLinePost(props) {
 
   const deleteLike = async (val) => {
     await axios
-      .post(`https://football-backend-updated.herokuapp.com/like/DeleteLike`, {
+      .post(`${process.env.REACT_APP_API}/like/DeleteLike`, {
         refOfNewsfeed: val._id,
         refOfUser: user.user.id,
       })
@@ -78,7 +78,7 @@ export default function PlayerTimeLinePost(props) {
     console.log("in add comment", val, comment);
     setRefresh(true);
     let response = await axios
-      .post("https://football-backend-updated.herokuapp.com/comment/PostComment", {
+      .post(`${process.env.REACT_APP_API}/comment/PostComment`, {
         refOfNewsfeed: val._id,
         comment: comment,
         refOfUser: user.user.id,
@@ -95,7 +95,7 @@ export default function PlayerTimeLinePost(props) {
     setRefresh(true);
     console.log("in delete post", postId);
     await axios
-      .delete(`/newsfeed/DeleteNewsFeed/${postId}`)
+      .delete(`${process.env.REACT_APP_API}/newsfeed/DeleteNewsFeed/${postId}`)
       .then((response) => {
         setRefresh(false);
         console.log("post deleted");
