@@ -5,7 +5,6 @@ import axios from "axios";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-// Route
 import Admin from "./routes/Admin";
 import Coach from "./routes/Coach";
 
