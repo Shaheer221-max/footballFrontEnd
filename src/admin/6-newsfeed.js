@@ -14,24 +14,23 @@ export default function NewsFeed() {
 
   return (
     <>
-      <div className="flex-col w-full ">
+      <div className="flex-col w-full h-screen">
         {/* Page Header */}
         <Header title={"News Feed"} />
-        <div className="flex h-screen">
-          {/* left side-bar details  */}
-          <div className="w-3/4 mt-8 ml-8 ">
+        <div className="flex flex-grow">
+          {/* left side-bar details */}
+          <div className="w-3/4 mt-8 ml-8">
             <RecentActivityies />
           </div>
 
           {/* center Post */}
-          <div className=" w-full scrollbar mt-10">
+          <div className="w-full scrollbar mt-10">
             {/* <UploadPostOntimeline newsfeed={true} name={name} image={pic} /> */}
             <TimelinePost newsfeed={true} />
           </div>
 
           {/* right side-bar parent profile */}
-
-          <div className=" mr-8 w-3/4 mt-8 ml-8">
+          <div className="mr-8 w-3/4 mt-8 ml-8">
             <MoreProfiles />
             <GroupList />
           </div>
