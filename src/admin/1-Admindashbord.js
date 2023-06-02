@@ -454,7 +454,7 @@ export default function Dashboard() {
                             {val?.refOfPlayer?.email}
                           </p>
                         </div>
-                        <Dropdown
+                        {/* <Dropdown
                           menu={{
                             items: item,
                           }}
@@ -475,10 +475,10 @@ export default function Dashboard() {
                               fill="white"
                             />
                           </svg>
-                        </Dropdown>
+                        </Dropdown> */}
                       </div>
                       <div className="flex gap-3 mt-9 items-center">
-                        <div className="ml-2">
+                        {/* <div className="ml-2">
                           <h5 className="text-sm font-light leading-5 tracking-tight text-white ">
                             Age
                           </h5>
@@ -487,15 +487,15 @@ export default function Dashboard() {
                               ? getAge(val?.dateOfBirth?.split("T")[0])
                               : "N/A"}
                           </p>
-                        </div>
-                        <div>
+                        </div> */}
+                        {/* <div>
                           <h5 className="text-sm font-light leading-5 tracking-tight text-white ">
                             Position
                           </h5>
                           <p className="text-sm font-light text-center text-[#7e7e7e] lexend ">
                             {val?.refOfPlayer?.position}
                           </p>
-                        </div>
+                        </div> */}
                         <div>
                           <h5 className="text-sm font-light tracking-tight text-white ">
                             Avg Marks

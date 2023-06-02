@@ -5,7 +5,7 @@ import pfp from "../assets/pfp.png";
 import { NavLink } from "react-router-dom";
 import axios from "../axios";
 import Spinner from "./Spinner";
-import { message } from "antd";
+import { message,Modal } from "antd";
 
 export default function VerificationCenter() {
   const [staticdata, setStaticData] = useState(false);
@@ -82,15 +82,17 @@ export default function VerificationCenter() {
 
   const unapproved = (id) => {
     axios
-      .delete(
-        `${process.env.REACT_APP_API}/users/deleteUser/${id}`
-      )
+      .delete(`${process.env.REACT_APP_API}/users/deleteUser/${id}`)
       .then((response) => {
         message.success("Player Deleted");
         console.log(response);
       })
       .catch((error) => {
         console.log(error.response.data);
+        Modal.error({
+          title: "Error",
+          content: "An error occurred while deleting the player.",
+        });
       });
   };
 
