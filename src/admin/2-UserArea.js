@@ -28,7 +28,7 @@ export default function UserArea() {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
-        console.log(res?.data?.data);
+        console.log(res?.data?.result);
         setTotalPlayers(res?.data?.result);
         setData(res?.data?.data.filter((item) => item.dateleft === null));
       })
@@ -59,6 +59,7 @@ export default function UserArea() {
           return item.name.toLowerCase().includes(search.toLowerCase());
         })
       );
+
     }
   }, [search, data]);
 
@@ -263,156 +264,97 @@ export default function UserArea() {
 
         {/* Table Of user  */}
         <div className="overflow-x-auto   font-lexend relative mx-10 my-5 font-dm rounded-xl">
-          <table className="font-dm w-full text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 ">
-            <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
-              <tr
-                className="text-center font-DM-sans"
-                onClick={() => setopenAddsubcatmodal(false)}
-              >
-                <th scope="col" className="py-3 pl-3">
-                  Id
-                </th>
-                <th scope="col" className="py-3 justify-start">
-                  User
-                </th>
-                <th scope="col" className="py-3 pl-2 text-left">
-                  Email
-                </th>
-                <th scope="col" className="py-3 pl-2">
-                  Phone
-                </th>
-                <th scope="col" className="py-3 pl-2">
-                  Date Joined
-                </th>
-                <th scope="col" className="py-3 pl-2">
-                  Son of
-                </th>
-                <th scope="col" className="py-3 px-3 ">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((object, index) => {
-                  const parents = parent.find(
-                    (parent) => parent.refOfPlayer === object._id
-                  );
-                  return (
-                    <tr className="font-dm border-[#7E7E7E] border-b text-center">
-                      <th
-                        scope="row"
-                        className="py-4 font-medium whitespace-nowrap text-white"
-                        onClick={() => setopenAddsubcatmodal(false)}
-                      >
-                        #{index + 1}
-                      </th>
-                      <td className="py-4 ">
-                        <div
-                          className="flex gap-4 items-center justify-left font-lexend"
-                          style={{ marginLeft: "15rem" }}
-                        >
-                          <img
-                            className=" w-10 h-10 rounded-full "
-                            src={object.image}
-                          />
-                          <p className="font-medium font-lexend">
-                            {" "}
-                            {object.name}{" "}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="py-4 text-left font-lexend">
-                        {object.email}
-                      </td>
-                      <td className="py-4 font-lexend">{object.phone}</td>
-                      <td className="py-4 font-lexend">
-                        {object.datedjoined.split("T")[0]}
-                      </td>
-                      <td className="py-4 font-lexend">
-                        {parents ? <>{parents?.name}</> : <>-</>}
-                      </td>
+        <table className="font-dm w-full text-sm text-left text-white bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0">
+  <thead className="font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
+    <tr className="text-center font-DM-sans" onClick={() => setopenAddsubcatmodal(false)}>
+      <th scope="col" className="py-3 pl-3">
+        Id
+      </th>
+      <th scope="col" className="py-3 justify-start">
+        User
+      </th>
+      <th scope="col" className="py-3 pl-2 text-left">
+        Email
+      </th>
+      <th scope="col" className="py-3 pl-2">
+        Phone
+      </th>
+      <th scope="col" className="py-3 pl-2">
+        Date Joined
+      </th>
+      <th scope="col" className="py-3 pl-2">
+        Son of
+      </th>
+      <th scope="col" className="py-3 px-3 ">
+        Action
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredData.length > 0 ? (
+      filteredData
+        .filter(object => object.active === "active")
+        .map((object, index) => {
+          const parents = parent.find((parent) => parent.refOfPlayer === object._id);
 
-                      <td>
-                        <div className="flex pl-3 gap-3 justify-center">
-                          <NavLink
-                            to={{ pathname: "/userarea/playerprofile/profile" }}
-                            state={object}
-                          >
-                            <EyeOutlined />
-                          </NavLink>
-                          <div className="">
-                            <Popconfirm
-                              title="Remove the Player"
-                              description="Are you sure to remove this player?"
-                              okText="Yes"
-                              cancelText="No"
-                              onConfirm={() => removePlayer(object._id)}
-                              onCancel={cancel}
-                              okButtonProps={{
-                                style: { backgroundColor: "#FF0000" },
-                              }}
-                            >
-                              <DeleteOutlined color="error" />
-                            </Popconfirm>
-                          </div>
-                        </div>
-                      </td>
-                      {/* view profile */}
-                      <tr>
-                        <div
-                          id="defaultModal"
-                          className={
-                            !object.isPlayer
-                              ? "hidden"
-                              : " flex  mt-3  bg-black/0 justify-center items-center"
-                          }
-                        >
-                          <div
-                            id="defaultModal"
-                            className={
-                              !object.isPlayer
-                                ? "hidden"
-                                : " flex absolute right-0 mb-3 mt-3  z-50 w-[150px] h-[80px]   bg-white rounded-xl justify-center content-center items-center"
-                            }
-                          >
-                            <div className="w-full ">
-                              <h5 className="text-sm text-center  mb-2 mt-3  font-medium tracking-tight font-lexend  text-[#212121] ">
-                                <NavLink
-                                  to={{
-                                    pathname: "/userarea/playerprofile/profile",
-                                  }}
-                                  state={object}
-                                >
-                                  <a href="">View Profile</a>
-                                </NavLink>
-                              </h5>
-                              <div className="border-b-2 w-full border-[#212121]/50" />
-
-                              <h5
-                                className="text-[#212121] text-center mt-3 mb-3  text-sm font-normal font-lexend cursor-pointer  "
-                                onClick={() => setopenAddsubcatmodal(false)}
-                              >
-                                <NavLink to={"chat"}>
-                                  <a href="/chat"> chat</a>
-                                </NavLink>
-                              </h5>
-                            </div>
-                          </div>
-                        </div>
-                      </tr>
-                    </tr>
-                  );
-                })
-              ) : (
-                <div className="flex justify-center mt-3 w-full h-96">
-                  <p className="text-[#818181] font-dm font-normal text-lg">
-                    Loading ...
-                  </p>
+          return (
+            <tr className="font-dm border-[#7E7E7E] border-b text-center" key={object._id}>
+              <th scope="row" className="py-4 font-medium whitespace-nowrap text-white" onClick={() => setopenAddsubcatmodal(false)}>
+                #{index + 1}
+              </th>
+              <td className="py-4 ">
+                <div className="flex gap-4 items-center justify-left font-lexend" style={{ marginLeft: "15rem" }}>
+                  <img className="w-10 h-10 rounded-full" src={object.image} alt={object.name} />
+                  <p className="font-medium font-lexend">{object.name}</p>
                 </div>
-              )}
-            </tbody>
-          </table>
+              </td>
+              <td className="py-4 text-left font-lexend">
+                {object.email}
+              </td>
+              <td className="py-4 font-lexend">
+                {object.phone}
+              </td>
+              <td className="py-4 font-lexend">
+                {object.datedjoined.split("T")[0]}
+              </td>
+              <td className="py-4 font-lexend">
+                {parents ? <>{parents?.name}</> : <>-</>}
+              </td>
+              <td>
+                <div className="flex pl-3 gap-3 justify-center">
+                  <NavLink to={{ pathname: "/userarea/playerprofile/profile" }} state={object}>
+                    <EyeOutlined />
+                  </NavLink>
+                  <div className="">
+                    <Popconfirm
+                      title="Remove the Player"
+                      description="Are you sure to remove this player?"
+                      okText="Yes"
+                      cancelText="No"
+                      onConfirm={() => removePlayer(object._id)}
+                      onCancel={cancel}
+                      okButtonProps={{ style: { backgroundColor: "#FF0000" } }}
+                    >
+                      <DeleteOutlined color="error" />
+                    </Popconfirm>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          );
+        })
+    ) : (
+      <tr>
+        <td className="flex justify-center mt-3 w-full h-96" colSpan="7">
+          <p className="text-[#818181] font-dm font-normal text-lg">
+            Loading ...
+          </p>
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
+
         </div>
 
         {/* pagination */}
