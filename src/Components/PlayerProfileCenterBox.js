@@ -90,6 +90,8 @@ export default function PlayerProfileCenterBox(props) {
   };
   React.useEffect(() => {
     getConversations();
+
+
   }, []);
 
   const createConversation = async () => {
@@ -186,10 +188,11 @@ export default function PlayerProfileCenterBox(props) {
   // Get Attendance
   const [attendanceData, setAttendanceData] = React.useState([]);
   const getAttendance = async () => {
+    console.log(location?.state._id);
     await axios
-      .get(
-        `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
-      )
+  .get(
+    `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
+  )
       .then((response) => {
         setAttendanceData(response.data.data.attendance);
         console.log("Attendance: ", response.data.data.attendance);
