@@ -719,7 +719,7 @@ export default function GroupChatBox(props) {
       </div>
 
       {/* Chat Input */}
-      <div className="my-[20px] mx-10 mb-10">
+      <div className="my-[20px] mx-10 mt-20">
         <div className="relative">
           <div
             className="cursor-pointer absolute top-3.5 right-2"
