@@ -45,24 +45,22 @@ export default function PlayerProfileRightSidebar(props) {
   const [data, setData] = React.useState([]);
 
   const getData = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API}/users/GetAllUsers`
-    );
-    console.log(
-      res.data.data.doc.filter(
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API}/users/GetAllUsers`);
+      const parents = response.data.data.doc.filter(
         (val) => val.role === "Parent" && val.refOfPlayer === props.data._id
-      )
-    );
-    setData(
-      res.data.data.doc.filter(
-        (val) => val.role === "Parent" && val.refOfPlayer === props.data._id
-      )
-    );
+      );
+      console.log(parents);
+      setData(parents);
+    } catch (error) {
+      console.log("Error:", error);
+    }
   };
-
+  
   React.useEffect(() => {
     getData();
   }, []);
+  
   return (
     <div>
       {/* Parent Profile Card */}
@@ -90,7 +88,7 @@ export default function PlayerProfileRightSidebar(props) {
                   <span className="text-sm font-normal text-gray-500 font-lexend">
                     {val?.email}
                   </span>
-                  <Link to={"/chat"}>
+                  <Link to={`/chat/${val.id}`}>
                     <a
                       href=""
                       className="inline-flex items-center py-2 px-9 mt-5 text-sm font-normal  font-lexend text-white bg-green-500 rounded-[4px] "
