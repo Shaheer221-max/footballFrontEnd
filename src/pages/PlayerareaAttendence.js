@@ -52,6 +52,7 @@ export default function PlayerareaAttendence() {
   const handleChangeAttendance = (index, value) => {
     const newAttendance = [...attendance];
     newAttendance[index].isPresent = value;
+
     setAttendance(newAttendance);
     console.log(newAttendance);
   };
@@ -93,6 +94,7 @@ export default function PlayerareaAttendence() {
       .post(
         `${process.env.REACT_APP_API}/attendance/MarkAttendance`,
         {
+          date:date,
           attendance: attendance,
           isMarked: true,
         }
@@ -290,7 +292,7 @@ export default function PlayerareaAttendence() {
                         onChange={(e) => {
                           handleChangeAttendance(ind, e.target.checked);
                         }}
-                        checked = {todayAttendance}
+                        checked = {attendance[ind].isPresent}
                         disabled={todayAttendance}
                       />
                     </td>
