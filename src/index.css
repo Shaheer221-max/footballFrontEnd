@@ -25,3 +25,8 @@ code {
   font-family: akira;
   src: local("akira"), url(./fonts/Akira\ Expanded\ Demo.otf);
 }
+
+video {
+  height: 150px;
+  /* min-height: 180px; */
+}

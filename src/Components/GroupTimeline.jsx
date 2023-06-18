@@ -413,6 +413,7 @@ export default function TimelinePost(props) {
         {post.length > 0 ? (
           <>
             {post.map((val, ind) => {
+              console.log("val",val)
               return (
                 <>
                   {/* if post img */}
@@ -450,7 +451,7 @@ export default function TimelinePost(props) {
 
                           <h5 className=" text-sm font-light tracking-tight text-white">
                             {/* <Moment fromNow>{val?.time}</Moment> */}
-                            {moment(val?.createdAt).fromNow()}
+                            {moment(val?.time).fromNow()}
                           </h5>
                         </div>
                       </div>
