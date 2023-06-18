@@ -10,6 +10,30 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
 
+const Modal = ({ notifications, onClose }) => {
+  return (
+    <div className="fixed inset-0  flex items-center justify-center bg-gray-800 bg-opacity-75">
+      <div className="bg-black p-6 rounded-lg overflow-y-scroll mb-10 mt-10 h-[450px]">
+        <h2 className="text-xl text-white font-bold mb-4">Notifications</h2>
+        <ul>
+          {notifications.map((notification, index) => (
+            <li key={index} className="mb-4">
+              <h3 className="font-bold text-white mb-1">{notification.Content}</h3>
+              <hr></hr>
+            </li>
+          ))}
+        </ul>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+          onClick={onClose}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export default function Settings() {
   const [event, setevent] = useState(false);
   const [openEmail, setOpenEmail] = useState(false);
@@ -20,11 +44,22 @@ export default function Settings() {
   const [confirmPassword, setNewPassword] = useState("");
   const [oldPasword, setOldPassword] = useState("");
   const [url, setUrl] = useState("");
+  const [notifications, setNotifications] = useState([])
+  const [showModal, setShowModal] = useState(false);
 
   const user = useSelector((state) => state.user);
   console.log(user.user);
 
   const token = localStorage.getItem("token");
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
 
   const changePassword = async () => {
     console.log(user.user, user.user.email, password, token);
@@ -103,6 +138,16 @@ export default function Settings() {
 
   const dispatch = useDispatch();
 
+  const getCoachNotifications = async() => {
+      await axios.get(`${process.env.REACT_APP_API}/generalnotification/GetCoachesAllGeneralNotifications`)
+      .then((res) => {
+        setNotifications(res.data.data)
+      })
+      .catch((err) => console.log("err"))
+
+    
+  }
+
   const getUser = async () => {
     if (token) {
       const user = await axios.get(
@@ -119,6 +164,7 @@ export default function Settings() {
 
   React.useEffect(() => {
     getUser();
+    getCoachNotifications()
   }, [dispatch]);
   return (
     <div className="flex-col w-full">
@@ -147,7 +193,7 @@ export default function Settings() {
           <h3 className="text-green-600 pt-7 pb-7">General</h3>
         </div>
         <Link>
-          <div className="flex justify-between align-middle w-7/12 h-full border-b-2 ml-7 border-white">
+          <div onClick={openModal} className="flex justify-between align-middle w-7/12 h-full border-b-2 ml-7 border-white">
             <h3 className="text-white pt-7 pb-7">Notifications</h3>
             <BsToggleOff className="text-green-600 mt-7" />
           </div>
@@ -346,6 +392,9 @@ export default function Settings() {
           </div>
         </div>
       </div>
+      {showModal && (
+        <Modal notifications={notifications} onClose={closeModal} />
+      )}
     </div>
   );
 }

@@ -194,8 +194,15 @@ export default function PlayerProfileCenterBox(props) {
     `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
   )
       .then((response) => {
-        setAttendanceData(response.data.data.attendance);
-        console.log("Attendance: ", response.data.data.attendance);
+        const adata = response.data.data.attendance.map((items) => {
+          const filteredRecords = items.attendance.filter(
+            (record) => record.refOfPlayer === location?.state._id
+          );
+          return { ...items, attendance: filteredRecords };
+        });
+        setAttendanceData(adata);
+        console.log("adata: ", adata);
+        // console.log("Attendance",response.data.data.attendance)
       })
       .catch((err) => {
         console.log(err);
@@ -210,12 +217,13 @@ export default function PlayerProfileCenterBox(props) {
     labels: attendanceData.map(({ date }) => date.split("T")[0]),
     datasets: [
       {
-        label: "Attendance",
-        data: attendanceData.map(({ isMarked }) => isMarked),
-        backgroundColor: "white",
+        label:"Attendance",
+        data: attendanceData.map(({ attendance }) => attendance[0].isPresent ? 1: 1),
+        backgroundColor: attendanceData.map(({ attendance }) => attendance[0].isPresent ? "white" : "red"),
         borderWidth: 1,
       },
     ],
+    
   };
 
   const chartData1 = {
@@ -235,7 +243,7 @@ export default function PlayerProfileCenterBox(props) {
       key: "1",
       label: `Attendance`,
       children: (
-        <div className="w-[700px]">
+        <div className="w-fit">
           <Bar
             data={chartData}
             options={{
@@ -256,7 +264,7 @@ export default function PlayerProfileCenterBox(props) {
     {
       key: "2",
       label: `Report`,
-      children:<div className="w-[700px]">
+      children:<div className="w-fit">
       <Bar
         data={chartData1}
         options={{

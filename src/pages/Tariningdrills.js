@@ -187,11 +187,16 @@ export default function Tariningdrills() {
                         >
                           {val?.refOfVideoCat?.title}
                         </div>
-                        <iframe
+                        <video
                           style={{ width: 235 }}
                           className="rounded-t-lg border w-{235px]"
                           src={val?.video}
-                        ></iframe>
+                          controls
+                          height="10%"
+                        ></video>
+                        {/* <video src={val?.video}
+                        className="rounded-t-lg border"
+                        controls></video> */}
                       </div>
                       <div className="flex items-center mt-2">
                         <img
