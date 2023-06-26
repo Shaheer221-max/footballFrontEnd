@@ -24,7 +24,7 @@ export default function PlayerareaSkill() {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         setPlayers(res.data.data);
       });
   };
@@ -39,7 +39,7 @@ export default function PlayerareaSkill() {
   };
 
   React.useEffect(() => {
-    console.log(players);
+    // console.log(players);
     if (search === "") {
       setFiltered(players);
     } else {
@@ -58,7 +58,7 @@ export default function PlayerareaSkill() {
     await axios
       .get(`${process.env.REACT_APP_API}/skill/GetAllSkills`)
       .then((res) => {
-        console.log(res.data.data.doc);
+        // console.log(res.data.data.doc);
         setSkills(res.data.data.doc);
       });
   };
@@ -83,8 +83,21 @@ export default function PlayerareaSkill() {
   };
 
   const addEvaluation = async (id) => {
-    if (evaluations.length > 0) {
-      message.error("You have already evaluated this player today");
+    let evaluations
+    await axios
+      .get(
+        `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsByDateOfPlayer/${id}&${new Date().toISOString().split('T')[0]}`
+      )
+      .then((res) => {
+        evaluations = res.data.data
+        // console.log("res",res.data)
+      })
+      .catch((err) => console.log("err",err))
+
+    console.log("evals", evaluations)
+    const evaluated = evaluations.some(obj => obj.refOfSkill._id === skill);
+    if (evaluations.length > 0 && evaluated) {
+      message.error("This Player has been already evaluated in this skill");
       return;
     }
     const data = {
@@ -94,7 +107,7 @@ export default function PlayerareaSkill() {
       date: new Date().toISOString().split("T")[0],
       isMarked: true,
     };
-    console.log(data);
+    // console.log(data);
     await axios
       .post(
         `${process.env.REACT_APP_API}/evaluation/Evaluate`,
@@ -102,7 +115,7 @@ export default function PlayerareaSkill() {
       )
       .then((res) => {
         message.success("Evaluation Added Successfully");
-        console.log(res.data);
+        // console.log(res.data);
       })
       .catch((err) => {
         message.error("Error");
@@ -119,7 +132,7 @@ export default function PlayerareaSkill() {
         `${process.env.REACT_APP_API}/skill/GetAllSubSkillsOfSkill/${skill}`
       )
       .then((res) => {
-        console.log("Skill: ", res?.data?.data[0]?.subskills);
+        // console.log("Skill: ", res?.data?.data[0]?.subskills);
         setSubSkills(res?.data?.data[0]?.subskills);
       });
   };
@@ -136,13 +149,13 @@ export default function PlayerareaSkill() {
   const [score, setScore] = React.useState([]);
   const handleScore = (e, ind, id) => {
     setId(id);
-    console.log("Score: ", e.target.value);
+    // console.log("Score: ", e.target.value);
     const newScore = [...score];
     // Converting string to number
     newScore[ind] = parseInt(e.target.value);
     // Converting string to number
     setScore(newScore);
-    console.log("New Score: ", newScore);
+    // console.log("New Score: ", newScore);
   }
 
   // Get All Evaluations
@@ -155,7 +168,7 @@ export default function PlayerareaSkill() {
         `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsByDateOfPlayer/${id}&${new Date().toISOString().split('T')[0]}`
       )
       .then((res) => {
-        console.log(res.data.data);
+        console.log("evaluations",res.data.data);
         setEvaluations(res.data.data);
       });
   };
