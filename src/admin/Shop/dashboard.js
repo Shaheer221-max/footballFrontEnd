@@ -281,7 +281,7 @@ const labels = [
                   <td className="py-4 pl-4 ">
                     <div className="flex gap-2 items-center">
                       
-                    {val.refOfCustomerNotification.refOfCustomer.name}
+                    {/* {val.refOfCustomerNotification.refOfCustomer.name} */}
                     </div>
                   </td>
                   <td className="py-4 ">£{val?.refOfCustomerNotification?.price}</td>
