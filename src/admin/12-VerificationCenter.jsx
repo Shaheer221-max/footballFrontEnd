@@ -65,7 +65,7 @@ export default function VerificationCenter() {
   const approve = (id) => {
     console.log(id)
     axios
-      .patch(
+      .put(
         `${process.env.REACT_APP_API}/users/updateUser/${id}`,
         {
           active: "active",
@@ -394,7 +394,7 @@ export default function VerificationCenter() {
                   Approve
                 </button>
                 <button
-                  onClick={unapproved(object._id)}
+                  onClick={()=>unapproved(object._id)}
                   className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
                 >
                   Unapprove
