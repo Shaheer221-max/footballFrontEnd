@@ -231,7 +231,7 @@ export default function Orders() {
                           </th>
                           <td className="py-4 pl-4 ">
                             <div className="flex gap-2 justify-center">
-                              {val.refOfCustomerNotification.refOfCustomer.name}
+                              {/* {val.refOfCustomerNotification.refOfCustomer.name} */}
                             </div>
                           </td>
                           <td className="py-4 ">
@@ -561,7 +561,7 @@ export default function Orders() {
                   <div className="ml-3 mt-3">
                     <p className="text-white text-sm pb-2">Date Ordered</p>
                     <p className="text-green-500 text-xs">
-                      {orderDate?.split("T")[0]}
+                      {orderDate}
                     </p>
                   </div>
                 </div>
