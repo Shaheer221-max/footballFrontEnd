@@ -33,7 +33,7 @@ export default function Dashboard() {
   const [month, setMonth] = useState(false);
   const [yearr, setyear] = useState(0);
   const [sceduleEvent, setSceduleEvent] = useState(false);
-  const [title, setTitle] = useState(false);
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date());
   const [getEvents, SetAllGetEvents] = useState([]);
@@ -120,6 +120,11 @@ export default function Dashboard() {
   };
 
   const setOfDay = async (day) => {
+    if (date === "" || title === "" || description === "") {
+      message.error("Please fill all fields");
+      return;
+    }
+    else {
     await axios
       .post(
         `${process.env.REACT_APP_API}/event/CreateOffday`,
@@ -138,6 +143,7 @@ export default function Dashboard() {
         setError(error.response.data);
         console.log(error.response.data);
       });
+    }
   };
 
   const [offDays, setOffDay] = useState([]);
