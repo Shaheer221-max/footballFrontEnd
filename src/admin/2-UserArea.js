@@ -205,6 +205,7 @@ export default function UserArea() {
               <div className="flex-1 mt-8 ml-3">
                 <h1 className="text-3xl font-bold font-lexend">
                   {totalPlayers}
+                  
                 </h1>
                 <h3 className="text-text-lg font-lexend">Total Players</h3>
               </div>
