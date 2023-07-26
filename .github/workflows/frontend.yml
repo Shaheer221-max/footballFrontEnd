@@ -20,11 +20,22 @@ jobs:
           node-version: "14.x"
       - name: Install dependencies
         run: |
-          npm ci
+          npm install
           npm audit fix --force
 
-      - name: Build project
-        run: npm run build
+  release:
+    needs: build
+    runs-on: self-hosted
 
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Deploy to Server
+        run: |
+           ssh -o StrictHostKeyChecking=no ubuntu@13.50.112.228 -p 22 'cp -r /home/agents/frontend-runner/_work/footballFrontEnd/footballFrontEnd/* /home/Project/footballFrontEnd && npm run build'
 
+      - name: Display success message
+        run: echo "Connected via SSH and files copied successfully"
