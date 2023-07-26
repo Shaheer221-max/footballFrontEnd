@@ -13,9 +13,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+        with:
+         node-version: 18.0.0
+      
+      - name: Update Npx
+        run:  npx update-browserslist-db@latest
+        
       - name: Install dependencies
-        run: npm install --no--optional
+        run: npm install
 
       - name: Build project
         run: npm run build
