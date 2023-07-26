@@ -87,8 +87,12 @@ export default function AddGroups() {
   };
 
   const createGroup = async () => {
-    if (name === "" || url === "") {
+    if (name === "") {
       message.error("Please Enter Group Name");
+      return;
+    }
+    if (url === ""){
+      message.error("Please upload group picture");
       return;
     }
     
