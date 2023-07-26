@@ -1,28 +1,23 @@
-name: Build React App
+name: Build and Release
 
 on:
   push:
-    branches:
-      - main # Adjust this branch name as needed
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install Node.js and NPM
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14' # Change the version if needed
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build the React app
+      - name: Build project
         run: npm run build
 
       # Add additional steps here, if needed.
