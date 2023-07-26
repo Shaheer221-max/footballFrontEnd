@@ -219,7 +219,7 @@ export default function PlayerProfileCenterBox(props) {
       {
         label:"Attendance",
         data: attendanceData.map(({ attendance }) => attendance[0].isPresent ? 1: 1),
-        backgroundColor: attendanceData.map(({ attendance }) => attendance[0].isPresent ? "white" : "red"),
+        backgroundColor: attendanceData.map(({ attendance }) => attendance[0].isPresent ? "green" : "red"),
         borderWidth: 1,
       },
     ],
