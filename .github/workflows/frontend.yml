@@ -1,0 +1,37 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+
+  release:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Server
+        run: |
+           ssh -o StrictHostKeyChecking=no ubuntu@13.50.112.228 -p 22 'cp -r /home/agents/frontend-runner/_work/footballFrontEnd/footballFrontEnd/* /home/Project/footballFrontEnd/ && cd /home/Project/footballFrontEnd/ && npm install && npm run build'
+
+      - name: Display success message
+        run: echo "Connected via SSH and files copied successfully"
