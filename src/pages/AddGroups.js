@@ -107,7 +107,7 @@ export default function AddGroups() {
           setGroupId(res.data.data.groupchat._id);
           setGroupAdded(true);
           setError(false);
-          navigate("/selectedGroup");
+          navigate("/selectgroup");
         })
         .catch((error) => {
           message.error("Group Not Created");

@@ -302,7 +302,7 @@ const [image, setImage] = useState("");
         </div>
 
         {/* Main ChatBox */}
-        <div className="w-4/4">
+        <div className="w-2/4">
           <GroupChatBox id={params.id} />
         </div>
 

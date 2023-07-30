@@ -134,7 +134,7 @@ export default function AddGroups() {
           }
         )
         .then((res) => {
-          navigate("/selectedGroup");
+          navigate("/selectgroup");
           setGroupId(res.data.data.groupchat._id);
           setGroupAdded(true);
           setError(false);

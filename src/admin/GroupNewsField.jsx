@@ -19,6 +19,7 @@ export default function GroupNewsField() {
   // getting players from database
   const data = async () => {
     console.log("in data");
+    console.log('in group feed');
     let res = await axios
       .get("/admin/getadminByEmail/" + id)
       .then((res) => {
@@ -36,7 +37,7 @@ export default function GroupNewsField() {
 
   return (
     <>
-      <div className="flex-col w-full ">
+      <div className="flex-col w-full h-screen">
         {/* Page Header */}
         <Header title={"News Feed"} />
         <div className="flex h-screen">

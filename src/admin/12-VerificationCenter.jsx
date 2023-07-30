@@ -20,6 +20,19 @@ export default function VerificationCenter() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(false);
   const [playersPerPage] = useState(10);
+
+  const [showModal, setShowModal] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+
+  const handleButtonClick = (url) => {
+    setImageUrl(url);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   let next = false;
   let Playerdata;
   // seting value
@@ -38,14 +51,16 @@ export default function VerificationCenter() {
     let res = await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
-        console.log(res.data.data.filter((val) => val.active === "pending"));
-        if (res.data.data !== res.data.data.Prototype) {
-          setStaticData(
-            res.data.data.filter((val) => val.active === "pending")
-          );
-          Playerdata = res.data.data.filter((val) => val.active === "pending");
-          setPage(Playerdata);
-        }
+        // console.log(res.data.data.filter((val) => val.active === "pending"));
+        // if (res.data.data !== res.data.data.Prototype) {
+        //   setStaticData(
+        //     res.data.data.filter((val) => val.active === "pending")
+        //   );
+        //   Playerdata = res.data.data.filter((val) => val.active === "pending");
+         
+          setPage(res.data.data)
+          console.log(res.data.data)
+        
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -82,9 +97,11 @@ export default function VerificationCenter() {
 
   const unapproved = (id) => {
     axios
-      .delete(`${process.env.REACT_APP_API}/users/deleteUser/${id}`)
+      .put(`${process.env.REACT_APP_API}/users/updateUser/${id}`,{
+        active: "pending",
+      })
       .then((response) => {
-        message.success("Player Deleted");
+        message.success("Player Un Approved");
         console.log(response);
       })
       .catch((error) => {
@@ -288,6 +305,7 @@ export default function VerificationCenter() {
       <th scope="col" className="py-3 pl-2">Email</th>
       <th scope="col" className="py-3 pl-2">Phone</th>
       <th scope="col" className="py-3 pl-2">Date Applied</th>
+      <th scrope="col" className="py-3 pl-2">Status</th>
       <th scope="col" className="py-3 px-3">Action</th>
     </tr>
   </thead>
@@ -316,19 +334,33 @@ export default function VerificationCenter() {
               <td className="py-4" onClick={() => closeProfile(index)}>
                 {object.datedjoined.split("T")[0]}
               </td>
+              <td className="py-4" onClick={() => closeProfile(index)}>
+                {object.active}
+              </td>
               <td className="py-4">
-                <button
-                  onClick={() => approve(object._id)}
-                  className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
-                >
-                  Approve
-                </button>
-                <button
-                  onClick={() => unapproved(object._id)}
-                  className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
-                >
-                  Unapprove
-                </button>
+              {object.active === "active" ? (
+  <button
+    onClick={() => {
+      console.log("Approve button clicked");
+      approve(object._id);
+    }}
+    className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
+  >
+    Approve
+  </button>
+) : (
+  <button
+    onClick={() => {
+      console.log("Unapprove button clicked");
+      unapproved(object._id);
+    }}
+    className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
+  >
+    Unapprove
+  </button>
+)}
+
+               
               </td>
               <td>
                 <div className="flex pl-3 gap-10 justify-center">
@@ -387,24 +419,50 @@ export default function VerificationCenter() {
                 {object.datedjoined.split("T")[0]}
               </td>
               <td className="py-4">
-                <button
-                  onClick={() => approve(object._id)}
-                  className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
-                >
-                  Approve
-                </button>
-                <button
-                  onClick={()=>unapproved(object._id)}
-                  className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
-                >
-                  Unapprove
-                </button>
+              {object.active === "pending" ? (
+  <button
+    onClick={() => {
+      console.log("Approve button clicked");
+      approve(object._id);
+    }}
+    className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
+  >
+    Approve
+  </button>
+) : (
+  <button
+    onClick={() => {
+      console.log("Unapprove button clicked");
+      unapproved(object._id);
+    }}
+    className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
+  >
+    Unapprove
+  </button>
+)}
+
               </td>
               <td>
                 <div className="flex pl-3 gap-10 justify-center">
-                  <NavLink to={"/userarea/playerprofile/profile"}>
-                    <p className="text-blue-500">View Attachments</p>
-                  </NavLink>
+                <button
+        onClick={() =>
+          handleButtonClick(
+            object.FeeSlipPhoto // Replace with the actual image URL
+          )
+        }
+        className="text-blue-500"
+      >
+        View Attachments
+      </button>
+
+      <Modal
+        visible={showModal}
+        onCancel={closeModal}
+        footer={null}
+        destroyOnClose
+      >
+        <img src={imageUrl} alt="Attachment" style={{ width: "100%", maxHeight: "400px", objectFit: "contain" }} />
+      </Modal>
                   <div className="mt-2">
                     <svg
                       onClick={() => openProfile(index)}

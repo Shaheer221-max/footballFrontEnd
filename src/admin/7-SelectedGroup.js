@@ -24,7 +24,7 @@ export default function Selectedgroup() {
         </div>
 
         {/* center Post */}
-        <div className="w-3/4 scrollbar mt-10">
+        <div className="w-full scrollbar mt-10">
           {/* <UploadGroupPost newsfeed={location.state} /> */}
           <GroupTimeline newsfeed={false} data={location.state} />
         </div>

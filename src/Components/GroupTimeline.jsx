@@ -409,7 +409,7 @@ export default function TimelinePost(props) {
         </div>
       </div>
 
-      <div className=" mx-[22px] my-10 lg:h-[400px] 2xl:h-[400px] overflow-y-hidden hover:overflow-y-scroll scrollbar">
+      <div className=" mx-[22px] my-10 lg:h-[400px] 2xl:h-[400px] overflow-y scrollbar">
         {post.length > 0 ? (
           <>
             {post.map((val, ind) => {
