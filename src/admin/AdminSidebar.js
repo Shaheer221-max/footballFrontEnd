@@ -19,7 +19,7 @@ export default function Sidebar() {
                 <li onClick={() => setShop(false)}>
                   <NavLink
                     to="/Dashboard"
-                    className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 justify-center"
                   >
                     <img src={backLogo} alt="logo" />
                   </NavLink>
@@ -29,8 +29,8 @@ export default function Sidebar() {
                     to="/shopDashboard"
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -54,8 +54,8 @@ export default function Sidebar() {
                     to={"/allItems"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -82,8 +82,8 @@ export default function Sidebar() {
                     to={"/allOrders"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -118,8 +118,8 @@ export default function Sidebar() {
                     to={"/category"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -146,8 +146,8 @@ export default function Sidebar() {
                     to="/addskillpage2"
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -167,7 +167,7 @@ export default function Sidebar() {
                 <li onClick={() => setdrop(false)}>
                   <NavLink
                     to={"/"}
-                    className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 justify-center"
                   >
                     <svg
                       width="25"
@@ -197,7 +197,7 @@ export default function Sidebar() {
             <div className=" py-4 px-3 flex justify-center  h-screen ">
               <ul className="space-y-[18.5px] ">
                 <li onClick={() => setdrop(false)}>
-                  <NavLink className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <NavLink className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 justify-center">
                     <img src={logo} alt="logo" />
                   </NavLink>
                 </li>
@@ -206,8 +206,8 @@ export default function Sidebar() {
                     to="/dashboard"
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -231,8 +231,8 @@ export default function Sidebar() {
                     to={"/userarea"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -255,8 +255,8 @@ export default function Sidebar() {
                     to={"/verificationCenter"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <img src={verify} style = {{ width: 33, height: 33 }} alt="" />
@@ -268,8 +268,8 @@ export default function Sidebar() {
                     to={"/playerarea/skill"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -315,8 +315,8 @@ export default function Sidebar() {
                     to={"/newsfeed"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center "
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -346,8 +346,8 @@ export default function Sidebar() {
                     to={"/selectgroup"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center "
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -370,8 +370,8 @@ export default function Sidebar() {
                     to={"/chat"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center "
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -394,8 +394,8 @@ export default function Sidebar() {
                     to={"/clubhub"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center "
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -417,8 +417,8 @@ export default function Sidebar() {
                     to="/shopDashboard"
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -444,8 +444,8 @@ export default function Sidebar() {
                     to="/setting"
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -469,7 +469,7 @@ export default function Sidebar() {
                   }}>
                   <NavLink
                     to={"/"}
-                    className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 justify-center"
                   >
                     <svg
                       width="25"

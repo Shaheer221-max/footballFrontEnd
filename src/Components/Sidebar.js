@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png";
 import { NavLink } from "react-router-dom";
-import "../styles/pointer.css"
-import "../styles/font.css"
+import "../styles/pointer.css";
+import "../styles/font.css";
 export default function Sidebar() {
   const [drop, setdrop] = useState(false);
 
@@ -12,7 +12,7 @@ export default function Sidebar() {
         <div className=" py-4 px-3 flex justify-center  h-screen ">
           <ul className="space-y-[18.5px] ">
             <li onClick={() => setdrop(false)}>
-              <NavLink className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+              <NavLink className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 justify-center">
                 <img src={logo} alt="logo" />
               </NavLink>
             </li>
@@ -21,8 +21,8 @@ export default function Sidebar() {
                 to="/dashboard"
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                 }
               >
                 <svg
@@ -46,8 +46,8 @@ export default function Sidebar() {
                 to={"/playerarea/attendence"}
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line "
-                    : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed"
+                    ? "flex items-center  text-base font-normal p-1.5 rounded-lg border-2 border-green-500 border-line justify-center"
+                    : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed justify-center"
                 }
                 onClick={() => setdrop(true)}
               >
@@ -84,8 +84,8 @@ export default function Sidebar() {
                     to="/playerarea/attendence"
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line"
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -108,8 +108,8 @@ export default function Sidebar() {
                     to="/playerarea/players"
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -133,8 +133,8 @@ export default function Sidebar() {
                     to="/playerarea/parents"
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -157,8 +157,8 @@ export default function Sidebar() {
                     to={"/playerarea/skill"}
                     className={({ isActive }) =>
                       isActive
-                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                        ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center "
+                        : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
                     <svg
@@ -197,15 +197,15 @@ export default function Sidebar() {
                   </NavLink>
                 </li>
                 <NavLink to={"/setting"}>
-                <svg
-                  width="76"
-                  height="2"
-                  viewBox="0 0 76 2"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M0.5 1H75.5" stroke="white" stroke-opacity="0.1" />
-                </svg>
+                  <svg
+                    width="76"
+                    height="2"
+                    viewBox="0 0 76 2"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M0.5 1H75.5" stroke="white" stroke-opacity="0.1" />
+                  </svg>
                 </NavLink>
               </>
             ) : (
@@ -216,8 +216,8 @@ export default function Sidebar() {
                 to={"/selectedGroup"}
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                 }
               >
                 <svg
@@ -239,8 +239,8 @@ export default function Sidebar() {
                 to={"/traningdrill"}
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                 }
               >
                 <svg
@@ -263,8 +263,8 @@ export default function Sidebar() {
                 to={"/newsfeed"}
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                 }
               >
                 <svg
@@ -295,8 +295,8 @@ export default function Sidebar() {
                 to={"/chat"}
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                 }
               >
                 <svg
@@ -318,8 +318,8 @@ export default function Sidebar() {
                 to="/setting"
                 className={({ isActive }) =>
                   isActive
-                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line "
-                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed"
+                    ? "flex items-center p-2.5 text-base font-normal rounded-lg border-2 border-green-500 border-line justify-center"
+                    : "flex items-center p-2.5 text-base font-normal  rounded-lg hover:bg-gray-500 border-dashed justify-center"
                 }
               >
                 <svg
@@ -337,7 +337,10 @@ export default function Sidebar() {
               </NavLink>
             </li>
             <li onClick={() => setdrop(false)}>
-              <NavLink to={"/"} className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+              <NavLink
+                to={"/"}
+                className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 justify-center"
+              >
                 <svg
                   width="25"
                   height="25"
