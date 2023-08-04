@@ -155,7 +155,7 @@ export default function RecentChats(props) {
     <>
       <div className="">
         <div className="font-lexend mt-12 ">
-          <div className="relative">
+          <div className="relative mr-8">
             <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
               <svg
                 aria-hidden="true"
@@ -183,7 +183,7 @@ export default function RecentChats(props) {
           </div>
 
           <div
-            className="lg:h-[550px] 2xl:h-[550px] overflow-y-scroll scrollbar"
+            className="lg:h-[480px] overflow-y-scroll scrollbar"
             style={{ overflowX: "hidden" }}
           >
             <>

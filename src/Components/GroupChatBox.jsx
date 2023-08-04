@@ -652,7 +652,7 @@ export default function GroupChatBox(props) {
 
           {/* Chat Of The  */}
           <div
-            className=" lg:h-[450px] 2xl:h-[450px] overflow-y-scroll scrollbar"
+            className=" lg:h-[420px] overflow-y-scroll scrollbar"
             id="chat-window"
             ref={messageEl}
           >
@@ -719,7 +719,7 @@ export default function GroupChatBox(props) {
       </div>
 
       {/* Chat Input */}
-      <div className="my-[20px] mx-10 mt-20">
+      <div className="my-[20px] mx-10 mb-10">
         <div className="relative">
           <div
             className="cursor-pointer absolute top-3.5 right-2"
