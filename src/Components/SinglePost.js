@@ -359,7 +359,6 @@ export default function SinglePost() {
                   <video
                     className="mt-5 px-2 w-full rounded-md h-24"
                     controls
-                    style={{ height: "300px" }}
                   >
                     <source src={posts?.video} type="video/mp4" />
                   </video>
