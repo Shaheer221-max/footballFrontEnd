@@ -139,7 +139,7 @@ export default function UploadGroupPost(props) {
   return (
     <>
       <div className="mx-[22px] ">
-        <div className=" px-7 pt-8 pb-6 font-lexend lg:w-full 2xl:w-[500px] min-w-sm text-center bg-[#212121] rounded-lg  ">
+        <div className=" px-7 pt-8 pb-6 font-lexend lg:w-full min-w-sm text-center bg-[#212121] rounded-lg  ">
           <div className=" gap-5 flex mt-2">
             <img
               className=" w-10 h-10 rounded-full "

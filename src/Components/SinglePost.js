@@ -273,7 +273,7 @@ export default function SinglePost() {
     <div className="">
       {posts ? (
         <div className=" mx-[22px] my-10  ">
-          <div className="mt-5 px-4 pb-2 font-lexend lg:w-full 2xl:w-[500px] min-w-sm text-center bg-[#212121] rounded-lg  ">
+          <div className="mt-5 px-4 pb-2 font-lexend lg:w-full min-w-sm text-center bg-[#212121] rounded-lg  ">
             <div className="flex items-center gap-2  mb-8 ml-4">
               <img
                 className=" mt-[34px] w-9 h-9 rounded-full "
@@ -348,7 +348,7 @@ export default function SinglePost() {
                 <img
                   className="mt-5 px-2 w-full rounded-md"
                   src={posts?.image}
-                  style={{ height: "300px", width: "500px" }}
+                  style={{ height: "350px", width: "100%" , objectFit: "contain" }}
                 />
               </>
             )}
