@@ -56,7 +56,7 @@ export default function RightSideChatGroup(props) {
             </div>
             <p className="font-medium bg-[#212121] text-base text-white mt-1  rounded-tr-lg rounded-b-lg py-2 px-6">
               {three === ".jpg" ? (
-                <img className="" src={props.message.content} alt="image" />
+                <img className="h-[300px]" src={props.message.content} alt="image" />
               ) : three === ".mp4" ? (
                 <video>
                   <source src={props.message.content} type="video/mp4" />

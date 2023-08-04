@@ -54,7 +54,7 @@ export default function LeftSideChat(props) {
             </div>
             <p className="font-medium bg-white text-base text-black mt-1  rounded-tr-lg rounded-b-lg py-2 px-6">
             {three === ".jpg" ? (
-                <img className="" src={props.message.text} alt="image" />
+                <img className="h-[300px]" src={props.message.text} alt="image" />
               ) : three === ".mp4" ? (
                 <video>
                   <source src={props.message.text} type="video/mp4" />
