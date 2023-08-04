@@ -190,7 +190,7 @@ export default function PlayerTimeLinePost(props) {
                     {val.image ? (
                       <>
                         <img
-                          className="mt-5 px-2 w-full rounded-md"
+                          className="mt-5 px-2 w-full rounded-md object-contain"
                           src={val.image}
                         />
                       </>
