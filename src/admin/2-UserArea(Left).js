@@ -74,13 +74,16 @@ export default function UserAreaLeft() {
   }, []);
 
   // Pagination
+  const itemsPerPage = 10; // Number of items per page
   const [itemOffset, setItemOffset] = useState(0);
-  const endOffset = itemOffset + 5;
-  const currentItems = filteredData.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(filteredData.length / 5);
+  const currentItems = filteredData.slice(
+    itemOffset,
+    itemOffset + itemsPerPage
+  );
+  const pageCount = Math.ceil(filteredData.length / itemsPerPage);
 
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * 5) % filteredData.length;
+  const handlePageClick = (selected) => {
+    const newOffset = selected * itemsPerPage;
     setItemOffset(newOffset);
   };
 

@@ -36,8 +36,6 @@ export default function UserArea() {
         console.log(error.response.data);
       });
   };
-// {console.log('totalPlayers', totalPlayers)}
-// {console.log('playersLeft', playersLeft)}
   const getParents = async () => {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
@@ -60,7 +58,6 @@ export default function UserArea() {
           return item.name.toLowerCase().includes(search.toLowerCase());
         })
       );
-
     }
   }, [search, data]);
 
@@ -70,25 +67,25 @@ export default function UserArea() {
   }, []);
 
   // Pagination
+  const itemsPerPage = 10; // Number of items per page
   const [itemOffset, setItemOffset] = useState(0);
-  const endOffset = itemOffset + 5;
-  const currentItems = filteredData.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(filteredData.length / 5);
+  const currentItems = filteredData.slice(
+    itemOffset,
+    itemOffset + itemsPerPage
+  );
+  const pageCount = Math.ceil(filteredData.length / itemsPerPage);
 
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * 5) % filteredData.length;
+  const handlePageClick = (selected) => {
+    const newOffset = selected * itemsPerPage;
     setItemOffset(newOffset);
   };
 
   // Remove Player
   const removePlayer = async (id) => {
     await axios
-      .put(
-        `${process.env.REACT_APP_API}/users/updateUser/${id}`,
-        {
-          dateleft: new Date(),
-        }
-      )
+      .put(`${process.env.REACT_APP_API}/users/updateUser/${id}`, {
+        dateleft: new Date(),
+      })
       .then((res) => {
         message.success("Player Removed Successfully");
         getData();
@@ -108,9 +105,7 @@ export default function UserArea() {
 
   const getPlayersLeft = async () => {
     await axios
-      .get(
-        `${process.env.REACT_APP_API}/users/GetLeftPlayers`
-      )
+      .get(`${process.env.REACT_APP_API}/users/GetLeftPlayers`)
       .then((res) => {
         console.log(res?.data?.data);
         setPlayersLeftData(res?.data?.data);
@@ -206,7 +201,6 @@ export default function UserArea() {
               <div className="flex-1 mt-8 ml-3">
                 <h1 className="text-3xl font-bold font-lexend">
                   {totalPlayers}
-                  
                 </h1>
                 <h3 className="text-text-lg font-lexend">Total Players</h3>
               </div>
@@ -266,96 +260,121 @@ export default function UserArea() {
 
         {/* Table Of user  */}
         <div className="overflow-x-auto   font-lexend relative mx-10 my-5 font-dm rounded-xl">
-        <table className="font-dm w-full text-sm text-left text-white bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0">
-  <thead className="font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
-    <tr className="text-center font-DM-sans" onClick={() => setopenAddsubcatmodal(false)}>
-      <th scope="col" className="py-3 pl-3">
-        Id
-      </th>
-      <th scope="col" className="py-3 justify-start">
-        User
-      </th>
-      <th scope="col" className="py-3 pl-2 text-left">
-        Email
-      </th>
-      <th scope="col" className="py-3 pl-2">
-        Phone
-      </th>
-      <th scope="col" className="py-3 pl-2">
-        Date Joined
-      </th>
-      <th scope="col" className="py-3 pl-2">
-        Son of
-      </th>
-      <th scope="col" className="py-3 px-3 ">
-        Action
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {filteredData.length > 0 ? (
-      filteredData
-        .map((object, index) => {
-          const parents = parent.find((parent) => parent.refOfPlayer === object._id);
+          <table className="font-dm w-full text-sm text-left text-white bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0">
+            <thead className="font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
+              <tr
+                className="text-center font-DM-sans"
+                onClick={() => setopenAddsubcatmodal(false)}
+              >
+                <th scope="col" className="py-3 pl-3">
+                  Id
+                </th>
+                <th scope="col" className="py-3 justify-start">
+                  User
+                </th>
+                <th scope="col" className="py-3 pl-2 text-left">
+                  Email
+                </th>
+                <th scope="col" className="py-3 pl-2">
+                  Phone
+                </th>
+                <th scope="col" className="py-3 pl-2">
+                  Date Joined
+                </th>
+                <th scope="col" className="py-3 pl-2">
+                  Son of
+                </th>
+                <th scope="col" className="py-3 px-3 ">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((object, index) => {
+                  const parents = parent.find(
+                    (parent) => parent.refOfPlayer === object._id
+                  );
 
-          return (
-            <tr className="font-dm border-[#7E7E7E] border-b text-center" key={object._id}>
-              <th scope="row" className="py-4 font-medium whitespace-nowrap text-white" onClick={() => setopenAddsubcatmodal(false)}>
-                #{index + 1}
-              </th>
-              <td className="py-4 ">
-                <div className="flex gap-4 items-center justify-left font-lexend" style={{ marginLeft: "15rem" }}>
-                  <img className="w-10 h-10 rounded-full" src={object.image} alt={object.name} />
-                  <p className="font-medium font-lexend">{object.name}</p>
-                </div>
-              </td>
-              <td className="py-4 text-left font-lexend">
-                {object.email}
-              </td>
-              <td className="py-4 font-lexend">
-                {object.phone}
-              </td>
-              <td className="py-4 font-lexend">
-                {object.datedjoined.split("T")[0]}
-              </td>
-              <td className="py-4 font-lexend">
-                {parents ? <>{parents?.name}</> : <>-</>}
-              </td>
-              <td>
-                <div className="flex pl-3 gap-3 justify-center">
-                  <NavLink to={{ pathname: "/userarea/playerprofile/profile" }} state={object}>
-                    <EyeOutlined />
-                  </NavLink>
-                  <div className="">
-                    <Popconfirm
-                      title="Remove the Player"
-                      description="Are you sure to remove this player?"
-                      okText="Yes"
-                      cancelText="No"
-                      onConfirm={() => removePlayer(object._id)}
-                      onCancel={cancel}
-                      okButtonProps={{ style: { backgroundColor: "#FF0000" } }}
+                  return (
+                    <tr
+                      className="font-dm border-[#7E7E7E] border-b text-center"
+                      key={object._id}
                     >
-                      <DeleteOutlined color="error" />
-                    </Popconfirm>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          );
-        })
-    ) : (
-      <tr>
-        <td className="flex justify-center mt-3 w-full h-96" colSpan="7">
-          <p className="text-[#818181] font-dm font-normal text-lg">
-            Loading ...
-          </p>
-        </td>
-      </tr>
-    )}
-  </tbody>
-</table>
-
+                      <th
+                        scope="row"
+                        className="py-4 font-medium whitespace-nowrap text-white"
+                        onClick={() => setopenAddsubcatmodal(false)}
+                      >
+                        #{index + 1 + itemOffset}
+                      </th>
+                      <td className="py-4 ">
+                        <div
+                          className="flex gap-4 items-center justify-left font-lexend"
+                          style={{ marginLeft: "15rem" }}
+                        >
+                          <img
+                            className="w-10 h-10 rounded-full"
+                            src={object.image}
+                            alt={object.name}
+                          />
+                          <p className="font-medium font-lexend">
+                            {object.name}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="py-4 text-left font-lexend">
+                        {object.email}
+                      </td>
+                      <td className="py-4 font-lexend">{object.phone}</td>
+                      <td className="py-4 font-lexend">
+                        {object.datedjoined.split("T")[0]}
+                      </td>
+                      <td className="py-4 font-lexend">
+                        {parents ? <>{parents?.name}</> : <>-</>}
+                      </td>
+                      <td>
+                        <div className="flex pl-3 gap-3 justify-center">
+                          <NavLink
+                            to={{ pathname: "/userarea/playerprofile/profile" }}
+                            state={object}
+                          >
+                            <EyeOutlined />
+                          </NavLink>
+                          <div className="">
+                            <Popconfirm
+                              title="Remove the Player"
+                              description="Are you sure to remove this player?"
+                              okText="Yes"
+                              cancelText="No"
+                              onConfirm={() => removePlayer(object._id)}
+                              onCancel={cancel}
+                              okButtonProps={{
+                                style: { backgroundColor: "#FF0000" },
+                              }}
+                            >
+                              <DeleteOutlined color="error" />
+                            </Popconfirm>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    className="flex justify-center mt-3 w-full h-96"
+                    colSpan="7"
+                  >
+                    <p className="text-[#818181] font-dm font-normal text-lg">
+                      Loading ...
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
         {/* pagination */}
@@ -373,7 +392,7 @@ export default function UserArea() {
                 style={{ fontSize: 28, width: 150 }}
               />
             }
-            onPageChange={handlePageClick}
+            onPageChange={({ selected }) => handlePageClick(selected)}
             pageCount={pageCount}
             pageClassName={"item pagination-page "}
             pageRangeDisplayed={5}

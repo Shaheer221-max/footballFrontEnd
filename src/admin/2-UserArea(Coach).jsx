@@ -214,7 +214,7 @@ export default function UserAreaCoach() {
                       className="py-4 font-medium whitespace-nowrap text-white"
                       onClick={() => setopenAddsubcatmodal(false)}
                     >
-                      #{index + 1}
+                      #{itemOffset + 1+ index}
                     </th>
                     <td className="py-4 ">
                       <div
