@@ -13,7 +13,7 @@ export default function NewsFeed() {
     <>
       <div className="flex-col w-full ">
         <Header title={"News Feed"} />
-        <div className="flex h-screen">
+        <div className="flex h-[calc(100vh-95px)] overflow-y-auto">
           <div className="w-2/4 mt-8 ml-8 ">
             <RecentActivityies />
           </div>
@@ -21,7 +21,7 @@ export default function NewsFeed() {
           <div className=" w-full overflow-y-scroll scrollbar mt-10">
             <TimelinePost newsfeed={true} />
           </div>
-          <div className=" mr-8 w-4/12 mt-8 ml-8">
+          <div className=" mr-8 w-4/12 mt-8 ml-8 h-[calc(100vh-95px)] overflow-y-auto">
             <MoreProfiles />
             <CoachGroupList />
           </div>

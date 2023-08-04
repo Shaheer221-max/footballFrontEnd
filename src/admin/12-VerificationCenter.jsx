@@ -196,6 +196,7 @@ export default function VerificationCenter() {
       <div className="flex-col w-full">
         {/* Page Header */}
         <Header title={"Verification Center"} />
+        <div className="h-[calc(100vh-95px)] overflow-y-auto">
         <p className="text-white text-20 font-medium ml-9 mt-[32px]">
           Approvals
         </p>
@@ -545,7 +546,8 @@ export default function VerificationCenter() {
           <h4 className="self-center text-xl font-normal whitespace-nowrap text-white mx-4 my-5 ">
             out of {totalPages}
           </h4>
-        </div>
+          </div>
+          </div>
       </div>
     </>
   );

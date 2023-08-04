@@ -295,19 +295,19 @@ const [image, setImage] = useState("");
             Create New Chat Group
           </button>
         </div>
-        <div className="flex divide-x divide-[#7e7e7e] h-screen mb-10">
+        <div className="flex divide-x divide-[#7e7e7e] h-[calc(100vh-115px)] overflow-y-auto">
         {/* Left side-bar details */}
-        <div className="w-1/4 ml-8 mr-3">
+        <div className="w-[40%] ml-8">
           <RecentChats />
         </div>
 
         {/* Main ChatBox */}
-        <div className="w-2/4">
+        <div className="w-full">
           <GroupChatBox id={params.id} />
         </div>
 
         {/* Chat Parental Profile */}
-        <div className="w-1/4 ml-3 mr-10 mb-4">
+        <div className="mb-4">
           <ChatParentalProfile />
         </div>
       </div>

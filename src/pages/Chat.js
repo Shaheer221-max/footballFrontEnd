@@ -298,19 +298,19 @@ export default function Chat() {
           </button>
         </div>
 
-        <div className="flex   divide-x divide-[#7e7e7e] mb-10">
+        <div className="flex   divide-x divide-[#7e7e7e] h-[calc(100vh-115px)] overflow-y-auto">
           {/* left side-bar details  */}
-          <div className="w-2/5 ml-8 mr-3">
+          <div className="w-[40%] ml-8">
             <RecentChats refresh={refresh} />
           </div>
 
           {/* center Post */}
 
-          <div className=" w-full mb-5">
+          <div className="w-full mb-5">
             <ChatBox id={params.id} />
           </div>
 
-          <div className="  mr-10 mb-4  w-1/4">
+          <div className="mb-4">
             <ChatParentalProfile />
           </div>
         </div>

@@ -17,20 +17,20 @@ export default function Selectedgroup() {
     <div className="flex-col w-full h-screen">
       {/* Page Header */}
       <Header title={location.state.val.title} />
-      <div className="flex h-full">
+      <div className="flex flex-grow h-[calc(100vh-95px)] overflow-y-auto mx-4">
         {/* left side-bar details */}
-        <div className="w-1/4 ml-6 mt-10 mr-2">
+        <div className="w-1/2 mt-8">
           <GroupMembers data={location.state} />
         </div>
 
         {/* center Post */}
-        <div className="w-full scrollbar mt-10">
+        <div className="w-full scrollbar mt-10 h-[calc(100vh-95px)] overflow-y-auto">
           {/* <UploadGroupPost newsfeed={location.state} /> */}
           <GroupTimeline newsfeed={false} data={location.state} />
         </div>
 
         {/* right side-bar parent profile */}
-        <div className="mr-8 w-1/4 mt-10 pl-8">
+        <div className="w-[55%] mt-8 ml-8 h-[calc(100vh-95px)] overflow-y-auto">
           <MoreProfiles />
           <GroupList />
         </div>

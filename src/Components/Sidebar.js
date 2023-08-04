@@ -8,7 +8,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <div className="w-28 bg-[#212121]">
+      <div className="w-28 bg-[#212121] h-screen overflow-y-scroll">
         <div className=" py-4 px-3 flex justify-center  h-screen ">
           <ul className="space-y-[18.5px] ">
             <li onClick={() => setdrop(false)}>

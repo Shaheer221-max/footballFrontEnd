@@ -369,7 +369,7 @@ export default function Chat() {
             Create New Chat Group
           </button>
         </div>
-        <div className="flex   divide-x divide-[#7e7e7e] mb-10">
+        <div className="flex   divide-x divide-[#7e7e7e] h-[calc(100vh-115px)] overflow-y-auto">
           {/* left side-bar details  */}
           <div className="w-2/5 ml-8 mr-3">
             <RecentChats

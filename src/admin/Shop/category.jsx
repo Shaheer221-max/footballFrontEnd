@@ -8,10 +8,7 @@ import { AuthContext } from "../ActiveUser";
 import { Dropdown, message, Modal } from "antd";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import {
-    DeleteOutlined,
-    EditOutlined
-  } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import Spinner from "../Spinner";
 
 export default function Category() {
@@ -84,10 +81,7 @@ export default function Category() {
   const deleteGroup = async () => {
     console.log(groupId);
     await axios
-      .delete(
-        `${process.env.REACT_APP_API}/group/DeleteGroup/` +
-          groupId
-      )
+      .delete(`${process.env.REACT_APP_API}/group/DeleteGroup/` + groupId)
       .then((res) => {
         message.success("Group Deleted Successfully");
         console.log(res.data);
@@ -100,59 +94,59 @@ export default function Category() {
   };
 
   const category = async (id) => {
-    setRefresh(true)
+    setRefresh(true);
     await axios
-        .post(`${process.env.REACT_APP_API}/itemcategory/CreateItemCategory/`, {name: categories})
-        .then((res) => {
-          message.success("Category Added Successfully");
-            console.log(res.data.data);
-            setActiveGroup(res.data.data);
-            setNewFolder(false);  
-            setRefresh(false)  
-        }
-        )
-        .catch((error) => {
-          message.error("Category Already Exists");
-            console.log(error.response.data);
-        }
-        );
-};
+      .post(`${process.env.REACT_APP_API}/itemcategory/CreateItemCategory/`, {
+        name: categories,
+      })
+      .then((res) => {
+        message.success("Category Added Successfully");
+        console.log(res.data.data);
+        setActiveGroup(res.data.data);
+        setNewFolder(false);
+        setRefresh(false);
+      })
+      .catch((error) => {
+        message.error("Category Already Exists");
+        console.log(error.response.data);
+      });
+  };
 
-const category1 = async () => {
-  setRefresh(true)
+  const category1 = async () => {
+    setRefresh(true);
     await axios
-        .put(`${process.env.REACT_APP_API}/itemcategory/UpdateItemCategory/${categoryid}`, {name: categories})
-        .then((res) => {
-          message.success("Category Updated Successfully");
-            console.log(res.data.data);
-            setActiveGroup(res.data.data);
-            setNewFolder1(false);   
-           setRefresh(false)
-        }
-        )
-        .catch((error) => {
-            console.log(error.response.data);
-        }
-        );
-};
+      .put(
+        `${process.env.REACT_APP_API}/itemcategory/UpdateItemCategory/${categoryid}`,
+        { name: categories }
+      )
+      .then((res) => {
+        message.success("Category Updated Successfully");
+        console.log(res.data.data);
+        setActiveGroup(res.data.data);
+        setNewFolder1(false);
+        setRefresh(false);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
 
-const deletecategory = async (id) => {
-  setRefresh(true)
+  const deletecategory = async (id) => {
+    setRefresh(true);
     await axios
-        .delete(`${process.env.REACT_APP_API}/itemcategory/DeleteItemCategory/${id}`)
-        .then((res) => {
-          message.success("Category Deleted Successfully");
-            console.log(res.data.data);
-            setRefresh(false)
-        }
-        )
-        .catch((error) => {
-          message.error("Category Already Exists");
-            console.log(error.response.data);
-        }
-        );
-};
-
+      .delete(
+        `${process.env.REACT_APP_API}/itemcategory/DeleteItemCategory/${id}`
+      )
+      .then((res) => {
+        message.success("Category Deleted Successfully");
+        console.log(res.data.data);
+        setRefresh(false);
+      })
+      .catch((error) => {
+        message.error("Category Already Exists");
+        console.log(error.response.data);
+      });
+  };
 
   return (
     <>
@@ -171,89 +165,97 @@ const deletecategory = async (id) => {
         {/* Page Header */}
         <Header title={"Categories"} />
         {/* Title Of the Page */}
-        <div className="flex items-center justify-between mt-[32px]  mr-10">
-          <h4 className="self-center text-xl font-medium text-white font-lexend whitespace-nowrap  ml-9 ">
-            All Categories
-          </h4>
-        </div>
-        <div className="flex">
-          <div className="flex-1 grow-1">
-            {/* search button */}
-            <form className="flex items-center w-1/2 ml-9 mt-4">
-              <div className="relative w-full font-dm">
-                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                  <svg
-                    aria-hidden="true"
-                    className="w-5 h-5 text-gray-500 "
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  className="bg-[#212121]  text-white  text-sm rounded-lg block w-full pl-10 p-2.5   border-gray-600 placeholder-gray-400  focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Search Items"
-                  required=""
-                    onChange={handleGroupChange}
-                />
-              </div>
-              <NavLink to="/allItems">
-                <button
-                  type="submit"
-                  className="inline-flex font-dm items-center font-lexend py-2 px-5 ml-4 text-sm font-normal text-white bg-green-500 rounded-[4px] "
-                  //   onClick={searchInItem}
-                >
-                  Search
-                </button>
-              </NavLink>
-            </form>
+        <div className="h-[calc(100vh-95px)] overflow-y-auto">
+          <div className="flex items-center justify-between mt-[32px]  mr-10">
+            <h4 className="self-center text-xl font-medium text-white font-lexend whitespace-nowrap  ml-9 ">
+              All Categories
+            </h4>
           </div>
+          <div className="flex">
+            <div className="flex-1 grow-1">
+              {/* search button */}
+              <form className="flex items-center w-1/2 ml-9 mt-4">
+                <div className="relative w-full font-dm">
+                  <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                    <svg
+                      aria-hidden="true"
+                      className="w-5 h-5 text-gray-500 "
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    className="bg-[#212121]  text-white  text-sm rounded-lg block w-full pl-10 p-2.5   border-gray-600 placeholder-gray-400  focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Search Items"
+                    required=""
+                    onChange={handleGroupChange}
+                  />
+                </div>
+                <NavLink to="/allItems">
+                  <button
+                    type="submit"
+                    className="inline-flex font-dm items-center font-lexend py-2 px-5 ml-4 text-sm font-normal text-white bg-green-500 rounded-[4px] "
+                    //   onClick={searchInItem}
+                  >
+                    Search
+                  </button>
+                </NavLink>
+              </form>
+            </div>
 
-          <div className="flex-1 grow-0 mt-2 mr-8">
-            
+            <div className="flex-1 grow-0 mt-2 mr-8">
               <button
-              onClick={() => {
-                setNewFolder(true);
-              }}
+                onClick={() => {
+                  setNewFolder(true);
+                }}
                 type="submit"
                 className=" font-dm items-center w-40 py-2  ml-4 text-sm font-normal text-white bg-green-500 rounded-[4px] "
               >
                 Add Category
               </button>
+            </div>
           </div>
-        </div>
-        {/* Group Cards */}
-        <div className="mb-9 mt-12 mx-9 font-sans grid lg:grid-cols-4 2xl:grid-cols-5 gap-5 ">
-          {/* checking if searched */}
-          {staticdataCopy.length > 0 || groups.length > 0 ? staticdataCopy?.length > 0 ? (
-            <>
-              {staticdataCopy.map((val, ind) => (
+          {/* Group Cards */}
+          <div className="mb-9 mt-12 mx-9 font-sans grid lg:grid-cols-4 2xl:grid-cols-5 gap-5 ">
+            {/* checking if searched */}
+            {staticdataCopy.length > 0 || groups.length > 0 ? (
+              staticdataCopy?.length > 0 ? (
                 <>
-                  <div className=" font-dm p-3 mb-6 max-w-xs bg-[#212121] rounded-lg h-30">
-                    <div className="">
-                      <div>
-                        <div className="flex justify-between align-middle">
-                        <h5 className="mb-2 font-dm text-lg font-normal tracking-tight text-white">
-                          {val.name}
-                        </h5>
-                        <div>
-                        <DeleteOutlined onClick={() => {
-                            deletecategory(val.id)
-                            }} className="text-green-500 mr-2" />
-                        <EditOutlined onClick={() => {
-                            setCategoryid(val.id);
-                            setNewFolder1(true)}} className="text-green-500" />
-                        </div>
-                        </div>
+                  {staticdataCopy.map((val, ind) => (
+                    <>
+                      <div className=" font-dm p-3 mb-6 max-w-xs bg-[#212121] rounded-lg h-30">
+                        <div className="">
+                          <div>
+                            <div className="flex justify-between align-middle">
+                              <h5 className="mb-2 font-dm text-lg font-normal tracking-tight text-white">
+                                {val.name}
+                              </h5>
+                              <div>
+                                <DeleteOutlined
+                                  onClick={() => {
+                                    deletecategory(val.id);
+                                  }}
+                                  className="text-green-500 mr-2"
+                                />
+                                <EditOutlined
+                                  onClick={() => {
+                                    setCategoryid(val.id);
+                                    setNewFolder1(true);
+                                  }}
+                                  className="text-green-500"
+                                />
+                              </div>
+                            </div>
 
-                        {/* <div className="flex items-center gap-3">
+                            {/* <div className="flex items-center gap-3">
                           <button
                             type="submit"
                             className=" font-dm items-center w-40 py-1 mt-2 text-sm font-normal text-white bg-blue-500 rounded-[4px] "
@@ -261,35 +263,42 @@ const deletecategory = async (id) => {
                             View All Variants
                           </button>
                         </div> */}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </>
+                  ))}
                 </>
-              ))}
-            </>
-          ) : (
-            // if group searched
-            <>
-              {groups.map((val, ind) => (
+              ) : (
+                // if group searched
                 <>
-                  <div className=" font-dm p-3 mb-6 max-w-xs bg-[#212121] rounded-lg h-30">
-                    <div className="">
-                      <div>
-                        <div className="flex justify-between align-middle">
-                        <h5 className="mb-2 font-dm text-lg font-normal tracking-tight text-white">
-                          {val.name}
-                        </h5>
-                        <div>
-                        <DeleteOutlined onClick={() => {
-                            deletecategory(val.id)
-                            }} className="text-green-500 mr-2" />
-                        <EditOutlined onClick={() => {
-                            setCategoryid(val.id);
-                            setNewFolder1(true)}} className="text-green-500" />
-                        </div>
-                        </div>
+                  {groups.map((val, ind) => (
+                    <>
+                      <div className=" font-dm p-3 mb-6 max-w-xs bg-[#212121] rounded-lg h-30">
+                        <div className="">
+                          <div>
+                            <div className="flex justify-between align-middle">
+                              <h5 className="mb-2 font-dm text-lg font-normal tracking-tight text-white">
+                                {val.name}
+                              </h5>
+                              <div>
+                                <DeleteOutlined
+                                  onClick={() => {
+                                    deletecategory(val.id);
+                                  }}
+                                  className="text-green-500 mr-2"
+                                />
+                                <EditOutlined
+                                  onClick={() => {
+                                    setCategoryid(val.id);
+                                    setNewFolder1(true);
+                                  }}
+                                  className="text-green-500"
+                                />
+                              </div>
+                            </div>
 
-                        {/* <div className="flex items-center gap-3">
+                            {/* <div className="flex items-center gap-3">
                           <button
                             type="submit"
                             className=" font-dm items-center w-40 py-1 mt-2 text-sm font-normal text-white bg-blue-500 rounded-[4px] "
@@ -297,13 +306,17 @@ const deletecategory = async (id) => {
                             View All Variants
                           </button>
                         </div> */}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </>
+                  ))}
                 </>
-              ))}
-            </>
-          ): <Spinner />}
+              )
+            ) : (
+              <Spinner />
+            )}
+          </div>
         </div>
       </div>
 
@@ -363,8 +376,6 @@ const deletecategory = async (id) => {
           </div>
         </div>
       </div>
-
-
 
       <div
         id="defaultModal"

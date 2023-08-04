@@ -17,20 +17,20 @@ export default function NewsFeed() {
       <div className="flex-col w-full h-screen">
         {/* Page Header */}
         <Header title={"News Feed"} />
-        <div className="flex flex-grow">
+        <div className="flex flex-grow h-[calc(100vh-95px)] overflow-y-auto mx-4">
           {/* left side-bar details */}
-          <div className="w-3/4 mt-8 ml-8">
+          <div className="w-1/2 mt-8">
             <RecentActivityies />
           </div>
 
           {/* center Post */}
-          <div className="w-full scrollbar mt-10">
+          <div className="w-full scrollbar mt-10 h-[calc(100vh-95px)] overflow-y-auto">
             {/* <UploadPostOntimeline newsfeed={true} name={name} image={pic} /> */}
             <TimelinePost newsfeed={true} />
           </div>
 
           {/* right side-bar parent profile */}
-          <div className="mr-8 w-3/4 mt-8 ml-8">
+          <div className="w-[55%] mt-8 ml-8 h-[calc(100vh-95px)] overflow-y-auto">
             <MoreProfiles />
             <GroupList />
           </div>

@@ -124,7 +124,7 @@ const labels = [
         {/* Page Header */}
         <Header title={"Dashboard"}  />
 
-        <div className="flex  divide-x xl:w-full ">
+        <div className="flex  divide-x xl:w-full h-[calc(100vh-95px)] overflow-y-auto">
           {/* Upload Of user  */}
           <div className="w-full pr-12">
             <h3 className="text-xl font-medium text-white font-lexend whitespace-nowrap  ml-9 mt-[32px]"> Analytics</h3>

@@ -123,26 +123,22 @@ export default function Dashboard() {
     if (date === "" || title === "" || description === "") {
       message.error("Please fill all fields");
       return;
-    }
-    else {
-    await axios
-      .post(
-        `${process.env.REACT_APP_API}/event/CreateOffday`,
-        {
+    } else {
+      await axios
+        .post(`${process.env.REACT_APP_API}/event/CreateOffday`, {
           date: date,
-        }
-      )
-      .then((res) => {
-        message.success("Offday Added");
-        console.log(res.data);
-        setevent(false);
-        setschedule(false);
-      })
-      .catch((error) => {
-        message.error("Offday Not Added");
-        setError(error.response.data);
-        console.log(error.response.data);
-      });
+        })
+        .then((res) => {
+          message.success("Offday Added");
+          console.log(res.data);
+          setevent(false);
+          setschedule(false);
+        })
+        .catch((error) => {
+          message.error("Offday Not Added");
+          setError(error.response.data);
+          console.log(error.response.data);
+        });
     }
   };
 
@@ -194,15 +190,12 @@ export default function Dashboard() {
     }
     console.log(date);
     await axios
-      .post(
-        `${process.env.REACT_APP_API}/event/CreateEvent`,
-        {
-          // date: `${day}-${month}-${yearr}`,
-          date: date,
-          title: title,
-          description: description,
-        }
-      )
+      .post(`${process.env.REACT_APP_API}/event/CreateEvent`, {
+        // date: `${day}-${month}-${yearr}`,
+        date: date,
+        title: title,
+        description: description,
+      })
       .then((res) => {
         message.success("Event Added");
         setRefresh(true);
@@ -231,9 +224,7 @@ export default function Dashboard() {
   const deleteSchedule = async (id) => {
     setRefresh(false);
     await axios
-      .delete(
-        `${process.env.REACT_APP_API}/event/DeleteEvent/${id}`
-      )
+      .delete(`${process.env.REACT_APP_API}/event/DeleteEvent/${id}`)
       .then((res) => {
         message.success("Event Deleted");
         setRefresh(true);
@@ -287,9 +278,7 @@ export default function Dashboard() {
   const [topProspect, setTopProspect] = useState([]);
   const getTopProspect = async () => {
     await axios
-      .get(
-        `${process.env.REACT_APP_API}/evaluation/GetTopProspects`
-      )
+      .get(`${process.env.REACT_APP_API}/evaluation/GetTopProspects`)
       .then((res) => {
         console.log(res.data.data);
         setTopProspect(res.data.data);
@@ -307,83 +296,84 @@ export default function Dashboard() {
   return (
     <>
       {contextHolder}
-      <div className="flex-col w-full  ">
+      <div className="flex-col w-full">
         {/* Page Header */}
         <Header title={"Dashboard"} />
+        <div className="h-[calc(100vh-95px)] overflow-y-auto">
+          <div className="flex m-9">
+            <div className="w-full " style={{ width: "100%" }}>
+              {/* calender */}
+              <h4 className="self-center  text-xl font-medium whitespace-nowrap   mb-9 text-white font-lexend">
+                Calendar
+              </h4>
+              <div>
+                <Calendar
+                  className="bg-gray-400 text-red-500"
+                  calendarType="Arabic"
+                  onChange={onChange}
+                  value={date}
+                  minDate={new Date()}
+                  tileClassName={tileClassName}
+                />
+              </div>
+              {/* Cards Upcoming schedule */}
+              <h4 className="self-center lexend text-white text-xl font-semibold whitespace-nowrap mt-10 mb-9 ">
+                Upcoming Schedule
+              </h4>
+              <div className="grid grid-cols-2 gap-4 pr-4 lg:mt-[36px] ">
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  <MenuItem onClick={deleteSchedule}>Delete Schedule</MenuItem>
+                </Menu>  
 
-        <div className="flex m-9">
-          <div className="w-full " style={{ width: "100%" }}>
-            {/* calender */}
-            <h4 className="self-center  text-xl font-medium whitespace-nowrap   mb-9 text-white font-lexend">
-              Calendar
-            </h4>
-            <div>
-              <Calendar
-                className="bg-gray-400 text-red-500"
-                calendarType="Arabic"
-                onChange={onChange}
-                value={date}
-                minDate={new Date()}
-                tileClassName={tileClassName}
-              />
-            </div>
-            {/* Cards Upcoming schedule */}
-            <h4 className="self-center lexend text-white text-xl font-semibold whitespace-nowrap mt-10 mb-9 ">
-              Upcoming Schedule
-            </h4>
-            <div className="grid grid-cols-2 gap-4 pr-4 lg:mt-[36px] ">
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                <MenuItem onClick={deleteSchedule}>Delete Schedule</MenuItem>
-              </Menu>
-              {getEvents.length > 0 ? (
-                getEvents?.map((val, ind) => (
-                  <div
-                    key={ind}
-                    className="schedule flex py-1 pr-[0px] w-full h-full  rounded-xl relative  shadow-md bg-gray-800 "
-                    style={{ width: "100%" }}
-                  >
-                    <div className=" border-4 rounded-r-full  border-green-500 mr-5 my-4"></div>
-                    <div>
-                      <h5 className="mb-2 mt-3 text-[16px] leading-5 lexend font-normal text-white">
-                        {val.title}
-                      </h5>
+                {getEvents.length > 0 ? (
+                  getEvents?.map((val, ind) => (
+                    <div
+                      key={ind}
+                      className="schedule flex py-1 pr-[0px] w-full h-full  rounded-xl relative  shadow-md bg-gray-800 "
+                      style={{ width: "100%" }}
+                    >
+                      <div className=" border-4 rounded-r-full  border-green-500 mr-5 my-4"></div>
+                      <div>
+                        <h5 className="mb-2 mt-3 text-[16px] leading-5 lexend font-normal text-white">
+                          {val.title}
+                        </h5>
 
-                      <p className="lexend text-white mt-2 mb-3 font-light text-sm ">
-                        {val.description}
-                      </p>
-                      <div className="flex mb-4 gap-36 items-center mt-2">
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <svg
-                            width="20px"
-                            height="20px"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
+                        <p className="lexend text-white mt-2 mb-3 font-light text-sm ">
+                          {val.description}
+                        </p>
+                        <div className="flex mb-4 gap-36 items-center mt-2">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
                           >
-                            <path
-                              d="M17 2H16V1C16 0.4 15.6 0 15 0C14.4 0 14 0.4 14 1V2H6V1C6 0.4 5.6 0 5 0C4.4 0 4 0.4 4 1V2H3C1.3 2 0 3.3 0 5V6H20V5C20 3.3 18.7 2 17 2ZM0 17C0 18.7 1.3 20 3 20H17C18.7 20 20 18.7 20 17V8H0V17ZM15 10C15.6 10 16 10.4 16 11C16 11.6 15.6 12 15 12C14.4 12 14 11.6 14 11C14 10.4 14.4 10 15 10ZM15 14C15.6 14 16 14.4 16 15C16 15.6 15.6 16 15 16C14.4 16 14 15.6 14 15C14 14.4 14.4 14 15 14ZM10 10C10.6 10 11 10.4 11 11C11 11.6 10.6 12 10 12C9.4 12 9 11.6 9 11C9 10.4 9.4 10 10 10ZM10 14C10.6 14 11 14.4 11 15C11 15.6 10.6 16 10 16C9.4 16 9 15.6 9 15C9 14.4 9.4 14 10 14ZM5 10C5.6 10 6 10.4 6 11C6 11.6 5.6 12 5 12C4.4 12 4 11.6 4 11C4 10.4 4.4 10 5 10ZM5 14C5.6 14 6 14.4 6 15C6 15.6 5.6 16 5 16C4.4 16 4 15.6 4 15C4 14.4 4.4 14 5 14Z"
-                              fill="#1DB954"
-                            />
-                          </svg>
-                          <p className="text-[15px] leading-5 lexend  font-light ml-3   text-gray-400">
-                            {val.date.split("T")[0]}
-                          </p>
-                        </div>
-                        {/* <Dropdown
+                            <svg
+                              width="20px"
+                              height="20px"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M17 2H16V1C16 0.4 15.6 0 15 0C14.4 0 14 0.4 14 1V2H6V1C6 0.4 5.6 0 5 0C4.4 0 4 0.4 4 1V2H3C1.3 2 0 3.3 0 5V6H20V5C20 3.3 18.7 2 17 2ZM0 17C0 18.7 1.3 20 3 20H17C18.7 20 20 18.7 20 17V8H0V17ZM15 10C15.6 10 16 10.4 16 11C16 11.6 15.6 12 15 12C14.4 12 14 11.6 14 11C14 10.4 14.4 10 15 10ZM15 14C15.6 14 16 14.4 16 15C16 15.6 15.6 16 15 16C14.4 16 14 15.6 14 15C14 14.4 14.4 14 15 14ZM10 10C10.6 10 11 10.4 11 11C11 11.6 10.6 12 10 12C9.4 12 9 11.6 9 11C9 10.4 9.4 10 10 10ZM10 14C10.6 14 11 14.4 11 15C11 15.6 10.6 16 10 16C9.4 16 9 15.6 9 15C9 14.4 9.4 14 10 14ZM5 10C5.6 10 6 10.4 6 11C6 11.6 5.6 12 5 12C4.4 12 4 11.6 4 11C4 10.4 4.4 10 5 10ZM5 14C5.6 14 6 14.4 6 15C6 15.6 5.6 16 5 16C4.4 16 4 15.6 4 15C4 14.4 4.4 14 5 14Z"
+                                fill="#1DB954"
+                              />
+                            </svg>
+                            <p className="text-[15px] leading-5 lexend  font-light ml-3   text-gray-400">
+                              {val.date.split("T")[0]}
+                            </p>
+                          </div>
+                          {/* <Dropdown
                         menu={{
                           items,
                         }}
@@ -412,55 +402,55 @@ export default function Dashboard() {
                         </button>
                       </Dropdown> */}
 
-                        <Popconfirm
-                          title="Delete Schedule"
-                          description="Are you sure to delete this Schedule?"
-                          okText="Yes"
-                          cancelText="No"
-                          onConfirm={() => deleteSchedule(val._id)}
-                          className="ml-auto absolute right-5"
-                          okButtonProps={{ className: "bg-red-500" }}
-                        >
-                          <MdDelete className="ml-auto text-2xl text-red-500 cursor-pointer" />
-                        </Popconfirm>
+                          <Popconfirm
+                            title="Delete Schedule"
+                            description="Are you sure to delete this Schedule?"
+                            okText="Yes"
+                            cancelText="No"
+                            onConfirm={() => deleteSchedule(val._id)}
+                            className="ml-auto absolute right-5"
+                            okButtonProps={{ className: "bg-red-500" }}
+                          >
+                            <MdDelete className="ml-auto text-2xl text-red-500 cursor-pointer" />
+                          </Popconfirm>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <Spinner />
-              )}
+                  ))
+                ) : (
+                  <Spinner />
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="w-full font-lexend">
-            {/* Cards Top Prospects */}
-            <h4 className="self-center text-xl font-lexend font-normal whitespace-nowrap  mb-9 text-white">
-              Top Prospects
-            </h4>
-            <div className="grid grid-cols-2 gap-3.5  ">
-              {topProspect?.map((val, ind) => {
-                return (
-                  <div
-                    key={ind}
-                    className="prospects flex p-3 max-w-sm font-lexend w-full h-full  rounded-lg border  shadow-md  bg-gray-800 border-gray-700 "
-                  >
-                    <div className="w-full">
-                      <div className="flex ">
-                        <img
-                          className=" w-12 h-12 rounded-full "
-                          src={val?.refOfPlayer?.image}
-                          alt="Bonnie image"
-                        />
-                        <div className="ml-4">
-                          <h5 className="text-xl font-medium tracking-tight  text-white font-lexend">
-                            {val.refOfPlayer?.name}
-                          </h5>
-                          <p className="text-[#7e7e7e] mt-1 text-base font-light font-lexend  ">
-                            {val?.refOfPlayer?.email}
-                          </p>
-                        </div>
-                        {/* <Dropdown
+            <div className="w-full font-lexend">
+              {/* Cards Top Prospects */}
+              <h4 className="self-center text-xl font-lexend font-normal whitespace-nowrap  mb-9 text-white">
+                Top Prospects
+              </h4>
+              <div className="grid grid-cols-2 gap-3.5  ">
+                {topProspect?.map((val, ind) => {
+                  return (
+                    <div
+                      key={ind}
+                      className="prospects flex p-3 max-w-sm font-lexend w-full h-full  rounded-lg border  shadow-md  bg-gray-800 border-gray-700 "
+                    >
+                      <div className="w-full">
+                        <div className="flex ">
+                          <img
+                            className=" w-12 h-12 rounded-full "
+                            src={val?.refOfPlayer?.image}
+                            alt="Bonnie image"
+                          />
+                          <div className="ml-4">
+                            <h5 className="text-xl font-medium tracking-tight  text-white font-lexend">
+                              {val.refOfPlayer?.name}
+                            </h5>
+                            <p className="text-[#7e7e7e] mt-1 text-base font-light font-lexend  ">
+                              {val?.refOfPlayer?.email}
+                            </p>
+                          </div>
+                          {/* <Dropdown
                           menu={{
                             items: item,
                           }}
@@ -482,9 +472,9 @@ export default function Dashboard() {
                             />
                           </svg>
                         </Dropdown> */}
-                      </div>
-                      <div className="flex gap-3 mt-9 items-center">
-                        {/* <div className="ml-2">
+                        </div>
+                        <div className="flex gap-3 mt-9 items-center">
+                          {/* <div className="ml-2">
                           <h5 className="text-sm font-light leading-5 tracking-tight text-white ">
                             Age
                           </h5>
@@ -494,7 +484,7 @@ export default function Dashboard() {
                               : "N/A"}
                           </p>
                         </div> */}
-                        {/* <div>
+                          {/* <div>
                           <h5 className="text-sm font-light leading-5 tracking-tight text-white ">
                             Position
                           </h5>
@@ -502,19 +492,20 @@ export default function Dashboard() {
                             {val?.refOfPlayer?.position}
                           </p>
                         </div> */}
-                        <div>
-                          <h5 className="text-sm font-light tracking-tight text-white ">
-                            Avg Marks
-                          </h5>
-                          <p className=" text-sm text-center font-light text-[#7e7e7e] font-lexend ">
-                            {Math.round(val?.avgScore)}
-                          </p>
+                          <div>
+                            <h5 className="text-sm font-light tracking-tight text-white ">
+                              Avg Marks
+                            </h5>
+                            <p className=" text-sm text-center font-light text-[#7e7e7e] font-lexend ">
+                              {Math.round(val?.avgScore)}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

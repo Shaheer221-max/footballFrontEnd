@@ -82,10 +82,7 @@ export default function CoachGroup() {
   const deleteGroup = async () => {
     setRefresh(true);
     await axios
-      .delete(
-        `${process.env.REACT_APP_API}/group/DeleteGroup/` +
-          groupId
-      )
+      .delete(`${process.env.REACT_APP_API}/group/DeleteGroup/` + groupId)
       .then((res) => {
         message.success("Group Deleted Successfully");
         console.log(res.data);
@@ -113,169 +110,171 @@ export default function CoachGroup() {
           <MenuItem onClick={deleteGroup}>Delete Group</MenuItem>
         </Menu>
         <Header title={"Groups"} />
-        <div className="flex items-center justify-between mt-[32px]  mr-10">
-          <h4 className="self-center text-xl font-medium text-white font-lexend whitespace-nowrap  ml-9 ">
-            All Groups
-          </h4>
-          <div className="flex">
-            <input
-              type="text"
-              onChange={handleGroupChange}
-              className="bg-[#212121]  text-white p-2.5  align-items-right text-sm rounded-lg block w-60 mr-3   border-gray-600 placeholder-gray-400  focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Search Group"
-            />
-            <div className=" space-x-4 mr-9">
-              <button
-                type="submit"
-                className="inline-flex items-center py-2.5 px-6 font-lexend  text-sm font-normal text-white bg-green-500 rounded-[4px] "
-              >
-                Search
-              </button>
-              <NavLink to={"/selectgroup/addgroups"}>
-                <a
-                  href=""
-                  className="inline-flex items-center  py-2.5 px-6  text-sm font-lexend font-normal text-black bg-white rounded-[4px] "
+        <div className="h-[calc(100vh-95px)] overflow-y-auto">
+          <div className="flex items-center justify-between mt-[32px]  mr-10">
+            <h4 className="self-center text-xl font-medium text-white font-lexend whitespace-nowrap  ml-9 ">
+              All Groups
+            </h4>
+            <div className="flex">
+              <input
+                type="text"
+                onChange={handleGroupChange}
+                className="bg-[#212121]  text-white p-2.5  align-items-right text-sm rounded-lg block w-60 mr-3   border-gray-600 placeholder-gray-400  focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search Group"
+              />
+              <div className=" space-x-4 mr-9">
+                <button
+                  type="submit"
+                  className="inline-flex items-center py-2.5 px-6 font-lexend  text-sm font-normal text-white bg-green-500 rounded-[4px] "
                 >
-                  New Group
-                </a>
-              </NavLink>
+                  Search
+                </button>
+                <NavLink to={"/selectgroup/addgroups"}>
+                  <a
+                    href=""
+                    className="inline-flex items-center  py-2.5 px-6  text-sm font-lexend font-normal text-black bg-white rounded-[4px] "
+                  >
+                    New Group
+                  </a>
+                </NavLink>
+              </div>
             </div>
           </div>
-        </div>
-        {/* Group Cards */}
-        <div className="mb-9 mt-12 mx-9 font-sans grid lg:grid-cols-4 2xl:grid-cols-5 gap-5 ">
-          {/* checking if searched */}
-          {staticdataCopy.length > 0 || groups.length > 0 ? (
-            staticdataCopy?.length > 0 ? (
-              <>
-                {staticdataCopy.map((val, ind) => (
-                  <>
-                    <div className=" font-dm p-3 mb-6 max-w-xs bg-[#212121] rounded-lg h-30">
-                      <NavLink
-                        to={{ pathname: "/selectgroup/groups" }}
-                        state={{ val }}
-                      >
-                        <div className="flex gap-4 items-center">
-                          <img
-                            src={val.image}
-                            className="rounded-lg h-20 w-20"
-                          />
-                          <div>
-                            <h5 className="mb-2 font-dm text-lg font-normal tracking-tight text-white">
-                              {val.title}
-                            </h5>
-                            <div className="flex items-center gap-3">
-                              <svg
-                                width="11"
-                                height="11"
-                                viewBox="0 0 11 11"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <circle
-                                  cx="5.5"
-                                  cy="5.5"
-                                  r="5.5"
-                                  fill="#1DB954"
-                                />
-                              </svg>
+          {/* Group Cards */}
+          <div className="mb-9 mt-12 mx-9 font-sans grid lg:grid-cols-4 2xl:grid-cols-5 gap-5 ">
+            {/* checking if searched */}
+            {staticdataCopy.length > 0 || groups.length > 0 ? (
+              staticdataCopy?.length > 0 ? (
+                <>
+                  {staticdataCopy.map((val, ind) => (
+                    <>
+                      <div className=" font-dm p-3 mb-6 max-w-xs bg-[#212121] rounded-lg h-30">
+                        <NavLink
+                          to={{ pathname: "/selectgroup/groups" }}
+                          state={{ val }}
+                        >
+                          <div className="flex gap-4 items-center">
+                            <img
+                              src={val.image}
+                              className="rounded-lg h-20 w-20"
+                            />
+                            <div>
+                              <h5 className="mb-2 font-dm text-lg font-normal tracking-tight text-white">
+                                {val.title}
+                              </h5>
+                              <div className="flex items-center gap-3">
+                                <svg
+                                  width="11"
+                                  height="11"
+                                  viewBox="0 0 11 11"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <circle
+                                    cx="5.5"
+                                    cy="5.5"
+                                    r="5.5"
+                                    fill="#1DB954"
+                                  />
+                                </svg>
 
-                              <p className="font-normal font-dm text-sm  text-gray-400">
-                                {val.Members.length} members
-                              </p>
+                                <p className="font-normal font-dm text-sm  text-gray-400">
+                                  {val.Members.length} members
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </NavLink>
-                      <div className="flex justify-end">
-                        <button
-                          onClick={(e) => {
-                            setGroupId(val._id);
-                          }}
-                        >
-                          <Popconfirm
-                            title="Delete Group"
-                            description="Are you sure to delete this Group?"
-                            okText="Yes"
-                            cancelText="No"
-                            onConfirm={() => deleteGroup()}
-                            okButtonProps={{ className: "bg-red-500" }}
+                        </NavLink>
+                        <div className="flex justify-end">
+                          <button
+                            onClick={(e) => {
+                              setGroupId(val._id);
+                            }}
                           >
-                            <MdDelete className="ml-auto text-2xl text-white cursor-pointer" />
-                          </Popconfirm>
-                        </button>
+                            <Popconfirm
+                              title="Delete Group"
+                              description="Are you sure to delete this Group?"
+                              okText="Yes"
+                              cancelText="No"
+                              onConfirm={() => deleteGroup()}
+                              okButtonProps={{ className: "bg-red-500" }}
+                            >
+                              <MdDelete className="ml-auto text-2xl text-white cursor-pointer" />
+                            </Popconfirm>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </>
-                ))}
-              </>
+                    </>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {groups.map((val, ind) => (
+                    <>
+                      <div className=" font-dm p-3 mb-6 max-w-xs bg-[#212121] rounded-lg h-30">
+                        <NavLink
+                          to={{ pathname: "/selectgroup/groups" }}
+                          state={{ val }}
+                        >
+                          <div className="flex gap-4 items-center">
+                            <img
+                              src={val.image}
+                              className="rounded-lg h-20 w-20"
+                            />
+                            <div>
+                              <h5 className="mb-2 font-dm text-lg font-normal tracking-tight text-white">
+                                {val.title}
+                              </h5>
+                              <div className="flex items-center gap-3">
+                                <svg
+                                  width="11"
+                                  height="11"
+                                  viewBox="0 0 11 11"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <circle
+                                    cx="5.5"
+                                    cy="5.5"
+                                    r="5.5"
+                                    fill="#1DB954"
+                                  />
+                                </svg>
+
+                                <p className="font-normal font-dm text-sm  text-gray-400">
+                                  {val.Members.length} members
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </NavLink>
+                        <div className="flex justify-end">
+                          <button
+                            onClick={(e) => {
+                              setGroupId(val._id);
+                            }}
+                          >
+                            <Popconfirm
+                              title="Delete Group"
+                              description="Are you sure to delete this Group?"
+                              okText="Yes"
+                              cancelText="No"
+                              onConfirm={() => deleteGroup()}
+                              okButtonProps={{ className: "bg-red-500" }}
+                            >
+                              <MdDelete className="ml-auto text-2xl text-white cursor-pointer" />
+                            </Popconfirm>
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ))}
+                </>
+              )
             ) : (
-              <>
-                {groups.map((val, ind) => (
-                  <>
-                    <div className=" font-dm p-3 mb-6 max-w-xs bg-[#212121] rounded-lg h-30">
-                      <NavLink
-                        to={{ pathname: "/selectgroup/groups" }}
-                        state={{ val }}
-                      >
-                        <div className="flex gap-4 items-center">
-                          <img
-                            src={val.image}
-                            className="rounded-lg h-20 w-20"
-                          />
-                          <div>
-                            <h5 className="mb-2 font-dm text-lg font-normal tracking-tight text-white">
-                              {val.title}
-                            </h5>
-                            <div className="flex items-center gap-3">
-                              <svg
-                                width="11"
-                                height="11"
-                                viewBox="0 0 11 11"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <circle
-                                  cx="5.5"
-                                  cy="5.5"
-                                  r="5.5"
-                                  fill="#1DB954"
-                                />
-                              </svg>
-
-                              <p className="font-normal font-dm text-sm  text-gray-400">
-                                {val.Members.length} members
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </NavLink>
-                      <div className="flex justify-end">
-                        <button
-                          onClick={(e) => {
-                            setGroupId(val._id);
-                          }}
-                        >
-                          <Popconfirm
-                            title="Delete Group"
-                            description="Are you sure to delete this Group?"
-                            okText="Yes"
-                            cancelText="No"
-                            onConfirm={() => deleteGroup()}
-                            okButtonProps={{ className: "bg-red-500" }}
-                          >
-                            <MdDelete className="ml-auto text-2xl text-white cursor-pointer" />
-                          </Popconfirm>
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ))}
-              </>
-            )
-          ) : (
-            <Spinner />
-          )}
+              <Spinner />
+            )}
+          </div>
         </div>
       </div>
     </>

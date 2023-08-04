@@ -85,20 +85,17 @@ export default function PlayerareaAttendence() {
   const [attendance, setAttendance] = useState([]);
 
   const AddAttendance = async (id) => {
-    if(todayAttendance){
+    if (todayAttendance) {
       message.error("Attendance Already Marked");
       return;
     }
     console.log(attendance);
     await axios
-      .post(
-        `${process.env.REACT_APP_API}/attendance/MarkAttendance`,
-        {
-          date:date,
-          attendance: attendance,
-          isMarked: true,
-        }
-      )
+      .post(`${process.env.REACT_APP_API}/attendance/MarkAttendance`, {
+        date: date,
+        attendance: attendance,
+        isMarked: true,
+      })
       .then((res) => {
         setAttendance([]);
         console.log(res.data.data);
@@ -116,9 +113,7 @@ export default function PlayerareaAttendence() {
   const getAttendance = async () => {
     const date = new Date().toISOString();
     await axios
-      .get(
-        `${process.env.REACT_APP_API}/attendance/GetAllAttendance`
-      )
+      .get(`${process.env.REACT_APP_API}/attendance/GetAllAttendance`)
       .then((res) => {
         // Check if attendance is marked for today
         const todayAttendance = res.data.data.doc.find(
@@ -148,192 +143,192 @@ export default function PlayerareaAttendence() {
         {/* Page Header */}
         <Header title={"Players Area"} />
         {/* Title Of the Page */}
-        <h4 className="self-center text-xl font-medium text-white font-lexend whitespace-nowrap  ml-9 mt-[32px] ">
-          Attendance
-        </h4>
-        {/* Search Button  */}
-        <div className="flex items-center justify-start gap-10 mx-9 my-5 font-dm">
-          <form className="flex items-center w-1/2">
-            <div className="relative w-full font-dm">
-              <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                <svg
-                  aria-hidden="true"
-                  className="w-5 h-5 text-gray-500 "
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
+        <div className="h-[calc(100vh-95px)] overflow-y-auto">
+          <h4 className="self-center text-xl font-medium text-white font-lexend whitespace-nowrap  ml-9 mt-[32px] ">
+            Attendance
+          </h4>
+          {/* Search Button  */}
+          <div className="flex items-center justify-start gap-10 mx-9 my-5 font-dm">
+            <form className="flex items-center w-1/2">
+              <div className="relative w-full font-dm">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                  <svg
+                    aria-hidden="true"
+                    className="w-5 h-5 text-gray-500 "
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  className="bg-[#212121]  text-white  text-sm rounded-lg block w-full pl-10 p-2.5   border-gray-600 placeholder-gray-400  focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Search Players"
+                  required=""
+                  onChange={handleSearch}
+                />
               </div>
-              <input
-                type="text"
-                className="bg-[#212121]  text-white  text-sm rounded-lg block w-full pl-10 p-2.5   border-gray-600 placeholder-gray-400  focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Search Players"
-                required=""
-                onChange={handleSearch}
-              />
-            </div>
-            <button
-              type="submit"
-              className="inline-flex font-dm items-center py-2 px-5 ml-4 text-sm font-normal text-white bg-green-500 rounded-[4px] "
+              <button
+                type="submit"
+                className="inline-flex font-dm items-center py-2 px-5 ml-4 text-sm font-normal text-white bg-green-500 rounded-[4px] "
+              >
+                Search
+              </button>
+            </form>
+          </div>
+
+          {/* Header Of Table  */}
+          <div className="flex items-center  mx-10 my-5 font-dm">
+            <label className="text-white mr-[18px] text-xl font-dm font-normal ">
+              {month} {day},{year}
+            </label>
+            <svg
+              className=""
+              width="24"
+              height="27"
+              viewBox="0 0 27 29"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              Search
+              <path
+                d="M22.6 3.69922H3.7C2.20883 3.69922 1 4.90805 1 6.39922V25.2992C1 26.7904 2.20883 27.9992 3.7 27.9992H22.6C24.0912 27.9992 25.3 26.7904 25.3 25.2992V6.39922C25.3 4.90805 24.0912 3.69922 22.6 3.69922Z"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M18.55 1V6.4"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M7.75 1V6.4"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M1 11.8008H25.3"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+
+            <button
+              type="button"
+              className="text-black bg-white ml-9 font-dm  font-normal rounded-[4px] text-base px-9 py-[6px] mr-2 "
+              onClick={AddAttendance}
+              // disabled={todayAttendance}
+            >
+              Mark Done
             </button>
-          </form>
-        </div>
-
-        {/* Header Of Table  */}
-        <div className="flex items-center  mx-10 my-5 font-dm">
-          <label className="text-white mr-[18px] text-xl font-dm font-normal ">
-            {month} {day},{year}
-          </label>
-          <svg
-            className=""
-            width="24"
-            height="27"
-            viewBox="0 0 27 29"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M22.6 3.69922H3.7C2.20883 3.69922 1 4.90805 1 6.39922V25.2992C1 26.7904 2.20883 27.9992 3.7 27.9992H22.6C24.0912 27.9992 25.3 26.7904 25.3 25.2992V6.39922C25.3 4.90805 24.0912 3.69922 22.6 3.69922Z"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M18.55 1V6.4"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M7.75 1V6.4"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M1 11.8008H25.3"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-
-          
-
-          <button
-            type="button"
-            className="text-black bg-white ml-9 font-dm  font-normal rounded-[4px] text-base px-9 py-[6px] mr-2 "
-            onClick={AddAttendance}
-            // disabled={todayAttendance}
-          >
-            Mark Done
-          </button>
-        </div>
-        {/* Table Of user  */}
-        <div className="overflow-x-auto   font-lexend relative mx-10 my-5 font-dm rounded-xl">
-          <table className="font-dm w-full text-sm text-left text-gray-500  bg-gradient-to-r from-[#212A39]/100 to-[#3A3A3A]/0 ">
-            <thead className=" font-dm text-base font-normal text-[#fffff]/0.81 uppercase  border-b">
-              <tr className="text-center ">
-                <th scope="col" className="py-3 pl-3">
-                  Id
-                </th>
-                <th scope="col" className="py-3 pl-2">
-                  User
-                </th>
-                <th scope="col" className="py-3 pl-2">
-                  Email
-                </th>
-                <th scope="col" className="py-3 pl-2">
-                  Phone
-                </th>
-                <th scope="col" className="py-3 pl-[256px]">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filter.length > 0 ? (
-                filter.map((val, ind) => (
-                  <tr className="font-font-lexend border-bbg-gray-800 border-gray-700 text-center">
-                    <th
-                      scope="row"
-                      className="py-4 px-3 font-medium whitespace-nowrap text-white"
-                    >
-                      {ind + 1}
-                    </th>
-                    <td className="py-4">
-                      <div className="flex gap-2 font-lexend items-center justify-start">
-                        <img
-                          className=" w-12 h-12 rounded-full ml-36"
-                          src={val?.image}
-                          alt="Bonnie image"
+          </div>
+          {/* Table Of user  */}
+          <div className="overflow-x-auto   font-lexend relative mx-10 my-5 font-dm rounded-xl">
+            <table className="font-dm w-full text-sm text-left text-gray-500  bg-gradient-to-r from-[#212A39]/100 to-[#3A3A3A]/0 ">
+              <thead className=" font-dm text-base font-normal text-[#fffff]/0.81 uppercase  border-b">
+                <tr className="text-center ">
+                  <th scope="col" className="py-3 pl-3">
+                    Id
+                  </th>
+                  <th scope="col" className="py-3 pl-2">
+                    User
+                  </th>
+                  <th scope="col" className="py-3 pl-2">
+                    Email
+                  </th>
+                  <th scope="col" className="py-3 pl-2">
+                    Phone
+                  </th>
+                  <th scope="col" className="py-3 pl-[256px]">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filter.length > 0 ? (
+                  filter.map((val, ind) => (
+                    <tr className="font-font-lexend border-bbg-gray-800 border-gray-700 text-center">
+                      <th
+                        scope="row"
+                        className="py-4 px-3 font-medium whitespace-nowrap text-white"
+                      >
+                        {ind + 1}
+                      </th>
+                      <td className="py-4">
+                        <div className="flex gap-2 font-lexend items-center justify-start">
+                          <img
+                            className=" w-12 h-12 rounded-full ml-36"
+                            src={val?.image}
+                            alt="Bonnie image"
+                          />
+                          {val.name}
+                        </div>
+                      </td>
+                      <td className="py-4 font-lexend ">{val.email}</td>
+                      <td className="py-4 font-lexend">{val.phone}</td>
+                      <td className="py-4 pl-[254px]">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 text-[#00B307] bg-gray-100 rounded-lg border-gray-300 focus:ring-[#00B307]  focus:ring-2"
+                          onChange={(e) => {
+                            handleChangeAttendance(ind, e.target.checked);
+                          }}
+                          checked={attendance[ind].isPresent}
+                          disabled={todayAttendance}
                         />
-                        {val.name}
-                      </div>
-                    </td>
-                    <td className="py-4 font-lexend ">{val.email}</td>
-                    <td className="py-4 font-lexend">{val.phone}</td>
-                    <td className="py-4 pl-[254px]">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 text-[#00B307] bg-gray-100 rounded-lg border-gray-300 focus:ring-[#00B307]  focus:ring-2"
-                        onChange={(e) => {
-                          handleChangeAttendance(ind, e.target.checked);
-                        }}
-                        checked = {attendance[ind].isPresent}
-                        disabled={todayAttendance}
-                      />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center text-white">
+                      No Data Found
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" className="text-center text-white">
-                    No Data Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        {/* pagination */}
-        <div className="text-white justify-end flex">
-          <ReactPaginate
-            activeClassName={"item active "}
-            breakClassName={"item break-me "}
-            breakLabel={"..."}
-            containerClassName={"pagination"}
-            disabledClassName={"disabled-page"}
-            marginPagesDisplayed={2}
-            nextClassName={"item next "}
-            nextLabel={
-              <MdOutlineKeyboardArrowRight
-                style={{ fontSize: 28, width: 150 }}
-              />
-            }
-            onPageChange={handlePageClick}
-            pageCount={pageCount}
-            pageClassName={"item pagination-page "}
-            pageRangeDisplayed={5}
-            previousClassName={"item previous"}
-            previousLabel={
-              <MdOutlineKeyboardArrowLeft
-                style={{ fontSize: 28, width: 150 }}
-              />
-            }
-          />
+                )}
+              </tbody>
+            </table>
+          </div>
+          {/* pagination */}
+          <div className="text-white justify-end flex">
+            <ReactPaginate
+              activeClassName={"item active "}
+              breakClassName={"item break-me "}
+              breakLabel={"..."}
+              containerClassName={"pagination"}
+              disabledClassName={"disabled-page"}
+              marginPagesDisplayed={2}
+              nextClassName={"item next "}
+              nextLabel={
+                <MdOutlineKeyboardArrowRight
+                  style={{ fontSize: 28, width: 150 }}
+                />
+              }
+              onPageChange={handlePageClick}
+              pageCount={pageCount}
+              pageClassName={"item pagination-page "}
+              pageRangeDisplayed={5}
+              previousClassName={"item previous"}
+              previousLabel={
+                <MdOutlineKeyboardArrowLeft
+                  style={{ fontSize: 28, width: 150 }}
+                />
+              }
+            />
+          </div>
         </div>
       </div>
 

@@ -13,17 +13,17 @@ export default function Selectedgroup() {
   return (
     <div className="flex-col w-full">
       <Header title={location.state.val.title} />
-      <div className="flex  divide-x divide-[#7E7E7E]">
+      <div className="flex  divide-x divide-[#7E7E7E] h-[calc(100vh-95px)] overflow-y-auto">
         <div className="w-2/4 ml-6 mt-10 mr-2">
           <GroupMembers data = {location.state} />
         </div>
 
-        <div className=" w-full scrollbar mt-10">
+        <div className=" w-full scrollbar mt-10 h-[calc(100vh-95px)] overflow-y-auto">
           <GroupTimeline newsfeed={false} data = {location.state} />
         </div>
 
 
-        <div className="mr-8 w-2/4  mt-10 pl-8">
+        <div className="mr-8 w-2/4  mt-10 pl-8 h-[calc(100vh-95px)] overflow-y-auto">
           <MoreProfiles />
           <CoachGroupList />
         </div>

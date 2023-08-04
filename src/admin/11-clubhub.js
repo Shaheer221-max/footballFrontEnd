@@ -82,19 +82,16 @@ export default function Club2() {
       });
   };
 
-  const [id, setId] = useState(""); 
+  const [id, setId] = useState("");
 
   // Edit Folder
   const EditFolder = async (id) => {
     console.log(id);
     setRefresh(true);
     await axios
-      .post(
-        `http://localhost:5000/club/EditClub/${id}`,
-        {
-          foldername: folderName,
-        }
-      )
+      .post(`http://localhost:5000/club/EditClub/${id}`, {
+        foldername: folderName,
+      })
       .then((res) => {
         message.success("Folder Updated Successfully");
         setRefresh(false);
@@ -114,7 +111,7 @@ export default function Club2() {
     hiddenFileInput.current.click();
   };
   const handleChange = (event) => {
-    if(params.id === undefined){
+    if (params.id === undefined) {
       message.error("Please Select Folder First");
       return;
     }
@@ -172,7 +169,6 @@ export default function Club2() {
       });
   };
 
-
   const confirm1 = async (val) => {
     setRefresh(true);
     await axios
@@ -205,7 +201,7 @@ export default function Club2() {
         {/* Page Header */}
         <Header title={"Club Hub"} />
 
-        <div className="flex  divide-x xl:w-full ">
+        <div className="flex  divide-x xl:w-full h-[calc(100vh-95px)] overflow-y-auto ">
           {/* Upload Of user  */}
           <div className="w-full pr-12">
             <div className="flex items-stretch">
@@ -276,22 +272,29 @@ export default function Club2() {
                           </h5>
                         </div>
                         <Link to={`/clubhub`}>
-                          
-                            <BsThreeDots onClick={handleClick1} className="text-white text-2xl mt-5 cursor-pointer" />
-                            <Menu
-                              id="basic-menu"
-                              anchorEl={anchorEl}
-                              open={open1}
-                              onClose={handleClose}
-                              MenuListProps={{
-                                "aria-labelledby": "basic-button",
+                          <BsThreeDots
+                            onClick={handleClick1}
+                            className="text-white text-2xl mt-5 cursor-pointer"
+                          />
+                          <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open1}
+                            onClose={handleClose}
+                            MenuListProps={{
+                              "aria-labelledby": "basic-button",
+                            }}
+                          >
+                            <MenuItem
+                              onClick={() => {
+                                handleClose();
+                                setId(val._id);
+                                setEditFolder(true);
                               }}
                             >
-                              <MenuItem onClick={() => {
-                                handleClose()
-                                setId(val._id)
-                                setEditFolder(true)}}>Edit Folder</MenuItem>
-                              {/* <Popconfirm
+                              Edit Folder
+                            </MenuItem>
+                            {/* <Popconfirm
                             title="Delete Folder"
                             description="Are you sure to delete this folder?"
                             okText="Yes"
@@ -300,11 +303,11 @@ export default function Club2() {
                             onCancel={cancel}
                             okButtonProps={{ className: "bg-blue-500" }}
                           > */}
-                              <MenuItem onClick={() => confirm(val._id)}>
-                                Delete Folder
-                              </MenuItem>
-                              {/* </Popconfirm> */}
-                            </Menu>
+                            <MenuItem onClick={() => confirm(val._id)}>
+                              Delete Folder
+                            </MenuItem>
+                            {/* </Popconfirm> */}
+                          </Menu>
                         </Link>
                       </div>
                     </div>
@@ -332,7 +335,10 @@ export default function Club2() {
                         <Spinner />
                       ) : (
                         <>
-                          <div className="ml-2 cursor-pointer"> Upload File</div>
+                          <div className="ml-2 cursor-pointer">
+                            {" "}
+                            Upload File
+                          </div>
                           <input
                             type="file"
                             ref={hiddenFileInput}
