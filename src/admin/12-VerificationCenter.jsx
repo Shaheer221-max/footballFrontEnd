@@ -5,7 +5,7 @@ import pfp from "../assets/pfp.png";
 import { NavLink } from "react-router-dom";
 import axios from "../axios";
 import Spinner from "./Spinner";
-import { message,Modal } from "antd";
+import { message, Modal } from "antd";
 
 export default function VerificationCenter() {
   const [staticdata, setStaticData] = useState(false);
@@ -43,7 +43,7 @@ export default function VerificationCenter() {
 
   useEffect(() => {
     data();
-  }, []);
+  }, [staticdata]);
 
   // getting players from database
   const data = async () => {
@@ -57,10 +57,9 @@ export default function VerificationCenter() {
         //     res.data.data.filter((val) => val.active === "pending")
         //   );
         //   Playerdata = res.data.data.filter((val) => val.active === "pending");
-         
-          setPage(res.data.data)
-          console.log(res.data.data)
-        
+
+        setPage(res.data.data);
+        console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -78,17 +77,16 @@ export default function VerificationCenter() {
   };
 
   const approve = (id) => {
-    console.log(id)
+    console.log(id);
     axios
-      .put(
-        `${process.env.REACT_APP_API}/users/updateUser/${id}`,
-        {
-          active: "active",
-        }
-      )
+      .put(`${process.env.REACT_APP_API}/users/updateUser/${id}`, {
+        active: "active",
+      })
       .then((response) => {
         message.success("Player Approved");
         console.log(response);
+        const updatedData = staticdata.filter((object) => object._id !== id);
+        setStaticData(updatedData);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -97,12 +95,14 @@ export default function VerificationCenter() {
 
   const unapproved = (id) => {
     axios
-      .put(`${process.env.REACT_APP_API}/users/updateUser/${id}`,{
+      .put(`${process.env.REACT_APP_API}/users/updateUser/${id}`, {
         active: "pending",
       })
       .then((response) => {
         message.success("Player Un Approved");
         console.log(response);
+        const updatedData = staticdata.filter((object) => object._id !== id);
+        setStaticData(updatedData);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -297,212 +297,280 @@ export default function VerificationCenter() {
 
         {/* Table Of user  */}
         <div className="overflow-x-auto   font-lexend relative mx-10 my-8 font-dm rounded-xl">
-        <table className="font-dm w-full text-sm text-left text-white bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0">
-  <thead className="font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
-    <tr className="text-center font-DM-sans" onClick={() => setopenAddsubcatmodal(false)}>
-      <th scope="col" className="py-3 pl-3">Id</th>
-      <th scope="col" className="py-3 pl-2">User</th>
-      <th scope="col" className="py-3 pl-2">Email</th>
-      <th scope="col" className="py-3 pl-2">Phone</th>
-      <th scope="col" className="py-3 pl-2">Date Applied</th>
-      <th scrope="col" className="py-3 pl-2">Status</th>
-      <th scope="col" className="py-3 px-3">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    {staticdata.length > 0 || staticdataCopy.length > 0 ? (
-      staticdataCopy !== false ? (
-        <>
-          {/* if searched */}
-          {staticdataCopy.map((object, index) => (
-            <tr className="font-dm border-[#7E7E7E] border-b text-center" key={index}>
-              <th scope="row" className="py-4 font-medium whitespace-nowrap text-white">
-                #{index + 1}
-              </th>
-              <td className="py-4">
-                <div className="flex gap-2 items-center ml-7" onClick={() => closeProfile(index)}>
-                  <img className="w-10 h-10 rounded-full" src={object.image} alt="User" />
-                  <p>{object.name}</p>
-                </div>
-              </td>
-              <td className="py-4" onClick={() => closeProfile(index)}>
-                {object.email}
-              </td>
-              <td className="py-4" onClick={() => closeProfile(index)}>
-                {object.phone}
-              </td>
-              <td className="py-4" onClick={() => closeProfile(index)}>
-                {object.datedjoined.split("T")[0]}
-              </td>
-              <td className="py-4" onClick={() => closeProfile(index)}>
-                {object.active}
-              </td>
-              <td className="py-4">
-              {object.active === "active" ? (
-  <button
-    onClick={() => {
-      console.log("Approve button clicked");
-      approve(object._id);
-    }}
-    className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
-  >
-    Approve
-  </button>
-) : (
-  <button
-    onClick={() => {
-      console.log("Unapprove button clicked");
-      unapproved(object._id);
-    }}
-    className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
-  >
-    Unapprove
-  </button>
-)}
-
+          <table className="font-dm w-full text-sm text-left text-white bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0">
+            <thead className="font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
+              <tr
+                className="text-center font-DM-sans"
+                onClick={() => setopenAddsubcatmodal(false)}
+              >
+                <th scope="col" className="py-3 pl-3">
+                  Id
+                </th>
+                <th scope="col" className="py-3 pl-2">
+                  User
+                </th>
+                <th scope="col" className="py-3 pl-2">
+                  Email
+                </th>
+                <th scope="col" className="py-3 pl-2">
+                  Phone
+                </th>
+                <th scope="col" className="py-3 pl-2">
+                  Date Applied
+                </th>
+                <th scrope="col" className="py-3 pl-2">
+                  Action
+                </th>
+                <th scrope="col" className="py-3 pl-2">
                
-              </td>
-              <td>
-                <div className="flex pl-3 gap-10 justify-center">
-                  <NavLink to={"/userarea/playerprofile/profile"}>
-                    <p className="text-blue-500">View Attachments</p>
-                  </NavLink>
-                  <div className="mt-2">
-                    <svg
-                      onClick={() => openProfile(index)}
-                      width="19"
-                      height="5"
-                      viewBox="0 0 19 5"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9.201 5.68597e-07C9.201 -1.49611e-06 9.28085 -1.73437e-07 9.33985 4.16649e-07C9.39885 8.06735e-07 9.45885 4.22465e-07 9.51785 4.71235e-07C9.57685 5.20006e-07 9.65671 5.68597e-07 9.65671 5.68597e-07C9.65671 5.68597e-07 9.57685 5.68597e-07 9.51785 5.68597e-07C9.45885 5.68597e-07 9.39885 5.68597e-07 9.33985 5.68597e-07C9.28085 5.68597e-07 9.201 5.68597e-07 9.201 5.68597e-07Z"
-                        fill="#9CA3AF"
-                      />
-                      <path
-                        d="M9.201 3.73243e-07C9.201 3.73243e-07 9.28085 4.39691e-07 9.33985 3.94357e-07C9.39885 3.49024e-07 9.45885 3.0369e-07 9.51785 2.58357e-07C9.57685 2.13023e-07 9.65671 1.6769e-07 9.65671 1.6769e-07C9.65671 1.6769e-07 9.57685 2.13023e-07 9.51785 2.58357e-07C9.45885 3.0369e-07 9.39885 3.49024e-07 9.33985 3.94357e-07C9.28085 4.39691e-07 9.201 3.73243e-07 9.201 3.73243e-07Z"
-                        fill="#9CA3AF"
-                      />
-                      <path
-                        d="M9.201 5.68597e-07C9.201 5.68597e-07 9.28085 5.68597e-07 9.33985 5.68597e-07C9.39885 5.68597e-07 9.45885 5.68597e-07 9.51785 5.68597e-07C9.57685 5.68597e-07 9.65671 5.68597e-07 9.65671 5.68597e-07C9.65671 5.68597e-07 9.57685 5.68597e-07 9.51785 5.68597e-07C9.45885 5.68597e-07 9.39885 5.68597e-07 9.33985 5.68597e-07C9.28085 5.68597e-07 9.201 5.68597e-07 9.201 5.68597e-07Z"
-                        fill="#9CA3AF"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </>
-      ) : (
-        // if no search
-        <>
-          {staticdata.map((object, index) => (
-            <tr className="font-dm border-[#7E7E7E] border-b text-center" key={index}>
-              <th scope="row" className="py-4 font-medium whitespace-nowrap text-white">
-                #{index + 1}
-              </th>
-              <td className="py-4">
-                <div className="flex gap-2 items-center ml-7" onClick={() => closeProfile(index)}>
-                  <img className="w-10 h-10 rounded-full" src={object.image} alt="User" />
-                  <p>{object.name}</p>
-                </div>
-              </td>
-              <td className="py-4" onClick={() => closeProfile(index)}>
-                {object.email}
-              </td>
-              <td className="py-4" onClick={() => closeProfile(index)}>
-                {object.phone}
-              </td>
-              <td className="py-4" onClick={() => closeProfile(index)}>
-                {object.datedjoined.split("T")[0]}
-              </td>
-              <td className="py-4">
-              {object.active === "pending" ? (
-  <button
-    onClick={() => {
-      console.log("Approve button clicked");
-      approve(object._id);
-    }}
-    className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
-  >
-    Approve
-  </button>
-) : (
-  <button
-    onClick={() => {
-      console.log("Unapprove button clicked");
-      unapproved(object._id);
-    }}
-    className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
-  >
-    Unapprove
-  </button>
-)}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {staticdata.length > 0 || staticdataCopy.length > 0 ? (
+                staticdataCopy !== false ? (
+                  <>
+                    {/* if searched */}
+                    {staticdataCopy.map((object, index) => (
+                      <tr
+                        className="font-dm border-[#7E7E7E] border-b text-center"
+                        key={index}
+                      >
+                        <th
+                          scope="row"
+                          className="py-4 font-medium whitespace-nowrap text-white"
+                        >
+                          #{index + 1}
+                        </th>
+                        <td className="py-4">
+                          <div
+                            className="flex gap-2 items-center ml-7"
+                            onClick={() => closeProfile(index)}
+                          >
+                            <img
+                              className="w-10 h-10 rounded-full"
+                              src={object.image}
+                              alt="User"
+                            />
+                            <p>{object.name}</p>
+                          </div>
+                        </td>
+                        <td
+                          className="py-4"
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.email}
+                        </td>
+                        <td
+                          className="py-4"
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.phone}
+                        </td>
+                        <td
+                          className="py-4"
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.datedjoined.split("T")[0]}
+                        </td>
+                        <td
+                          className="py-4"
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.active}
+                        </td>
+                        <td className="py-4">
+                          {/* {object.active === "active" ? ( */}
+                            <button
+                              onClick={() => {
+                                console.log("Approve button clicked");
+                                approve(object._id);
+                              }}
+                              className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
+                            >
+                              Approve
+                            </button>
+                          {/* ) : ( */}
+                            <button
+                              onClick={() => {
+                                console.log("Unapprove button clicked");
+                                unapproved(object._id);
+                              }}
+                              className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
+                            >
+                              Unapprove
+                            </button>
+                          {/* )} */}
+                        </td>
+                        <td>
+                          <div className="flex pl-3 gap-10 justify-center">
+                            <NavLink to={"/userarea/playerprofile/profile"}>
+                              <p className="text-blue-500">View Attachments</p>
+                            </NavLink>
+                            <div className="mt-2">
+                              <svg
+                                onClick={() => openProfile(index)}
+                                width="19"
+                                height="5"
+                                viewBox="0 0 19 5"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M9.201 5.68597e-07C9.201 -1.49611e-06 9.28085 -1.73437e-07 9.33985 4.16649e-07C9.39885 8.06735e-07 9.45885 4.22465e-07 9.51785 4.71235e-07C9.57685 5.20006e-07 9.65671 5.68597e-07 9.65671 5.68597e-07C9.65671 5.68597e-07 9.57685 5.68597e-07 9.51785 5.68597e-07C9.45885 5.68597e-07 9.39885 5.68597e-07 9.33985 5.68597e-07C9.28085 5.68597e-07 9.201 5.68597e-07 9.201 5.68597e-07Z"
+                                  fill="#9CA3AF"
+                                />
+                                <path
+                                  d="M9.201 3.73243e-07C9.201 3.73243e-07 9.28085 4.39691e-07 9.33985 3.94357e-07C9.39885 3.49024e-07 9.45885 3.0369e-07 9.51785 2.58357e-07C9.57685 2.13023e-07 9.65671 1.6769e-07 9.65671 1.6769e-07C9.65671 1.6769e-07 9.57685 2.13023e-07 9.51785 2.58357e-07C9.45885 3.0369e-07 9.39885 3.49024e-07 9.33985 3.94357e-07C9.28085 4.39691e-07 9.201 3.73243e-07 9.201 3.73243e-07Z"
+                                  fill="#9CA3AF"
+                                />
+                                <path
+                                  d="M9.201 5.68597e-07C9.201 5.68597e-07 9.28085 5.68597e-07 9.33985 5.68597e-07C9.39885 5.68597e-07 9.45885 5.68597e-07 9.51785 5.68597e-07C9.57685 5.68597e-07 9.65671 5.68597e-07 9.65671 5.68597e-07C9.65671 5.68597e-07 9.57685 5.68597e-07 9.51785 5.68597e-07C9.45885 5.68597e-07 9.39885 5.68597e-07 9.33985 5.68597e-07C9.28085 5.68597e-07 9.201 5.68597e-07 9.201 5.68597e-07Z"
+                                  fill="#9CA3AF"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                ) : (
+                  // if no search
+                  <>
+                    {staticdata.map((object, index) => (
+                      <tr
+                        className="font-dm border-[#7E7E7E] border-b text-center"
+                        key={index}
+                      >
+                        <th
+                          scope="row"
+                          className="py-4 font-medium whitespace-nowrap text-white"
+                        >
+                          #{index + 1}
+                        </th>
+                        <td className="py-4">
+                          <div
+                            className="flex gap-2 items-center ml-7"
+                            onClick={() => closeProfile(index)}
+                          >
+                            <img
+                              className="w-10 h-10 rounded-full"
+                              src={object.image}
+                              alt="User"
+                            />
+                            <p>{object.name}</p>
+                          </div>
+                        </td>
+                        <td
+                          className="py-4"
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.email}
+                        </td>
+                        <td
+                          className="py-4"
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.phone}
+                        </td>
+                        <td
+                          className="py-4"
+                          onClick={() => closeProfile(index)}
+                        >
+                          {object.datedjoined.split("T")[0]}
+                        </td>
+                        <td className="py-4">
+                          {/* {object.active === "pending" ? ( */}
+                            <button
+                              onClick={() => {
+                                console.log("Approve button clicked");
+                                approve(object._id);
+                              }}
+                              className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
+                            >
+                              Approve
+                            </button>
+                          {/* ) : ( */}
+                            <button
+                              onClick={() => {
+                                console.log("Unapprove button clicked");
+                                unapproved(object._id);
+                              }}
+                              className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
+                            >
+                              Unapprove
+                            </button>
+                          {/* )} */}
+                        </td>
+                        <td>
+                          <div className="flex pl-3 gap-10 justify-center">
+                            <button
+                              onClick={() =>
+                                handleButtonClick(
+                                  object.FeeSlipPhoto // Replace with the actual image URL
+                                )
+                              }
+                              className="text-blue-500"
+                            >
+                              View Attachments
+                            </button>
 
-              </td>
-              <td>
-                <div className="flex pl-3 gap-10 justify-center">
-                <button
-        onClick={() =>
-          handleButtonClick(
-            object.FeeSlipPhoto // Replace with the actual image URL
-          )
-        }
-        className="text-blue-500"
-      >
-        View Attachments
-      </button>
-
-      <Modal
-        visible={showModal}
-        onCancel={closeModal}
-        footer={null}
-        destroyOnClose
-      >
-        <img src={imageUrl} alt="Attachment" style={{ width: "100%", maxHeight: "400px", objectFit: "contain" }} />
-      </Modal>
-                  <div className="mt-2">
-                    <svg
-                      onClick={() => openProfile(index)}
-                      width="19"
-                      height="5"
-                      viewBox="0 0 19 5"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9.201 5.68597e-07C9.201 5.68597e-07 9.28085 5.68597e-07 9.33985 5.68597e-07C9.39885 5.68597e-07 9.45885 5.68597e-07 9.51785 5.68597e-07C9.57685 5.68597e-07 9.65671 5.68597e-07 9.65671 5.68597e-07C9.65671 5.68597e-07 9.57685 5.68597e-07 9.51785 5.68597e-07C9.45885 5.68597e-07 9.39885 5.68597e-07 9.33985 5.68597e-07C9.28085 5.68597e-07 9.201 5.68597e-07 9.201 5.68597e-07Z"
-                        fill="#9CA3AF"
-                      />
-                      <path
-                        d="M9.201 3.73243e-07C9.201 3.73243e-07 9.28085 4.39691e-07 9.33985 3.94357e-07C9.39885 3.49024e-07 9.45885 3.0369e-07 9.51785 2.58357e-07C9.57685 2.13023e-07 9.65671 1.6769e-07 9.65671 1.6769e-07C9.65671 1.6769e-07 9.57685 2.13023e-07 9.51785 2.58357e-07C9.45885 3.0369e-07 9.39885 3.49024e-07 9.33985 3.94357e-07C9.28085 4.39691e-07 9.201 3.73243e-07 9.201 3.73243e-07Z"
-                        fill="#9CA3AF"
-                      />
-                      <path
-                        d="M9.201 5.68597e-07C9.201 5.68597e-07 9.28085 5.68597e-07 9.33985 5.68597e-07C9.39885 5.68597e-07 9.45885 5.68597e-07 9.51785 5.68597e-07C9.57685 5.68597e-07 9.65671 5.68597e-07 9.65671 5.68597e-07C9.65671 5.68597e-07 9.57685 5.68597e-07 9.51785 5.68597e-07C9.45885 5.68597e-07 9.39885 5.68597e-07 9.33985 5.68597e-07C9.28085 5.68597e-07 9.201 5.68597e-07 9.201 5.68597e-07Z"
-                        fill="#9CA3AF"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </>
-      )
-    ) : (
-      // if no data
-      <tr>
-        <td colSpan="6" className="py-8 text-center text-white">
-          No data found
-        </td>
-      </tr>
-    )}
-  </tbody>
-</table>
-
+                            <Modal
+                              visible={showModal}
+                              onCancel={closeModal}
+                              footer={null}
+                              destroyOnClose
+                            >
+                              <img
+                                src={imageUrl}
+                                alt="Attachment"
+                                style={{
+                                  width: "100%",
+                                  maxHeight: "400px",
+                                  objectFit: "contain",
+                                }}
+                              />
+                            </Modal>
+                            <div className="mt-2">
+                              <svg
+                                onClick={() => openProfile(index)}
+                                width="19"
+                                height="5"
+                                viewBox="0 0 19 5"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M9.201 5.68597e-07C9.201 5.68597e-07 9.28085 5.68597e-07 9.33985 5.68597e-07C9.39885 5.68597e-07 9.45885 5.68597e-07 9.51785 5.68597e-07C9.57685 5.68597e-07 9.65671 5.68597e-07 9.65671 5.68597e-07C9.65671 5.68597e-07 9.57685 5.68597e-07 9.51785 5.68597e-07C9.45885 5.68597e-07 9.39885 5.68597e-07 9.33985 5.68597e-07C9.28085 5.68597e-07 9.201 5.68597e-07 9.201 5.68597e-07Z"
+                                  fill="#9CA3AF"
+                                />
+                                <path
+                                  d="M9.201 3.73243e-07C9.201 3.73243e-07 9.28085 4.39691e-07 9.33985 3.94357e-07C9.39885 3.49024e-07 9.45885 3.0369e-07 9.51785 2.58357e-07C9.57685 2.13023e-07 9.65671 1.6769e-07 9.65671 1.6769e-07C9.65671 1.6769e-07 9.57685 2.13023e-07 9.51785 2.58357e-07C9.45885 3.0369e-07 9.39885 3.49024e-07 9.33985 3.94357e-07C9.28085 4.39691e-07 9.201 3.73243e-07 9.201 3.73243e-07Z"
+                                  fill="#9CA3AF"
+                                />
+                                <path
+                                  d="M9.201 5.68597e-07C9.201 5.68597e-07 9.28085 5.68597e-07 9.33985 5.68597e-07C9.39885 5.68597e-07 9.45885 5.68597e-07 9.51785 5.68597e-07C9.57685 5.68597e-07 9.65671 5.68597e-07 9.65671 5.68597e-07C9.65671 5.68597e-07 9.57685 5.68597e-07 9.51785 5.68597e-07C9.45885 5.68597e-07 9.39885 5.68597e-07 9.33985 5.68597e-07C9.28085 5.68597e-07 9.201 5.68597e-07 9.201 5.68597e-07Z"
+                                  fill="#9CA3AF"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                )
+              ) : (
+                // if no data
+                <tr>
+                  <td colSpan="6" className="py-8 text-center text-white">
+                    No data found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
         {/* pagination */}
         <div className="flex items-center justify-end font-lexend">

@@ -30,13 +30,14 @@ export default function UserArea() {
       .then((res) => {
         console.log(res?.data?.result);
         setTotalPlayers(res?.data?.result);
-        setData(res?.data?.data.filter((item) => item.dateleft === null));
+        setData(res?.data?.data);
       })
       .catch((error) => {
         console.log(error.response.data);
       });
   };
-
+// {console.log('totalPlayers', totalPlayers)}
+// {console.log('playersLeft', playersLeft)}
   const getParents = async () => {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
@@ -294,7 +295,6 @@ export default function UserArea() {
   <tbody>
     {filteredData.length > 0 ? (
       filteredData
-        .filter(object => object.active === "active")
         .map((object, index) => {
           const parents = parent.find((parent) => parent.refOfPlayer === object._id);
 
