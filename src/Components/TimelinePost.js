@@ -558,7 +558,6 @@ export default function TimelinePost(props) {
                           <video
                             className="mt-5 px-2 w-full rounded-md h-24"
                             controls
-                            style={{ height: "300px" }}
                           >
                             <source src={val.video} type="video/mp4" />
                           </video>
@@ -736,7 +735,7 @@ export default function TimelinePost(props) {
                             </div>
                             <div className="flex ml-[68px] mb-5 text-white text-xs font-font-lexend">
                               <p className="mr-5 ml-5">{moment(val?.createdDate).format('dddd, MMMM Do YYYY')}</p>
-                              <button className="btn text-xs">Like</button>
+                              {/* <button className="btn text-xs">Like</button> */}
                               <button
                                 onClick={() => reply(ind)}
                                 className="ml-5"

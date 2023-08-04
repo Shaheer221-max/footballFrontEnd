@@ -24,6 +24,16 @@ export default function TimelinePost(props) {
   const [refresh, setRefresh] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
   const [load, setLoad] = useState([]);
+  const [load1, setLoad1] = useState([]);
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [replies, setReply] = useState([]);
+
+
+  const handleChange2 = (index, event) => {
+    const newComments = [...comment];
+    newComments[index] = event.target.value;
+    setReply(newComments);
+  };
 
   const { user } = useSelector((state) => state);
 
@@ -43,6 +53,13 @@ export default function TimelinePost(props) {
     const newComments = [...comment];
     newComments[index] = event.target.value;
     setComment(newComments);
+  };
+
+  const reply = (index) => {
+    console.log("in reply", index);
+    const newCommentsOpen = [...load1];
+    newCommentsOpen[index] = !load1[index];
+    setLoad1(newCommentsOpen);
   };
 
   // getting all posts
@@ -99,14 +116,11 @@ export default function TimelinePost(props) {
     console.log("in add comment", val, comment);
     setRefresh(true);
     let response = await axios
-      .post(
-        `${process.env.REACT_APP_API}/comment/PostComment`,
-        {
-          refOfNewsfeed: val._id,
-          comment: comment[ind],
-          refOfUser: user.user.id,
-        }
-      )
+      .post(`${process.env.REACT_APP_API}/comment/PostComment`, {
+        refOfNewsfeed: val._id,
+        comment: comment[ind],
+        refOfUser: user.user.id,
+      })
       .then((response) => {
         message.success("Comment Added");
         setComment("");
@@ -116,14 +130,38 @@ export default function TimelinePost(props) {
       });
   };
 
+    // Reply Comment
+    const ReplyComment = async (val, ind) => {
+      console.log("in reply comment", val, replies[ind]);
+      setRefresh(true);
+      setCommentLoading(true);
+      await axios
+        .post(
+          `${process.env.REACT_APP_API}/comment/AddReplyToComment/${val._id}`,
+          {
+            text: replies[ind],
+            refOfUser: user.user.id,
+          }
+        )
+        .then((response) => {
+          setCommentLoading(false);
+          message.success("Reply Added");
+          setReply("");
+          setRefresh(false);
+          setComment("");
+          console.log("commented");
+          console.log(response.data);
+          // memberName();
+        });
+    };
+  
+
   // delete Post
   const deletePost = async () => {
     setRefresh(true);
     console.log("in delete post", postId);
     await axios
-      .delete(
-        `${process.env.REACT_APP_API}/newsfeed/DeleteNewsFeed/${postId}`
-      )
+      .delete(`${process.env.REACT_APP_API}/newsfeed/DeleteNewsFeed/${postId}`)
       .then((response) => {
         message.success("Post Deleted");
         setRefresh(false);
@@ -143,16 +181,13 @@ export default function TimelinePost(props) {
     setRefresh(true);
     console.log("in share post", val);
     await axios
-      .post(
-        `${process.env.REACT_APP_API}/newsfeed/ShareNewsFeed`,
-        {
-          refOfUser: user.user.id,
-          status: val.status,
-          image: val.image,
-          video: val.video,
-          refOfGroup: val.refOfGroup,
-        }
-      )
+      .post(`${process.env.REACT_APP_API}/newsfeed/ShareNewsFeed`, {
+        refOfUser: user.user.id,
+        status: val.status,
+        image: val.image,
+        video: val.video,
+        refOfGroup: val.refOfGroup,
+      })
       .then(() => {
         message.success("Post Shared");
         setRefresh(false);
@@ -243,10 +278,7 @@ export default function TimelinePost(props) {
       data.append("refOfGroup", props.data.val.id);
       data.append("status", postt);
       await axios
-        .post(
-          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
-          data
-        )
+        .post(`${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`, data)
         .then((res) => {
           setRefresh(false);
           message.success("Post Uploaded");
@@ -264,15 +296,12 @@ export default function TimelinePost(props) {
     } else {
       setRefresh(true);
       await axios
-        .post(
-          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
-          {
-            refOfUser: user.user.id,
-            refOfGroup: props.data.val.id,
-            status: postt,
-            image: img,
-          }
-        )
+        .post(`${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`, {
+          refOfUser: user.user.id,
+          refOfGroup: props.data.val.id,
+          status: postt,
+          image: img,
+        })
         .then((res) => {
           setRefresh(false);
           message.success("Post Uploaded");
@@ -413,7 +442,7 @@ export default function TimelinePost(props) {
         {post.length > 0 ? (
           <>
             {post.map((val, ind) => {
-              console.log("val",val)
+              console.log("val", val);
               return (
                 <>
                   {/* if post img */}
@@ -577,6 +606,9 @@ export default function TimelinePost(props) {
                         viewBox="0 0 30 30"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        className={
+                          commentLoading ? "animate-pulse" : "cursor-pointer"
+                        }
                       >
                         <path
                           d="M15 0C11.0231 0.00448626 7.21043 1.58628 4.39835 4.39835C1.58628 7.21043 0.00448626 11.0231 0 15V27.65C0.000713846 28.2731 0.248539 28.8704 0.689107 29.3109C1.12967 29.7515 1.727 29.9993 2.35005 30H15C18.9782 30 22.7936 28.4196 25.6066 25.6066C28.4196 22.7936 30 18.9782 30 15C30 11.0218 28.4196 7.20644 25.6066 4.3934C22.7936 1.58035 18.9782 0 15 0ZM7.79971 17.4002C7.4437 17.4002 7.09569 17.2946 6.79968 17.0968C6.50367 16.899 6.27296 16.6179 6.13672 16.289C6.00049 15.9601 5.96484 15.5982 6.03429 15.249C6.10375 14.8998 6.27518 14.5791 6.52692 14.3274C6.77865 14.0756 7.09938 13.9042 7.44855 13.8347C7.79771 13.7653 8.15963 13.8009 8.48854 13.9372C8.81744 14.0734 9.09857 14.3041 9.29635 14.6001C9.49414 14.8961 9.59971 15.2441 9.59971 15.6002C9.59971 16.0775 9.41006 16.5354 9.0725 16.8729C8.73493 17.2105 8.2771 17.4001 7.79971 17.4001V17.4002ZM14.9997 17.4002C14.6437 17.4002 14.2957 17.2946 13.9997 17.0968C13.7037 16.899 13.473 16.6179 13.3367 16.289C13.2005 15.9601 13.1648 15.5982 13.2343 15.249C13.3037 14.8998 13.4752 14.5791 13.7269 14.3274C13.9787 14.0756 14.2994 13.9042 14.6485 13.8347C14.9977 13.7653 15.3596 13.8009 15.6885 13.9372C16.0174 14.0734 16.2986 14.3041 16.4964 14.6001C16.6941 14.8961 16.7997 15.2441 16.7997 15.6002C16.7997 16.0775 16.6101 16.5354 16.2725 16.8729C15.9349 17.2105 15.4771 17.4001 14.9997 17.4001V17.4002ZM22.1997 17.4002C21.8437 17.4002 21.4957 17.2946 21.1997 17.0968C20.9037 16.899 20.673 16.6179 20.5367 16.289C20.4005 15.9601 20.3648 15.5982 20.4343 15.249C20.5037 14.8998 20.6752 14.5791 20.9269 14.3274C21.1787 14.0756 21.4994 13.9042 21.8485 13.8347C22.1977 13.7653 22.5596 13.8009 22.8885 13.9372C23.2174 14.0734 23.4986 14.3041 23.6964 14.6001C23.8941 14.8961 23.9997 15.2441 23.9997 15.6002C23.9997 16.0775 23.8101 16.5354 23.4725 16.8729C23.1349 17.2105 22.6771 17.4001 22.1997 17.4001V17.4002Z"
@@ -651,7 +683,7 @@ export default function TimelinePost(props) {
                       </div>
                     </div>
                     {load[ind] ? (
-                      val?.Comment?.map((val, ind) => {
+                      val.Comment.map((val, ind) => {
                         return (
                           <>
                             <div className="flex align-middle mb-3 ml-4">
@@ -662,21 +694,89 @@ export default function TimelinePost(props) {
                               />
                               <div className="text-gray-400 pl-4 bg-[#1A1A1A] p-2 rounded-2xl w-full text-left font-lexend text-sm">
                                 <div className="flex align-middle">
-                                <p className="text-white">
-                                  {val?.refOfUser?.name}
-                                </p>
-                                <div className="inline-flex font-dm ml-3 items-center py-1 px-3  text-xs font-thin text-white bg-green-500 rounded-md ">
-                                  {val?.refOfUser?.role}
-                                </div>
+                                  <p className="text-md text-white mb-2">
+                                    {val?.refOfUser?.name}
+                                  </p>
+                                  <div className="inline-flex font-dm ml-3 items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
+                                    {val?.refOfUser?.role}
+                                  </div>
                                 </div>
                                 <p>{val?.comment}</p>
                               </div>
                             </div>
                             <div className="flex ml-[68px] mb-5 text-white text-xs font-font-lexend">
-                              <p className="mr-5 ml-5">{moment(val?.createdAt).fromNow()}</p>
-                              <button className="btn text-xs">Like</button>
-                              <button className="ml-5">Reply</button>
+                              <p className="mr-5 ml-5">{moment(val?.createdDate).format('dddd, MMMM Do YYYY')}</p>
+                              {/* <button className="btn text-xs">Like</button> */}
+                              <button
+                                onClick={() => reply(ind)}
+                                className="ml-5"
+                              >
+                                Reply
+                              </button>
                             </div>
+                            {val?.replies?.map((val, ind) => {
+                              return (
+                                <>
+                                  <div className="flex align-middle mb-3 ml-20">
+                                    <img
+                                      src={val?.refOfUser?.image}
+                                      className="rounded-full w-7 h-7 mr-3"
+                                      alt=""
+                                    />
+                                    <div className="text-gray-400 pl-4 bg-[#1A1A1A] p-2 rounded-2xl w-full text-left font-lexend text-xs">
+                                      <div className="flex align-middle">
+                                      <p className="text-md text-white mb-2">
+                                        {val?.refOfUser?.name}
+                                      </p>
+                                      <div className="inline-flex font-dm ml-3 items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
+                                        {val?.refOfUser?.role}
+                                      </div>
+                                      </div>
+                                      <p className="text-xs">{val?.text}</p>
+                                    </div>
+                                  </div>
+                                </>
+                              );
+                            })}
+
+                            {load1[ind] ? (
+                              <div className="flex gap-4 pl-4 mt-4 mb-4">
+                                <input
+                                  type="text"
+                                  className="w-3/4 ml-auto bg-[#1A1A1A]  text-white text-sm rounded-2xl block  pl-10 p-2.5  dark:placeholder-gray-400 "
+                                  placeholder="write Reply"
+                                  required=""
+                                  onChange={(e) => handleChange2(ind, e)}
+                                  // Submit on Enter
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      ReplyComment(val, ind);
+                                    }
+                                  }}
+                                  value={replies[ind] || ""}
+                                />
+                                <div
+                                  className="mt-[10px]"
+                                  onClick={() => ReplyComment(val, ind)}
+                                >
+                                  <svg
+                                    width="24"
+                                    height="22"
+                                    viewBox="0 0 24 22"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="cursor-pointer"
+                                  >
+                                    <path
+                                      d="M2.48647 12.7028L9.95408 11.2092C10.6209 11.076 10.6209 10.8592 9.95408 10.726L2.48647 9.23244C2.04167 9.14364 1.60847 8.71004 1.51967 8.26564L0.0260634 0.798029C-0.107537 0.130828 0.285664 -0.179173 0.903665 0.106027L23.6913 10.6232C24.1029 10.8132 24.1029 11.122 23.6913 11.312L0.903665 21.8293C0.285664 22.1145 -0.107537 21.8045 0.0260634 21.1373L1.51967 13.6696C1.60847 13.2252 2.04167 12.7916 2.48647 12.7028Z"
+                                      fill="white"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
+                            ) : (
+                              <></>
+                            )}
                           </>
                         );
                       })
