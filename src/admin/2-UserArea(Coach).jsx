@@ -293,7 +293,7 @@ export default function UserAreaCoach() {
               ) : (
                 <div className="flex justify-center mt-3 w-full h-96">
                   <p className="text-[#818181] font-dm font-normal text-lg">
-                    No Product Found
+                    No Results Found
                   </p>
                 </div>
               )}
