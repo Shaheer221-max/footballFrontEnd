@@ -129,7 +129,6 @@ const [image, setImage] = useState("");
       )
       .then((res) => {
         message.success("Group Created");
-        console.log("ID Chat: ", res.data);
         navigate(`/chat/group/${res.data.data.groupchat._id}`);
         setGroupName("");
         setMembers([]);
@@ -205,7 +204,7 @@ const [image, setImage] = useState("");
               />
             </svg>
 
-            <div>Upload Group Picture 3</div>
+            <div>Upload Group Picture</div>
             <input
               type="file"
               ref={hiddenFileInput}

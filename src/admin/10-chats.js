@@ -275,7 +275,7 @@ export default function Chat() {
               />
             </svg>
 
-            <div>Upload Group Picture 1</div>
+            <div>Upload Group Picture</div>
             <input
               type="file"
               ref={hiddenFileInput}
