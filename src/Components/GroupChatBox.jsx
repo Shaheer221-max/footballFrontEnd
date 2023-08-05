@@ -90,7 +90,6 @@ export default function GroupChatBox(props) {
         `${process.env.REACT_APP_API}/groupconversation/DeleteGroupChat/${params.id}`
       )
       .then((res) => {
-        console.log(res.data);
         message.success("Group Chat Deleted Successfully");
         setRefresh(false);
         setConversations([]);
@@ -135,7 +134,6 @@ export default function GroupChatBox(props) {
         `${process.env.REACT_APP_API}/groupconversation/messages/${params.id}`
       )
       .then((res) => {
-        console.log("All Messages: ", res.data);
         setChat(res.data);
       })
       .catch((error) => {
@@ -257,8 +255,6 @@ export default function GroupChatBox(props) {
   };
 
   const addMember = async (id) => {
-    console.log(id);
-    console.log(players);
     setRefresh(true);
     setPlayers([...players, id]);
     await axios
@@ -332,20 +328,17 @@ export default function GroupChatBox(props) {
   }, [search, players, refresh]);
 
   const handleChangeSearch1 = (event) => {
-    console.log("Handle Search", players);
     setSearch(event.target.value);
   };
 
   const [conversations, setConversations] = useState(null);
   const getConversation = async () => {
-    console.log("Conversation Id: ", params.id);
     await axios
       .get(
         `${process.env.REACT_APP_API}/groupconversation/GetGroupChatById/${params.id}`
       )
       .then((res) => {
         setConversations(res.data.data);
-        console.log("Conversation: ", res.data.data);
       })
       .catch((error) => {
         console.log(error.response.data);

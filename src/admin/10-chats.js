@@ -59,6 +59,7 @@ export default function Chat() {
         message.success("Group Created");
         setGroupName("");
         setMembers([]);
+        setImage("")
         setIsModalOpen(false);
         console.log(res.data.data);
       })
@@ -203,17 +204,14 @@ export default function Chat() {
         console.log(error.response.data);
       });
   };
-
-  const addMember = async (id) => {
-    setMembers([...members, id]);
-    console.log(members);
+  const isMember = (id) => members.some((member) => member._id === id);
+  const toggleMember = (player) => {
+    if (isMember(player._id)) {
+      setMembers(members.filter((member) => member._id !== player._id));
+    } else {
+      setMembers([...members, player]);
+    }
   };
-
-  const removeMember = async (id) => {
-    setMembers(members.filter((item) => item !== id));
-    console.log(members);
-  };
-
   return (
     <>
       <div className="flex-col w-full font-lexend">
@@ -238,7 +236,7 @@ export default function Chat() {
               borderRadius: 5,
             }}
           >
-            <svg
+            {/* <svg
               style={{ width: 16, height: 16, marginRight: 8 }}
               className="svg-icon search-icon"
               aria-labelledby="title desc"
@@ -252,7 +250,7 @@ export default function Chat() {
                 <path strokeLinecap="square" d="M18.5 18.3l-5.4-5.4" />
                 <circle cx="8" cy="8" r="7" />
               </g>
-            </svg>
+            </svg> */}
             <input
               style={{ backgroundColor: "transparent", border: "none" }}
               type="text"
@@ -304,7 +302,7 @@ export default function Chat() {
                     <p className="text-md">{player.name}</p>
 
                     {/* + Sign SVG */}
-                    {members.includes(player._id) ? (
+                    {isMember(player._id)? (
                       <svg
                         className="ml-auto cursor-pointer"
                         width="16"
@@ -312,7 +310,7 @@ export default function Chat() {
                         viewBox="0 0 18 18"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        onClick={() => removeMember(player.id)}
+                        onClick={() => toggleMember(player)}
                       >
                         <path
                           d="M9 0C4.0275 0 0 4.0275 0 9C0 13.9725 4.0275 18 9 18C13.9725 18 18 13.9725 18 9C18 4.0275 13.9725 0 9 0ZM13.5 9.9H4.5V8.1H13.5V9.9Z"
@@ -327,7 +325,7 @@ export default function Chat() {
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                         className="cursor-pointer ml-auto"
-                        onClick={() => addMember(player._id)}
+                        onClick={() => toggleMember(player)}
                       >
                         <path
                           d="M12.5 0C5.596 0 0 5.596 0 12.5C0 19.404 5.596 25 12.5 25C19.404 25 25 19.404 25 12.5C25 5.596 19.404 0 12.5 0ZM19 13.5H13.5V19C13.5 19.2652 13.3946 19.5196 13.2071 19.7071C13.0196 19.8946 12.7652 20 12.5 20C12.2348 20 11.9804 19.8946 11.7929 19.7071C11.6054 19.5196 11.5 19.2652 11.5 19V13.5H6C5.73478 13.5 5.48043 13.3946 5.29289 13.2071C5.10536 13.0196 5 12.7652 5 12.5C5 12.2348 5.10536 11.9804 5.29289 11.7929C5.48043 11.6054 5.73478 11.5 6 11.5H11.5V6C11.5 5.73478 11.6054 5.48043 11.7929 5.29289C11.9804 5.10536 12.2348 5 12.5 5C12.7652 5 13.0196 5.10536 13.2071 5.29289C13.3946 5.48043 13.5 5.73478 13.5 6V11.5H19C19.2652 11.5 19.5196 11.6054 19.7071 11.7929C19.8946 11.9804 20 12.2348 20 12.5C20 12.7652 19.8946 13.0196 19.7071 13.2071C19.5196 13.3946 19.2652 13.5 19 13.5Z"
