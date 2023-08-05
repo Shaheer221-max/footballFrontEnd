@@ -16,8 +16,10 @@ export default function Club2() {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open1 = Boolean(anchorEl);
-  const handleClick1 = (event) => {
+  const handleClick1 = (event, targetFolder) => {
     setAnchorEl(event.currentTarget);
+    setId(targetFolder._id);
+    setFolderName(targetFolder.foldername);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -46,7 +48,6 @@ export default function Club2() {
       .get(`${process.env.REACT_APP_API}/club/GetFolders/`)
       .then((res) => {
         setfolders(res.data.data.doc);
-        console.log(res.data.data.doc.filter((item) => item._id === params.id));
         setfiles(res.data.data.doc.filter((item) => item._id === params.id));
       })
       .catch((error) => {
@@ -71,7 +72,6 @@ export default function Club2() {
       .then((res) => {
         message.success("Folder Created Successfully");
         setRefresh(false);
-        console.log(res.data.data);
         setError(false);
         setNewFolder(false);
       })
@@ -86,22 +86,21 @@ export default function Club2() {
 
   // Edit Folder
   const EditFolder = async (id) => {
-    console.log(id);
     setRefresh(true);
     await axios
-      .post(`http://localhost:5000/club/EditClub/${id}`, {
+      .post(`${process.env.REACT_APP_API}/Club/EditFolder/${id}`, {
         foldername: folderName,
       })
       .then((res) => {
         message.success("Folder Updated Successfully");
         setRefresh(false);
-        console.log(res.data.data);
         setError(false);
         setNewFolder(false);
+        setEditFolder(false);
       })
       .catch((error) => {
         message.error("Error");
-        setError(error.response.data);
+        // setError(error.response.data);
         console.log(error);
       });
   };
@@ -133,16 +132,13 @@ export default function Club2() {
             setLoading(false);
             message.success("File Uploaded Successfully");
             setRefresh(false);
-            console.log(res);
           })
           .catch((error) => {
             setError(error.response.data);
-            console.log("Error: ", error.response.data);
           });
       })
       .catch((err) => {
         message.error("Error");
-        console.log(err);
         setError("Image not Selected");
       });
   };
@@ -160,7 +156,6 @@ export default function Club2() {
       .then((res) => {
         message.success("Deleted Successfully");
         setRefresh(false);
-        console.log(res);
         setOpen(false);
       })
       .catch((error) => {
@@ -181,7 +176,6 @@ export default function Club2() {
       .then((res) => {
         message.success("Deleted Successfully");
         setRefresh(false);
-        console.log(res);
         setOpen(false);
       })
       .catch((error) => {
@@ -227,7 +221,7 @@ export default function Club2() {
             <div className="mb-9 mx-7 font-sans grid grid-cols-3 md:grid-cols-3  gap-4 ">
               {folders.length > 0 ? (
                 folders.map((val, ind) => (
-                  <Link to={`/clubhub/${val._id}`}>
+                  <Link to={`/clubhub/${val._id}`} key={ind}>
                     <div className="rounded-lg bg-[#212121] w-full">
                       <div className="flex">
                         <div className="flex-1 m-2 p-4">
@@ -272,10 +266,6 @@ export default function Club2() {
                           </h5>
                         </div>
                         <Link to={`/clubhub`}>
-                          <BsThreeDots
-                            onClick={handleClick1}
-                            className="text-white text-2xl mt-5 cursor-pointer"
-                          />
                           <Menu
                             id="basic-menu"
                             anchorEl={anchorEl}
@@ -287,9 +277,8 @@ export default function Club2() {
                           >
                             <MenuItem
                               onClick={() => {
-                                handleClose();
-                                setId(val._id);
                                 setEditFolder(true);
+                                handleClose();
                               }}
                             >
                               Edit Folder
@@ -303,11 +292,15 @@ export default function Club2() {
                             onCancel={cancel}
                             okButtonProps={{ className: "bg-blue-500" }}
                           > */}
-                            <MenuItem onClick={() => confirm(val._id)}>
+                            <MenuItem onClick={() => confirm(id)}>
                               Delete Folder
                             </MenuItem>
                             {/* </Popconfirm> */}
                           </Menu>
+                          <BsThreeDots
+                            onClick={(e) => handleClick1(e, val)}
+                            className="text-white text-2xl mt-5 cursor-pointer"
+                          />
                         </Link>
                       </div>
                     </div>
@@ -488,6 +481,7 @@ export default function Club2() {
                   placeholder="Enter Name of the Folder"
                   required=""
                   onChange={handleFileName}
+                  value={folderName}
                 />
               </div>
               {error ? (
