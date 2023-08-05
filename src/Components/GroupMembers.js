@@ -33,7 +33,6 @@ export default function GroupMembers(props) {
         `${process.env.REACT_APP_API}/users/singleUser/${props.data.val.refOfUser}`
       )
       .then((res) => {
-        console.log(res.data);
         setAdmin(res.data.data.doc.id);
         setAdminImage(res.data.data.doc.image);
         setAdminName(res.data.data.doc.name);
@@ -51,7 +50,6 @@ export default function GroupMembers(props) {
         },
       })
       .then((res) => {
-        console.log(res.data.data.doc.id);
         setActiveId(res.data.data.doc.id);
         setImage(res.data.data.doc.image);
         setName(res.data.data.doc.name);
@@ -67,7 +65,6 @@ export default function GroupMembers(props) {
         `${process.env.REACT_APP_API}/group/GetGroup/${props.data.val._id}`
       )
       .then((res) => {
-        console.log(res.data.data.doc.Members);
         SetGroupDetail(res.data.data.doc);
         setMembers(res.data.data.doc.Members);
       })
@@ -84,7 +81,6 @@ export default function GroupMembers(props) {
 
   // Remove Member from Group
   const removeMember = async (id, ind) => {
-    console.log(groupDetail._id, id);
     setRefresh(true);
     setRefreshIndex([...refreshIndex, ind]);
     await axios
@@ -95,7 +91,6 @@ export default function GroupMembers(props) {
         setRefresh(false);
         setRefreshIndex([]);
         message.success("Member Removed");
-        console.log(res.data);
       })
       .catch((error) => {
         message.error("Member Not Removed");
@@ -108,7 +103,6 @@ export default function GroupMembers(props) {
 
   // Add Member to Group
   const addMember = async (id, ind) => {
-    console.log(groupDetail._id);
     setRefresh(true);
     setRefreshIndex([...refreshIndex, ind]);
     await axios
@@ -119,7 +113,6 @@ export default function GroupMembers(props) {
         setRefreshIndex([]);
         setRefresh(false);
         message.success("Member Added");
-        console.log(res.data);
       })
       .catch((error) => {
         message.error("Member Not Added");
@@ -132,7 +125,6 @@ export default function GroupMembers(props) {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
-        console.log(groupDetail.Members);
         SetPlayers(res.data.data);
       })
       .catch((error) => {
@@ -151,7 +143,7 @@ export default function GroupMembers(props) {
 
   return (
     <>
-      <div className="lg:h-[550px] 2xl:h-[550px] overflow-y-hidden scrollbar hover:overflow-y-scroll">
+      <div className="lg:h-[calc(100vh-95px)] overflow-y-auto scrollbar hover:overflow-y-scroll">
         {/* <div className="flex justify-end ">
           <svg
             width="19"
@@ -492,16 +484,68 @@ export default function GroupMembers(props) {
                   Admin
                 </h4>
               </div>
-              <div className="flex items-center gap-3  my-7 pb-10 mb-10 ">
-                <img
-                  className=" w-10 h-10 rounded-full"
-                  src={adminImage}
-                  alt="Bonnie image"
-                />
-                <h4 className="self-center  text-base font-normal font-lexend whitespace-nowrap text-white   ">
-                  {adminName}
-                </h4>
-              </div>
+              {members.map((val, ind) => {
+                return val.role == "Admin" ? (
+                  <div className="flex items-center font-lexend mb-6">
+                    {val.image ? (
+                      <>
+                        <img
+                          className=" w-10 h-10 rounded-full"
+                          src={val.image}
+                          alt="Bonnie image"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <div className=" w-10 h-10 rounded-full bg-white"></div>
+                      </>
+                    )}
+
+                    <h4 className="font-lexend self-center text-base font-normal whitespace-nowrap text-white ml-3  ">
+                      {val.name}
+                    </h4>
+                    {refreshIndex.includes(ind) ? (
+                      <svg
+                        className="animate-spin h-5 w-5 ml-auto text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8z"
+                        ></path>
+                      </svg>
+                    ) : (
+                      <svg
+                        className="ml-auto cursor-pointer"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 18 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        onClick={() => removeMember(val.id, ind)}
+                      >
+                        <path
+                          d="M9 0C4.0275 0 0 4.0275 0 9C0 13.9725 4.0275 18 9 18C13.9725 18 18 13.9725 18 9C18 4.0275 13.9725 0 9 0ZM13.5 9.9H4.5V8.1H13.5V9.9Z"
+                          fill="#FF0000"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                ) : (
+                  <></>
+                );
+              })}
             </div>
           </div>
         </div>
