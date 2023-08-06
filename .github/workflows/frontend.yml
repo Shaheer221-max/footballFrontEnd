@@ -35,3 +35,8 @@ jobs:
 
       - name: Display success message
         run: echo "Connected via SSH and files copied successfully"
+
+      - name: Cleanup Build Artifacts
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@13.48.234.163 -p 22 'cd /home/agents/frontend-runner/_work/footballFrontEnd/footballFrontEnd && rm -r *'
+
