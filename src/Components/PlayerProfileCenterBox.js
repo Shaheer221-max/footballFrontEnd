@@ -3,6 +3,7 @@ import { Line } from "react-chartjs-2";
 import "../styles/player.css";
 import "../styles/font.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import getAge from "get-age";
 import {
   Chart as ChartJS,
@@ -33,20 +34,34 @@ ChartJS.register(
 export default function PlayerProfileCenterBox(props) {
   const [evaluation, setEvaluation] = React.useState([]);
   const [avg, setAvg] = React.useState(0);
-
+  const [playerAttendence, setPlayerAttendence] = useState([]);
   const { user } = useSelector((state) => state.user);
-
+  const [activeKey, setActiveKey] = React.useState(0);
   const navigation = useNavigate();
 
   const onChange = (key) => {
+    setActiveKey(key);
     console.log(key);
   };
-
+  const getPlayerAttendence = async () => {
+    await axios
+      .get(
+        `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${props?.data?.id}`
+      )
+      .then((res) => {
+        console.log("66666666666666", res);
+        setPlayerAttendence(res?.data?.data?.attendance);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
   // Get Evaluation
   const getEvaluation = async () => {
     const response = await axios.get(
       `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsOfPlayer/${location?.state._id}`
     );
+    console.log("respone", response);
     // Calculate Average of Evaluation
     let sum = 0;
     for (let i = 0; i < response.data.data.length; i++) {
@@ -59,6 +74,7 @@ export default function PlayerProfileCenterBox(props) {
 
   React.useEffect(() => {
     getEvaluation();
+    getPlayerAttendence();
   }, []);
 
   // Get All Conversations
@@ -90,8 +106,6 @@ export default function PlayerProfileCenterBox(props) {
   };
   React.useEffect(() => {
     getConversations();
-
-
   }, []);
 
   const createConversation = async () => {
@@ -190,9 +204,9 @@ export default function PlayerProfileCenterBox(props) {
   const getAttendance = async () => {
     console.log(location?.state._id);
     await axios
-  .get(
-    `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
-  )
+      .get(
+        `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
+      )
       .then((response) => {
         const adata = response.data.data.attendance.map((items) => {
           const filteredRecords = items.attendance.filter(
@@ -212,18 +226,41 @@ export default function PlayerProfileCenterBox(props) {
     getAttendance();
   }, []);
 
-
+  // const chartData = {
+  //   labels: attendanceData.map(({ date }) => date.split("T")[0]),
+  //   datasets: [
+  //     {
+  //       label: "Attendance",
+  //       data: attendanceData.map(({ attendance }) =>
+  //         attendance[0].isPresent ? 1 : 1
+  //       ),
+  //       backgroundColor: attendanceData.map(({ attendance }) =>
+  //         attendance[0].isPresent ? "white" : "green"
+  //       ),
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
+  function formatDateToMonth(dateString) {
+    const options = { month: "long" };
+    const dateObj = new Date(dateString);
+    const formattedDate = dateObj.toLocaleDateString(undefined, options);
+    return formattedDate;
+  }
   const chartData = {
-    labels: attendanceData.map(({ date }) => date.split("T")[0]),
+    labels: attendanceData.map(({ date }) => formatDateToMonth(date)),
     datasets: [
       {
-        label:"Attendance",
-        data: attendanceData.map(({ attendance }) => attendance[0].isPresent ? 1: 1),
-        backgroundColor: attendanceData.map(({ attendance }) => attendance[0].isPresent ? "white" : "red"),
+        label: "Attendance",
+        data: attendanceData.map(({ attendance }) =>
+          attendance[0].isPresent ? 100 : 0
+        ),
+        backgroundColor: attendanceData.map(({ attendance }) =>
+          attendance[0].isPresent ? "white" : "green"
+        ),
         borderWidth: 1,
       },
     ],
-    
   };
 
   const chartData1 = {
@@ -252,6 +289,42 @@ export default function PlayerProfileCenterBox(props) {
                   {
                     ticks: {
                       beginAtZero: true,
+                      stepSize: 20,
+                      min: 0,
+                      max: 100,
+                      callback: function (value) {
+                        return value + "%";
+                      },
+                    },
+                  },
+                ],
+              },
+              plugins: {
+                legend: {
+                  display: true,
+                  position: "top",
+                },
+              },
+              responsive: true,
+              maintainAspectRatio: false,
+            }}
+          />
+        </div>
+      ),
+    },
+    {
+      key: "2",
+      label: `Report`,
+      children: (
+        <div className="w-fit">
+          <Bar
+            data={chartData1}
+            options={{
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      beginAtZero: true,
                     },
                   },
                 ],
@@ -261,33 +334,39 @@ export default function PlayerProfileCenterBox(props) {
         </div>
       ),
     },
-    {
-      key: "2",
-      label: `Report`,
-      children:<div className="w-fit">
-      <Bar
-        data={chartData1}
-        options={{
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                },
-              },
-            ],
-          },
-        }}
-      />
-    </div>,
-    },
   ];
+
+  function formatDate(dateString) {
+    const dateObj = new Date(dateString);
+
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const formattedDate = dateObj.toLocaleDateString(undefined, options);
+
+    return formattedDate;
+  }
+
+  function ConvertDateintoDay(dateString) {
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const dateObj = new Date(dateString);
+    const dayIndex = dateObj.getDay();
+
+    return daysOfWeek[dayIndex];
+  }
+
   return (
     <>
       {/* picture card and Graph */}
       <div className="flex my-4 gap-3 mx-7 justify-between">
         <div
-          className="w-full background height-full  lg:max-w-[250px] 2xl:min-w-[350px]  rounded-lg border border-gray-400 "
+          className="background h-[300px] w-[350px]  rounded-lg border border-gray-400 "
           id="player"
           style={{
             backgroundImage: `url(${location?.state?.image})`,
@@ -316,7 +395,7 @@ export default function PlayerProfileCenterBox(props) {
                   </button>
                 </span>
                 <span>
-                  <div className="flex mt-60">
+                  <div className="flex mt-[130px]">
                     <svg
                       width="25"
                       height="25"
@@ -337,8 +416,8 @@ export default function PlayerProfileCenterBox(props) {
               </div>
             </div>
           </div>
-          <div className="flex gap-1 ml-1 pr-10  items-center font-['lexend']">
-            <div className="flex-1 m-2 py-2 w-28 bg-gradient-to-b from-[#3e3e3e]/40 to-[#000000]/40 rounded-lg">
+          <div className="flex gap-1 ml-1 pr-10  items-center font-['lexend'] sticky top-[300px]">
+            <div className="flex-1 m-2 py-2 w-20 bg-gradient-to-b from-[#3e3e3e]/40 to-[#000000]/40 rounded-lg">
               <h5 className="text-xs ml-2 font-medium leading-5 tracking-tight text-green-500">
                 Age
               </h5>
@@ -347,7 +426,7 @@ export default function PlayerProfileCenterBox(props) {
                 {getAge(location?.state?.dateOfBirth?.split("T")[0])}
               </p>
             </div>
-            <div className="flex-1 m-2 py-2 w-28 bg-gradient-to-b from-[#3e3e3e]/40 to-[#000000]/40 rounded-lg">
+            <div className="flex-1 m-2 py-2 w-20 bg-gradient-to-b from-[#3e3e3e]/40 to-[#000000]/40 rounded-lg">
               <h5 className="text-xs ml-2 font-medium leading-5 tracking-tight text-green-500 ">
                 Avg
               </h5>
@@ -355,7 +434,7 @@ export default function PlayerProfileCenterBox(props) {
                 {Math.round(avg)}
               </p>
             </div>
-            <div className="flex-1 m-2 py-2 w-28 bg-gradient-to-b from-[#3e3e3e]/40 to-[#000000]/40 rounded-lg ">
+            <div className="flex-1 m-2 py-2 w-20 bg-gradient-to-b from-[#3e3e3e]/40 to-[#000000]/40 rounded-lg ">
               <h5 className="text-xs ml-2 font-medium leading-5 tracking-tight text-green-500 ">
                 Height
               </h5>
@@ -384,6 +463,142 @@ export default function PlayerProfileCenterBox(props) {
           </div>
         </div>
       </div>
+      {activeKey === "1" ? (
+        <div className="overflow-x-auto   font-lexend relative mx-10 my-5 font-dm rounded-xl">
+          <table className="font-dm w-full text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 ">
+            <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
+              <tr className="text-center font-DM-sans">
+                <th scope="col" className="py-3 pl-3">
+                  Date
+                </th>
+                <th scope="col" className="py-3 pl-3">
+                  Day
+                </th>
+                <th scope="col" className="py-3 pl-3">
+                  Status
+                </th>
+                <th scope="col" className="py-3 pl-3 justify-center">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {playerAttendence.length > 0 ? (
+                playerAttendence.map((attendanceObject, index) => {
+                  console.log("attendanceObject ", attendanceObject);
+                  return (
+                    <tr className="font-dm border-[#7E7E7E] border-b text-center">
+                      <td className="py-4 text-green-500">
+                        {formatDate(attendanceObject?.date)}{" "}
+                      </td>
+                      <td className="py-4 font-lexend">
+                        {ConvertDateintoDay(attendanceObject?.date)}
+                      </td>
+                      <td
+                        className={`py-4 font-lexend ${
+                          attendanceObject?.attendance[0]?.isPresent
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
+                      >
+                        {attendanceObject?.attendance[0]?.isPresent
+                          ? "Present"
+                          : "Absent"}
+                      </td>
+                      <td className="py-4 font-lexend flex text-green-500 justify-center cursor-pointer">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-pencil-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          {" "}
+                          <path
+                            d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"
+                            fill="#118d1f"
+                          ></path>{" "}
+                        </svg>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <div className="flex justify-center mt-3 w-full h-96">
+                  <p className="text-[#818181] font-dm font-normal text-lg">
+                    Loading ...
+                  </p>
+                </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="overflow-x-auto font-lexend relative mx-10 my-5 font-dm rounded-xl">
+          <table className="font-dm w-[800px] text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 overflow-x-auto ">
+            <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
+              <tr className="text-center font-DM-sans">
+                <th scope="col" className="py-3 pl-3 w-[100px]">
+                  Date
+                </th>
+                <th scope="col" className="py-3 pl-3 w-[100px]">
+                  Day
+                </th>
+                <th scope="col" className="py-3 pl-3">
+                  Mental Skill
+                </th>
+                <th scope="col" className="py-3 pl-3">
+                  Personal Traits
+                </th>
+                <th scope="col" className="py-3 pl-3">
+                  Physical Aptitude
+                </th>
+                <th scope="col" className="py-3 pl-3">
+                  Physical Fitness
+                </th>
+                <th scope="col" className="py-3 pl-3 justify-center">
+                  Practical Evaluation
+                </th>
+                <th scope="col" className="py-3 pl-3 justify-center">
+                  Comments
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {evaluation.length > 0 ? (
+                evaluation.map((evaluationObject, index) => {
+                  return (
+                    <tr className="font-dm border-[#7E7E7E] border-b text-center">
+                      <td className="py-4 text-green-500">
+                        {formatDate(evaluationObject?.date)}{" "}
+                      </td>
+                      <td className="py-4 font-lexend">
+                        {ConvertDateintoDay(evaluationObject?.date)}
+                      </td>
+                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                      <td className="text-blue-500 underline">
+                        {" "}
+                        View Comments
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <div className="flex justify-center mt-3 w-full h-96">
+                  <p className="text-[#818181] font-dm font-normal text-lg">
+                    Loading ...
+                  </p>
+                </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
       {/* Pictures */}
       {/* <div className="flex gap-4 my-9 ml-7">
         <img

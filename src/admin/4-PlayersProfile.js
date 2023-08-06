@@ -8,20 +8,19 @@ import "../styles/font.css"
 import axios from "axios";
 export default function Playerprofile() {
   const location = useLocation();
-  console.log(location)
   return (
     <>
       <div className="flex-col w-full ">
         {/* Page Header */}
         <Header title={"Player's Profile"} />
-        <div className="flex  divide-x h-screen">
+        <div className="flex  divide-x h-[calc(100vh-95px)] overflow-y-auto">
           {/* left side-bar details  */}
           <div className="w-1/4 ml-10 mr-3 mt-5">
             <PlayerProfileleftsidebar data = {location?.state} />
           </div>
 
           {/* center Post */}
-          <div className=" border-[#7E7E7E] w-full mt-7 ">
+          <div className=" border-[#7E7E7E] w-full mt-15 h-[calc(100vh-95px)] overflow-y-auto ">
             <PlayerProfileCenterBox data = {location?.state} />
           </div>
 
