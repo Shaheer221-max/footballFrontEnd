@@ -31,7 +31,7 @@ jobs:
 
       - name: Deploy to Server
         run: |
-           ssh -o StrictHostKeyChecking=no ubuntu@13.50.112.228 -p 22 'cp -r /home/agents/frontend-runner/_work/footballFrontEnd/footballFrontEnd/* /home/Project/footballFrontEnd/ && cd /home/Project/footballFrontEnd/ && npm install && npm run build'
+           ssh -o StrictHostKeyChecking=no ubuntu@13.48.234.163 -p 22 'cp -r /home/agents/frontend-runner/_work/footballFrontEnd/footballFrontEnd/* /home/Project/footballFrontEnd/ && cd /home/Project/footballFrontEnd/ && npm install && npm run build'
 
       - name: Display success message
         run: echo "Connected via SSH and files copied successfully"
