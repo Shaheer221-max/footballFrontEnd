@@ -87,6 +87,7 @@ export default function VerificationCenter() {
         console.log(response);
         const updatedData = staticdata.filter((object) => object._id !== id);
         setStaticData(updatedData);
+        setStaticDataCopy(updatedData);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -103,6 +104,7 @@ export default function VerificationCenter() {
         console.log(response);
         const updatedData = staticdata.filter((object) => object._id !== id);
         setStaticData(updatedData);
+        setStaticDataCopy(updatedData);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -332,7 +334,9 @@ export default function VerificationCenter() {
                 staticdataCopy !== false ? (
                   <>
                     {/* if searched */}
-                    {staticdataCopy.map((object, index) => (
+                    {staticdataCopy
+                     .filter((object) => object.active === "pending")
+                    .map((object, index) => (
                       <tr
                         className="font-dm border-[#7E7E7E] border-b text-center"
                         key={index}
