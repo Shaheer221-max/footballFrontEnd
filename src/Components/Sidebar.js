@@ -3,6 +3,7 @@ import logo from "../assets/logo.png";
 import { NavLink } from "react-router-dom";
 import "../styles/pointer.css";
 import "../styles/font.css";
+import "../styles/scrollbar.css";
 export default function Sidebar() {
   const [drop, setdrop] = useState(false);
 
