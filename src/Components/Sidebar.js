@@ -27,7 +27,7 @@ export default function Sidebar() {
                 }
               >
                 <svg
-                  // className=" text-green-500 fill-current"
+                  /* className=" text-green-500 fill-current" */
                   width="33"
                   height="25"
                   viewBox="0 0 33 25"
