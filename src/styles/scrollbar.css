@@ -5,8 +5,12 @@
   }
   
   /* Works on Chrome, Edge, and Safari */
-  .scrollbar::-webkit-scrollbar {
-    width: 12px;
+  /* .scrollbar::-webkit-scrollbar {
+    width: 5px;
+  } */
+
+  ::-webkit-scrollbar {
+    width: 5px;
   }
   
   .scrollbar::-webkit-scrollbar-track {

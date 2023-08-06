@@ -3,6 +3,7 @@ import logo from "../assets/logo.png";
 import { NavLink } from "react-router-dom";
 import "../styles/pointer.css";
 import "../styles/font.css";
+import "../styles/scrollbar.css";
 export default function Sidebar() {
   const [drop, setdrop] = useState(false);
 
@@ -26,7 +27,7 @@ export default function Sidebar() {
                 }
               >
                 <svg
-                  // className=" text-green-500 fill-current"
+                  /* className=" text-green-500 fill-current" */
                   width="33"
                   height="25"
                   viewBox="0 0 33 25"
