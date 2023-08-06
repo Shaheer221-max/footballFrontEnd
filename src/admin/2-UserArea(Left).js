@@ -15,6 +15,7 @@ import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 
 export default function UserAreaLeft() {
   const [data, setData] = useState([]);
+  const [allPlayersData, setAllPlayersData] = useState([]);
   const [openAddsubcatmodal, setopenAddsubcatmodal] = useState(false);
   const [totalPlayers, setTotalPlayers] = useState(0);
   const [playersJoined, setPlayersJoined] = useState(0);
@@ -26,7 +27,7 @@ export default function UserAreaLeft() {
   // getting players from database
   const getData = async () => {
     await axios
-      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
+      .get(`${process.env.REACT_APP_API}/users/GetLeftPlayers`)
       .then((res) => {
         console.log(res?.data?.data);
         setTotalPlayers(res?.data?.result);
@@ -36,7 +37,17 @@ export default function UserAreaLeft() {
         console.log(error.response.data);
       });
   };
-
+  const getallPlayers = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
+      .then((res) => {
+        console.log(res?.data?.result);
+        setAllPlayersData(res?.data?.data);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
   const getParents = async () => {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
@@ -50,15 +61,10 @@ export default function UserAreaLeft() {
       });
   };
 
-  useEffect(() => {
-    console.log('data', data)
-    console.log('playersLeftData', playersLeftData)
-  
+  useEffect(() => { 
     if (search === "") {
-      console.log('if')
       setFilteredData(playersLeftData);
     } else {
-      console.log('else')
       setFilteredData(
         playersLeftData.filter((item) => {
           return item.name.toLowerCase().includes(search.toLowerCase());
@@ -71,6 +77,7 @@ export default function UserAreaLeft() {
     getData();
     getParents();
     getPlayersLeft();
+    getallPlayers();
   }, []);
 
   // Pagination
@@ -114,7 +121,6 @@ export default function UserAreaLeft() {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetLeftPlayers`)
       .then((res) => {
-        console.log(res?.data?.data);
         setPlayersLeftData(res?.data?.data);
         setPlayersLeft(res?.data?.result);
       })
@@ -188,6 +194,7 @@ export default function UserAreaLeft() {
 
         {/* Header Of Table  */}
         <div className="flex mx-10">
+        <Link to={"/userarea"}>
           <div className="w-72 mr-8">
             <div className="flex rounded-lg text-lg text-left text-white  bg-zinc-800 p-19">
               <div className="flex-1 w-full mt-3 ml-2 mb-3 pt-3 pb-3 pl-3 grow-0">
@@ -207,13 +214,14 @@ export default function UserAreaLeft() {
               </div>
               <div className="flex-1 mt-8 ml-3">
                 <h1 className="text-3xl font-bold font-lexend">
-                  {totalPlayers}
+                  {allPlayersData?.length}
                 </h1>
                 <h3 className="text-text-lg font-lexend">Total Players</h3>
               </div>
             </div>
           </div>
-          <Link to={"/userarea"}>
+          </Link>
+          <Link to={"/userarea/middle"}>
             <div className="w-72 mr-8">
               <div className="flex rounded-lg text-lg text-left text-white  bg-zinc-800 p-18">
                 <div className="flex-1 w-20 mt-3 ml-2 mb-3 pt-3 pb-3 pl-3 grow-0">
@@ -233,7 +241,7 @@ export default function UserAreaLeft() {
                 </div>
                 <div className="flex-1 mt-3 mt-8 ml-4">
                   <h1 className="text-3xl font-bold">
-                    {totalPlayers - playersLeft}
+                    {allPlayersData.filter((object) => object.active === "active").length}
                   </h1>
                   <h3 className="text-lg">Players Joined</h3>
                 </div>
@@ -256,13 +264,11 @@ export default function UserAreaLeft() {
                     fill="white"
                   />
                 </svg>
-              </div>
-              <Link to={"/userarea/left"}>
+              </div>           
                 <div className="flex-1 mt-8 ml-3 cursor-pointer">
                   <h1 className="text-3xl font-bold">{playersLeft}</h1>
                   <h3 className="text-lg">Players Left</h3>
                 </div>
-              </Link>
             </div>
           </div>
         </div>
@@ -304,7 +310,7 @@ export default function UserAreaLeft() {
             <tbody>
               {filteredData.length > 0 ? (
                 filteredData
-                  .filter((object) => object.active === "pending")
+                  // .filter((object) => object.active === "pending")
                   .map((object, index) => {
                     const parents = parent.find(
                       (parent) => parent.refOfPlayer === object._id

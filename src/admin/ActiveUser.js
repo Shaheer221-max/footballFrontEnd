@@ -55,6 +55,7 @@ import Parents from "../pages/Parents";
 import EditDrill from "../pages/EditDrill";
 import CoachProfile from "./CoachProfile";
 import UserAreaLeft from "./2-UserArea(Left)";
+import UserAreaMiddle from "./2-UserArea(middle)";
 
 export const AuthContext = React.createContext();
 
@@ -111,6 +112,11 @@ function AuthProvider({ children }) {
                     exact
                     path="/userarea/left"
                     element={<UserAreaLeft />}
+                  />
+                    <Route
+                    exact
+                    path="/userarea/middle"
+                    element={<UserAreaMiddle/>}
                   />
                   <Route
                     exact

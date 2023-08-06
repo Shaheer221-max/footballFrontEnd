@@ -13,7 +13,7 @@ import {
 import { Dropdown, message, Popconfirm } from "antd";
 import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 
-export default function UserArea() {
+export default function UserAreaMiddle() {
   const [data, setData] = useState([]);
   const [openAddsubcatmodal, setopenAddsubcatmodal] = useState(false);
   const [totalPlayers, setTotalPlayers] = useState(0);
@@ -44,7 +44,6 @@ export default function UserArea() {
           res?.data?.data?.doc.filter((item) => item.role === "Parent")
         );
       })
-      console.log('parent', parent)
       .catch((error) => {
         console.log(error.response.data);
       });
@@ -182,6 +181,7 @@ export default function UserArea() {
 
         {/* Header Of Table  */}
         <div className="flex mx-10">
+        <Link to={"/userarea"}>
           <div className="w-72 mr-8">
             <div className="flex rounded-lg text-lg text-left text-white  bg-zinc-800 p-19">
               <div className="flex-1 w-full mt-3 ml-2 mb-3 pt-3 pb-3 pl-3 grow-0">
@@ -207,7 +207,7 @@ export default function UserArea() {
               </div>
             </div>
           </div>
-          <Link to={"/userarea/middle"}>
+          </Link>
           <div className="w-72 mr-8">
             <div className="flex rounded-lg text-lg text-left text-white  bg-zinc-800 p-18">
               <div className="flex-1 w-20 mt-3 ml-2 mb-3 pt-3 pb-3 pl-3 grow-0">
@@ -227,13 +227,12 @@ export default function UserArea() {
               </div>
               <div className="flex-1 mt-3 mt-8 ml-4">
                 <h1 className="text-3xl font-bold">
-                {filteredData.filter((object) => object.active === "active").length}
+                    {filteredData.filter((object) => object.active === "active").length}
                 </h1>
                 <h3 className="text-lg">Players Joined</h3>
               </div>
             </div>
           </div>
-          </Link>
           <Link to={"/userarea/left"}>
             <div className="w-72 ">
               <div className="flex rounded-lg text-lg text-left text-white  bg-zinc-800 p-18">
@@ -297,6 +296,7 @@ export default function UserArea() {
             <tbody>
               {filteredData.length > 0 ? (
                 filteredData
+                .filter((object) => object.active === "active")
                 .map((object, index) => {
                   const parents = parent.find(
                     (parent) => parent.refOfPlayer === object._id

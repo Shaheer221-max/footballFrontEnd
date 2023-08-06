@@ -96,7 +96,7 @@ export default function VerificationCenter() {
   const unapproved = (id) => {
     axios
       .put(`${process.env.REACT_APP_API}/users/updateUser/${id}`, {
-        active: "pending",
+        active: "unapprove",
       })
       .then((response) => {
         message.success("Player Un Approved");
@@ -439,7 +439,9 @@ export default function VerificationCenter() {
                 ) : (
                   // if no search
                   <>
-                    {staticdata.map((object, index) => (
+                    {staticdata
+                   .filter((object) => object.active === "pending")
+                    .map((object, index) => (
                       <tr
                         className="font-dm border-[#7E7E7E] border-b text-center"
                         key={index}
