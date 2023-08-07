@@ -36,7 +36,7 @@ export default function PlayerProfileCenterBox(props) {
   const [avg, setAvg] = React.useState(0);
   const [playerAttendence, setPlayerAttendence] = useState([]);
   const { user } = useSelector((state) => state.user);
-  const [activeKey, setActiveKey] = React.useState('1');
+  const [activeKey, setActiveKey] = React.useState("1");
   const navigation = useNavigate();
 
   const onChange = (key) => {
@@ -241,36 +241,55 @@ export default function PlayerProfileCenterBox(props) {
   //     },
   //   ],
   // };
-  function formatDateToMonth(dateString) {
-    const options = { month: "long" };
-    const dateObj = new Date(dateString);
-    const formattedDate = dateObj.toLocaleDateString(undefined, options);
-    return formattedDate;
-  }
+  const attendanceDataByMonth = attendanceData.reduce((acc, item) => {
+    const date = new Date(item.date);
+    const month = date.getMonth();
+    const isPresent = item.attendance[0]?.isPresent || false;
+    if (!acc[month]) {
+      acc[month] = { present: 0, total: 0 };
+    }
+    acc[month].total++;
+    if (isPresent) {
+      acc[month].present++;
+    }
+    return acc;
+  }, {});
+
+  // Step 2: Calculate the monthly attendance percentages
+  const monthlyAttendancePercentages = Object.values(attendanceDataByMonth).map(
+    ({ present, total }) => (present / total) * 100
+  );
   const chartData = {
-    labels: attendanceData.map(({ date }) => formatDateToMonth(date)),
+    labels: labels.map(month => month.slice(0,3)),
     datasets: [
       {
-        label: "Attendance",
-        data: attendanceData.map(({ attendance }) =>
-          attendance[0].isPresent ? 100 : 0
-        ),
-        backgroundColor: attendanceData.map(({ attendance }) =>
-          attendance[0].isPresent ? "white" : "green"
-        ),
+        label: "Attendance Percentage",
+        data: monthlyAttendancePercentages,
+        backgroundColor: monthlyAttendancePercentages.map((percentage) =>
+          percentage >= 50 ? "green" : "red"
+        ), // Use green for attendance >= 50% and red for attendance < 50%
+        hoverBackgroundColor: "white", // Change to white when hovering
         borderWidth: 1,
+        barThickness: 20, // Set the bar width to 20 pixels
       },
     ],
   };
 
+  const avgScores = evaluation.map((item) => item.avgScore);
+
+  const getBackgroundColor = (score) => {
+    return score >=2 ? "green" : "red";
+  };
   const chartData1 = {
-    labels: attendanceData.map(({ date }) => date.split("T")[0]),
+    labels: labels.map(month => month.slice(0,3)),
     datasets: [
       {
         label: "Average Score",
-        data: evaluation.map(({ avgScore }) => avgScore),
-        backgroundColor: "white",
+        data: avgScores,
+        backgroundColor: avgScores.map((score) => getBackgroundColor(score)),
+        hoverBackgroundColor: "white",
         borderWidth: 1,
+        barThickness: 20, // Set the bar width to 20 pixels
       },
     ],
   };
@@ -280,24 +299,34 @@ export default function PlayerProfileCenterBox(props) {
       key: "1",
       label: `Attendance`,
       children: (
-        <div className="w-fit">
+        <div className="w-fit" style={{ height: "225px" }}>
           <Bar
             data={chartData}
             options={{
               scales: {
-                yAxes: [
-                  {
-                    ticks: {
-                      beginAtZero: true,
-                      stepSize: 20,
-                      min: 0,
-                      max: 100,
-                      callback: function (value) {
-                        return value + "%";
-                      },
+                x: {
+                  grid: {
+                    display: true, // Display grid lines for x-axis
+                    borderColor: "gray", // Border color for x-axis
+                    borderWidth: 1, // Border width for x-axis
+                  },
+                },
+                y: {
+                  grid: {
+                    display: true, // Display grid lines for y-axis
+                    borderColor: "gray", // Border color for y-axis
+                    borderWidth: 1, // Border width for y-axis
+                  },
+                  ticks: {
+                    beginAtZero: true,
+                    stepSize: 20,
+                    min: 0,
+                    max: 100,
+                    callback: function (value) {
+                      return value + "%";
                     },
                   },
-                ],
+                },
               },
               plugins: {
                 legend: {
@@ -307,6 +336,8 @@ export default function PlayerProfileCenterBox(props) {
               },
               responsive: true,
               maintainAspectRatio: false,
+              // height of the canvas in pixels
+              height: 225,
             }}
           />
         </div>
@@ -316,19 +347,45 @@ export default function PlayerProfileCenterBox(props) {
       key: "2",
       label: `Report`,
       children: (
-        <div className="w-fit">
+        <div className="w-fit" style={{ height: "225px" }}>
           <Bar
             data={chartData1}
             options={{
               scales: {
-                yAxes: [
-                  {
-                    ticks: {
-                      beginAtZero: true,
+                x: {
+                  grid: {
+                    display: true, // Display grid lines for x-axis
+                    borderColor: "gray", // Border color for x-axis
+                    borderWidth: 1, // Border width for x-axis
+                  },
+                },
+                y: {
+                  grid: {
+                    display: true, // Display grid lines for y-axis
+                    borderColor: "gray", // Border color for y-axis
+                    borderWidth: 1, // Border width for y-axis
+                  },
+                  ticks: {
+                    beginAtZero: true,
+                    stepSize: 20,
+                    min: 0,
+                    max: 100,
+                    callback: function (value) {
+                      return value + "%";
                     },
                   },
-                ],
+                },
               },
+              plugins: {
+                legend: {
+                  display: true,
+                  position: "top",
+                },
+              },
+              responsive: true,
+              maintainAspectRatio: false,
+              // height of the canvas in pixels
+              height: 225,
             }}
           />
         </div>
