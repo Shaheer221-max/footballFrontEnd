@@ -20,13 +20,13 @@ export default function Playerprofile() {
           </div>
 
           {/* center Post */}
-          <div className=" w-[55rem] h-[calc(100vh-95px)] overflow-y-auto ">
+          <div className=" w-[55rem] h-[calc(100vh-95px)] overflow-y-auto border-[#7e7e7e] ">
             <PlayerProfileCenterBox data = {location?.state} />
           </div>
 
           {/* right side-bar parent profile */}
 
-          <div className=" mr-5 mt-2 w-1/4 h-[calc(100vh-95px)] overflow-y-auto">
+          <div className=" mr-5 mt-2 w-1/4 h-[calc(100vh-95px)] overflow-y-auto border-[#7e7e7e] ">
             <PlayerProfileRightSidebar data = {location?.state} />
           </div>
         </div>
