@@ -14,7 +14,7 @@ export default function CoachProfile() {
     <>
       <div className="flex-col w-full ">
         {/* Page Header */}
-        <Header title={"Player's Profile"} />
+        <Header title={"Coach's Profile"} />
         <div className="flex  divide-x h-screen">
           {/* left side-bar details  */}
           <div className="w-1/4 ml-10 mr-3 mt-5">
