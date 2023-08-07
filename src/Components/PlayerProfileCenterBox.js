@@ -529,6 +529,7 @@ export default function PlayerProfileCenterBox(props) {
           </div>
         </div>
       </div>
+      
       {activeKey === "1" ? (
         <div className="overflow-x-auto   font-lexend relative mx-7 my-5 font-dm rounded-xl">
           <table className="font-dm w-full text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 ">
