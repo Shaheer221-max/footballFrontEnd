@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import { Avatar, Tooltip } from "antd";
 import RightSideChatGroup from "./RightSideChatGroup";
 import LeftSideChatGroup from "./LeftSideChatGroup";
+import { storage } from "../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export default function GroupChatBox(props) {
   var today = new Date(),
@@ -174,14 +176,19 @@ export default function GroupChatBox(props) {
   };
 
   const handleChange = (event) => {
-    const data = new FormData();
-    data.append("file", event.target.files[0]);
-    data.append("upload_preset", "player_image");
-    //data.append("cloud_name","dyapmvalo");
-    axios
-      .post("https://api.cloudinary.com/v1_1/dyapmvalo/image/upload", data)
-      .then((res) => {
-        setUrl(res.data.url);
+    const imageRef = ref(storage, "image/" + event.target.files[0].name);
+
+    uploadBytes(imageRef, event.target.files[0])
+      .then(() => {
+        // Get the download URL of the uploaded image
+        getDownloadURL(imageRef)
+          .then((downloadURL) => {
+            console.log("Image URL: ", downloadURL);
+            setUrl(downloadURL); // Set the URL to the state variable
+          })
+          .catch((error) => {
+            console.error("Error getting download URL:", error);
+          });
       })
       .catch((err) => {
         console.log(err);
