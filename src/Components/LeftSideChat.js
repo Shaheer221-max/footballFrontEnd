@@ -52,7 +52,7 @@ export default function LeftSideChat(props) {
                 {/* {props.date.slice(11,16)} */}
               </p>
             </div>
-            <p className="font-medium bg-white text-base text-black mt-1  rounded-tr-lg rounded-b-lg py-2 px-6">
+            <p class="font-medium bg-white text-base text-black mt-1 rounded-tr-lg rounded-b-lg py-2 px-6 whitespace-pre-wrap max-w-400">
             {three === ".jpg" ? (
                 <img className="h-[300px]" src={props.message.text} alt="image" />
               ) : three === ".mp4" ? (

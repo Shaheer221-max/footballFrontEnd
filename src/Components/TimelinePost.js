@@ -210,6 +210,27 @@ export default function TimelinePost(props) {
 
   // const {user} = useSelector((state) => state);
 
+  function formatDuration(createdDate) {
+    const now = new Date();
+    const durationInSeconds = Math.floor((now - new Date(createdDate)) / 1000);
+  
+    const minutes = Math.floor(durationInSeconds / 60);
+    const hours = Math.floor(durationInSeconds / (60 * 60));
+    const days = Math.floor(durationInSeconds / (60 * 60 * 24));
+    const weeks = Math.floor(durationInSeconds / (60 * 60 * 24 * 7));
+    const months = Math.floor(durationInSeconds / (60 * 60 * 24 * 30.44)); // Average days in a month
+    const years = Math.floor(durationInSeconds / (60 * 60 * 24 * 365));
+  
+    if (years > 0) return years === 1 ? "1y" : `${years}y`;
+    if (months > 0) return months === 1 ? "1m" : `${months}m`;
+    if (weeks > 0) return weeks === 1 ? "1w" : `${weeks}w`;
+    if (days > 0) return days === 1 ? "1d" : `${days}d`;
+    if (hours > 0) return hours === 1 ? "1h" : `${hours}h`;
+    if (minutes > 0) return minutes === 1 ? "1min" : `${minutes}mins`;
+  
+    return "Just now";
+  }
+
   const getData = async () => {
     await axios
       .get(`${process.env.REACT_APP_API}/users/me`, {
@@ -480,7 +501,7 @@ export default function TimelinePost(props) {
                           <h5 className="text-base  font-normal tracking-tight text-white">
                             {val?.refOfUser?.name}
                           </h5>
-                          <div className="inline-flex font-dm ml-3 items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
+                          <div className="inline-flex font-dm ml-3 items-center px-[10px]  text-xs font-medium text-white bg-green-500 rounded-md ">
                             {val?.refOfUser?.role}
                           </div>
                         </div>
@@ -713,6 +734,7 @@ export default function TimelinePost(props) {
 
                     {load[ind] ? (
                       val.Comment.map((val, ind) => {
+                        console.log('valdate : ', val);
                         return (
                           <>
                             <div className="flex align-middle mb-3 ml-4">
@@ -726,7 +748,7 @@ export default function TimelinePost(props) {
                                   <p className="text-md text-white mb-2">
                                     {val?.refOfUser?.name}
                                   </p>
-                                  <div className="inline-flex font-dm ml-3 items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
+                                  <div className="inline-flex font-dm ml-3 items-center  px-[10px] text-xs font-medium text-white bg-green-500 rounded-md ">
                                     {val?.refOfUser?.role}
                                   </div>
                                 </div>
@@ -734,11 +756,11 @@ export default function TimelinePost(props) {
                               </div>
                             </div>
                             <div className="flex ml-[68px] mb-5 text-white text-xs font-font-lexend">
-                              <p className="mr-5 ml-5">{moment(val?.createdDate).format('dddd, MMMM Do YYYY')}</p>
+                              <p className="ml-2">{formatDuration(val?.createdDate)}</p>
                               {/* <button className="btn text-xs">Like</button> */}
                               <button
                                 onClick={() => reply(ind)}
-                                className="ml-5"
+                                className="ml-3"
                               >
                                 Reply
                               </button>
@@ -757,7 +779,7 @@ export default function TimelinePost(props) {
                                       <p className="text-md text-white mb-2">
                                         {val?.refOfUser?.name}
                                       </p>
-                                      <div className="inline-flex font-dm ml-3 items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
+                                      <div className="inline-flex font-dm ml-3 items-center px-[10px] text-xs font-medium text-white bg-green-500 rounded-md ">
                                         {val?.refOfUser?.role}
                                       </div>
                                       </div>
