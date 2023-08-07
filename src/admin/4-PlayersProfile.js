@@ -15,18 +15,18 @@ export default function Playerprofile() {
         <Header title={"Player's Profile"} />
         <div className="flex  divide-x h-[calc(100vh-95px)] overflow-y-auto">
           {/* left side-bar details  */}
-          <div className="w-1/4 ml-10 mr-3 mt-5">
+          <div className="w-[20%] ml-10 mr-3 mt-5 h-[calc(100vh-115px)] overflow-y-auto">
             <PlayerProfileleftsidebar data = {location?.state} />
           </div>
 
           {/* center Post */}
-          <div className=" border-[#7E7E7E] w-full mt-15 h-[calc(100vh-95px)] overflow-y-auto ">
+          <div className=" w-[55rem] h-[calc(100vh-95px)] overflow-y-auto ">
             <PlayerProfileCenterBox data = {location?.state} />
           </div>
 
           {/* right side-bar parent profile */}
 
-          <div className=" border-[#7E7E7E] mr-5 mt-2 w-4/12">
+          <div className=" mr-5 mt-2 w-1/4 h-[calc(100vh-95px)] overflow-y-auto">
             <PlayerProfileRightSidebar data = {location?.state} />
           </div>
         </div>

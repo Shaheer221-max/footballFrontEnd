@@ -114,7 +114,7 @@ export default function PlayerProfileleftsidebar(props) {
         {props?.data?.gender}
         </p>
       </div>
-      <div className=" mt-[200px] 2xl:mt-[450px]">
+      <div className=" mt-[200px] 2xl:mt-[300px]">
         <NavLink
           to={{pathname : "/userarea/playerprofile/profile"}} state = {props?.data}
           className={({ isActive }) =>

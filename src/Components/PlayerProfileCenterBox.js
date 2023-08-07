@@ -36,7 +36,7 @@ export default function PlayerProfileCenterBox(props) {
   const [avg, setAvg] = React.useState(0);
   const [playerAttendence, setPlayerAttendence] = useState([]);
   const { user } = useSelector((state) => state.user);
-  const [activeKey, setActiveKey] = React.useState(0);
+  const [activeKey, setActiveKey] = React.useState('1');
   const navigation = useNavigate();
 
   const onChange = (key) => {
@@ -364,7 +364,7 @@ export default function PlayerProfileCenterBox(props) {
   return (
     <>
       {/* picture card and Graph */}
-      <div className="flex my-4 gap-3 mx-7 justify-between">
+      <div className="flex my-4 gap-3 mx-7 justify-between pt-7">
         <div
           className="background h-[300px] w-[350px]  rounded-lg border border-gray-400 "
           id="player"
@@ -464,7 +464,7 @@ export default function PlayerProfileCenterBox(props) {
         </div>
       </div>
       {activeKey === "1" ? (
-        <div className="overflow-x-auto   font-lexend relative mx-10 my-5 font-dm rounded-xl">
+        <div className="overflow-x-auto   font-lexend relative mx-7 my-5 font-dm rounded-xl">
           <table className="font-dm w-full text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 ">
             <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
               <tr className="text-center font-DM-sans">
@@ -535,7 +535,7 @@ export default function PlayerProfileCenterBox(props) {
           </table>
         </div>
       ) : (
-        <div className="overflow-x-auto font-lexend relative mx-10 my-5 font-dm rounded-xl">
+        <div className="overflow-x-auto font-lexend relative mx-7 my-5 font-dm rounded-xl">
           <table className="font-dm w-[800px] text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 overflow-x-auto ">
             <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
               <tr className="text-center font-DM-sans">
