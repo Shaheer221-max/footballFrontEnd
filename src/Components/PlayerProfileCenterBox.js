@@ -543,9 +543,9 @@ export default function PlayerProfileCenterBox(props) {
                 <th scope="col" className="py-3 pl-3">
                   Status
                 </th>
-                <th scope="col" className="py-3 pl-3 justify-center">
+                {/* <th scope="col" className="py-3 pl-3 justify-center">
                   Action
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
@@ -573,7 +573,7 @@ export default function PlayerProfileCenterBox(props) {
                               ? "Present"
                               : "Absent"}
                           </td>
-                          <td className="py-4 font-lexend flex text-green-500 justify-center cursor-pointer">
+                          {/* <td className="py-4 font-lexend flex text-green-500 justify-center cursor-pointer">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="16"
@@ -588,7 +588,7 @@ export default function PlayerProfileCenterBox(props) {
                                 fill="#118d1f"
                               ></path>{" "}
                             </svg>
-                          </td>
+                          </td> */}
                         </tr>
                       </>
                     );
