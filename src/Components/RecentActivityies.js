@@ -60,7 +60,7 @@ export default function RecentActivityies(props) {
                           {val?.refOfUser?.name}
                         </h6>
                         {/* <p className="text-white">{val.image}</p> */}
-                        <p className="text-xs font-lexend text-gray-500 ">
+                        <p className="text-xs font-lexend text-gray-500 ml-2">
                           Posted{" "}
                         </p>{" "}
                         {val?.image !== "false" ? (
