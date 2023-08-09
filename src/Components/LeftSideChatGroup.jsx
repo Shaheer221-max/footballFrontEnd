@@ -61,7 +61,7 @@ export default function LeftSideChatGroup(props) {
             )
           )}
 
-          <div>
+          <div style={{width: '50%'}}>
             <div className="flex  justify-between">
               <h5 className="text-lg font-normal tracking-tight  text-white">
                 {/* {props.name} */}
@@ -70,7 +70,7 @@ export default function LeftSideChatGroup(props) {
                 {/* {props.date.slice(11,16)} */}
               </p>
             </div>
-            <p className="font-medium bg-white text-base text-black mt-1  rounded-tr-lg rounded-b-lg py-2 px-6">
+            <p className="font-medium bg-white text-base text-black mt-1  rounded-tr-lg rounded-b-lg py-2 px-6 " style={{ width: "100%", overflowWrap: "break-word" }}>
             {three === ".jpg" ? (
                 <img className="h-[300px]" src={props.message.content} alt="image" />
               ) : three === ".mp4" ? (

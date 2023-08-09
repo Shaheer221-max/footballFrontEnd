@@ -42,7 +42,7 @@ export default function RightSideChat(props) {
               )
             )
           )}
-          <div>
+          <div style={{width: '50%'}}>
             <div className="flex flex-row-reverse justify-between mx2">
               <h5 className="text-lg font-normal tracking-tight text-white">
                 {user.user.name}
@@ -53,7 +53,7 @@ export default function RightSideChat(props) {
                 {moment(props.message.createdAt).format("LT")}
               </p>
             </div>
-            <p className="font-medium bg-[#212121] text-base text-white mt-1  rounded-tr-lg rounded-b-lg py-2 px-6">
+            <p className="font-medium bg-[#212121] text-base text-white mt-1  rounded-tr-lg rounded-b-lg py-2 px-6" style={{ width: "100%", overflowWrap: "break-word" }}>
               {three === ".jpg" || three === ".png" ? (
                 <img className="h-[300px]" src={props.message.text} alt="image" />
               ) : three === ".mp4" ? (
