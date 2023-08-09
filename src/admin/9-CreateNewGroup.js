@@ -117,10 +117,9 @@ export default function AddGroups() {
 
   const createGroup = async () => {
     if (name === "" || url === "") {
-      message.error("Please Enter Group Name");
+      message.error("Group Name or Group Image is missing");
       return;
     }
-    console.log(mem);
 
     if (check === true) {
       await axios
@@ -158,7 +157,7 @@ export default function AddGroups() {
         .then((res) => {
           setGroupAdded(true);
           setError(false);
-          navigate("/selectedGroup");
+          navigate("/selectgroup");
         })
         .catch((error) => {
           // message.error("Group Not Created");
