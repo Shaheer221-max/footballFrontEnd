@@ -22,6 +22,7 @@ export default function GroupChatBox(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chat, setChat] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const [msgLoading, setMsgLoading] = useState(false);
 
   const hiddenFileInput = React.useRef(null);
 
@@ -196,6 +197,8 @@ export default function GroupChatBox(props) {
       )[0]._id,
       text: sendChat,
     });
+    setMsgLoading(true);
+
     await axios
       .post(
         `${process.env.REACT_APP_API}/groupconversation/send/${params.id}`,
@@ -207,8 +210,10 @@ export default function GroupChatBox(props) {
       .then((res) => {
         setSendChat("");
         setUrl("");
+        setMsgLoading(false);
       })
       .catch((error) => {
+        setMsgLoading(false);
         console.log(error);
       });
     AllMessages();
@@ -650,62 +655,87 @@ export default function GroupChatBox(props) {
             ref={messageEl}
           >
             <>
-              {chat.map((val, ind) => {
-                return (
-                  <div>
-                    {ind === 0 ? (
-                      <>
-                        <div className="flex items-center py-4 mx-10">
-                          <div className="flex-grow h-px bg-gray-400"></div>
+              {msgLoading ? (
+                <div className="flex justify-center align-middle items-center h-[60vh] ">
+                  <svg
+                    className="animate-spin h-7 w-7 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    ></path>
+                  </svg>
+                </div>
+              ) : (
+                chat.map((val, ind) => {
+                  return (
+                    <div>
+                      {ind === 0 ? (
+                        <>
+                          <div className="flex items-center py-4 mx-10">
+                            <div className="flex-grow h-px bg-gray-400"></div>
 
-                          <span className="flex-shrink text-base font-dm text-[#ffffff] px-4  font-normal">
-                            {today === val.timestamp.slice(0, 10) ? (
-                              <>Today</>
-                            ) : (
-                              <>{val.timestamp.slice(0, 10)}</>
-                            )}
-                          </span>
+                            <span className="flex-shrink text-base font-dm text-[#ffffff] px-4  font-normal">
+                              {today === val.timestamp.slice(0, 10) ? (
+                                <>Today</>
+                              ) : (
+                                <>{val.timestamp.slice(0, 10)}</>
+                              )}
+                            </span>
 
-                          <div className="flex-grow h-px bg-gray-400"></div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        {val?.createdAt?.slice(0, 10).toString() !==
-                        chat[ind - 1]?.createdAt?.slice(0, 10).toString() ? (
-                          <>
-                            <div className="flex items-center py-4 mx-10">
-                              <div className="flex-grow h-px bg-gray-400"></div>
+                            <div className="flex-grow h-px bg-gray-400"></div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {val?.createdAt?.slice(0, 10).toString() !==
+                          chat[ind - 1]?.createdAt?.slice(0, 10).toString() ? (
+                            <>
+                              <div className="flex items-center py-4 mx-10">
+                                <div className="flex-grow h-px bg-gray-400"></div>
 
-                              <span className="flex-shrink text-base font-dm text-[#ffffff] px-4  font-normal">
-                                {val?.createdAt?.slice(0, 10)}
-                              </span>
+                                <span className="flex-shrink text-base font-dm text-[#ffffff] px-4  font-normal">
+                                  {val?.createdAt?.slice(0, 10)}
+                                </span>
 
-                              <div className="flex-grow h-px bg-gray-400"></div>
-                            </div>
-                          </>
-                        ) : (
-                          <></>
-                        )}
-                      </>
-                    )}
+                                <div className="flex-grow h-px bg-gray-400"></div>
+                              </div>
+                            </>
+                          ) : (
+                            <></>
+                          )}
+                        </>
+                      )}
 
-                    {val.sender !== user.user.id ? (
-                      <>
-                        <div className="mt-5">
-                          <LeftSideChatGroup message={val} />
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div>
-                          <RightSideChatGroup message={val} />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
+                      {val.sender !== user.user.id ? (
+                        <>
+                          <div className="mt-5">
+                            <LeftSideChatGroup message={val} />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <RightSideChatGroup message={val} />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </>
           </div>
         </div>
@@ -749,6 +779,7 @@ export default function GroupChatBox(props) {
             </svg>
             <input
               type="file"
+              accept=".jpg, .jpeg, .png, .gif, .bmp, .pdf, .doc, .docx, .ppt, .pptx"
               ref={hiddenFileInput}
               onChange={handleChange}
               style={{ display: "none" }}
