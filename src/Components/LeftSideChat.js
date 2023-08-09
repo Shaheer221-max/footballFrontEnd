@@ -54,7 +54,20 @@ export default function LeftSideChat(props) {
             </div>
             <p className="font-medium bg-white text-base text-black mt-1  rounded-tr-lg rounded-b-lg py-2 px-6" style={{ width: "100%", overflowWrap: "break-word" }} >
             {three === ".jpg" ? (
-                <img className="h-[300px]" src={props.message.text} alt="image" />
+                 <a
+                 href={props.message.content} // Link to the image
+                 target="_blank" // Open link in a new tab
+                 rel="noopener noreferrer" // Security best practice for opening links
+                 style={{
+                   textDecoration: "none", // Remove underline from the link
+                 }}
+               >
+                 <img
+                   className="h-[300px] w-[100%] cursor-pointer border border-gray-300 hover:border-green-500"
+                   src={props.message.content}
+                   alt="image"
+                 />
+               </a>
               ) : three === ".mp4" ? (
                 <video>
                   <source src={props.message.text} type="video/mp4" />
