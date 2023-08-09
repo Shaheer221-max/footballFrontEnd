@@ -21,16 +21,16 @@ export default function LeftSideChatGroup(props) {
   const [players, setPlayers] = React.useState([]);
 
   const users = async () => {
-    await axios.get(
-        `${process.env.REACT_APP_API}/users/GetAllUsers`)
-        .then((res) => {
-            console.log(res.data);
-            setPlayers(res.data.data.doc);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    };
+    await axios
+      .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
+      .then((res) => {
+        console.log(res.data);
+        setPlayers(res.data.data.doc);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   React.useEffect(() => {
     getData();
@@ -61,7 +61,7 @@ export default function LeftSideChatGroup(props) {
             )
           )}
 
-          <div>
+          <div style={{ width: "50%" }}>
             <div className="flex  justify-between">
               <h5 className="text-lg font-normal tracking-tight  text-white">
                 {/* {props.name} */}
@@ -70,17 +70,32 @@ export default function LeftSideChatGroup(props) {
                 {/* {props.date.slice(11,16)} */}
               </p>
             </div>
-            <p class="font-medium bg-white text-base text-black mt-1 rounded-tr-lg rounded-b-lg py-2 px-6 whitespace-pre-wrap max-w-400">
-            {three === ".jpg" ? (
-                <img className="h-[300px]" src={props.message.content} alt="image" />
+            <p
+              className="font-medium bg-white text-base text-black mt-1  rounded-tr-lg rounded-b-lg py-2 px-6 "
+              style={{ width: "100%", overflowWrap: "break-word" }}
+            >
+              {three === ".jpg" ? (
+                <a
+                  href={props.message.content} // Link to the image
+                  target="_blank" // Open link in a new tab
+                  rel="noopener noreferrer" // Security best practice for opening links
+                  style={{
+                    textDecoration: "none", // Remove underline from the link
+                  }}
+                >
+                  <img
+                    className="h-[300px] w-[100%] cursor-pointer border border-gray-300 hover:border-green-500"
+                    src={props.message.content}
+                    alt="image"
+                  />
+                </a>
               ) : three === ".mp4" ? (
                 <video>
                   <source src={props.message.content} type="video/mp4" />
                 </video>
               ) : (
                 props.message.content
-              )
-              }
+              )}
             </p>
           </div>
         </div>

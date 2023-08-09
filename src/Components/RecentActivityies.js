@@ -30,7 +30,7 @@ export default function RecentActivityies(props) {
           Recent Activity
         </h4>
       </div>
-      <div className="cursor-pointer">
+      <div className="cursor-pointer mb-12">
         {post === false ? (
           <></>
         ) : (

@@ -786,8 +786,9 @@ export default function GroupChatBox(props) {
             />
           </div>
           <input
+          // width={90}
             type="text"
-            className="bg-[#212121]   text-white text-sm placeholder-lexend text-lexend rounded-md w-full pl-10 p-2.5  placeholder-gray-400"
+            className="bg-[#212121]   text-white text-sm placeholder-lexend text-lexend rounded-md w-[93%] pl-10 p-2.5  placeholder-gray-400"
             placeholder="Type Message Here"
             required=""
             onChange={handleChangeMsg}

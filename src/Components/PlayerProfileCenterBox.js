@@ -618,6 +618,7 @@ export default function PlayerProfileCenterBox(props) {
                 )}
               </td>
             <td></td>
+            <td></td>
             </tr>
           </table>
         </div>

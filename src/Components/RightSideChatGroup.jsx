@@ -43,7 +43,7 @@ export default function RightSideChatGroup(props) {
               )
             )
           )}
-          <div>
+          <div style={{width: '50%'}}>
             <div className="flex flex-row-reverse justify-between mx2">
               <h5 className="text-lg font-normal tracking-tight text-white">
                 {user.user.name}
@@ -54,9 +54,22 @@ export default function RightSideChatGroup(props) {
                 {moment(props.message.timestamp).format("LT")}
               </p>
             </div>
-            <p className="font-medium bg-[#212121] text-base text-white mt-1  rounded-tr-lg rounded-b-lg py-2 px-6">
+            <p className="font-medium bg-[#212121] text-base text-white mt-1  rounded-tr-lg rounded-b-lg py-2 px-6" style={{ width: "100%", overflowWrap: "break-word" }}>
               {three === ".jpg" ? (
-                <img className="h-[300px]" src={props.message.content} alt="image" />
+                  <a
+                  href={props.message.content} // Link to the image
+                  target="_blank" // Open link in a new tab
+                  rel="noopener noreferrer" // Security best practice for opening links
+                  style={{
+                    textDecoration: "none", // Remove underline from the link
+                  }}
+                >
+                  <img
+                    className="h-[300px] w-[100%] cursor-pointer border border-gray-300 hover:border-green-500"
+                    src={props.message.content}
+                    alt="image"
+                  />
+                </a>
               ) : three === ".mp4" ? (
                 <video>
                   <source src={props.message.content} type="video/mp4" />
