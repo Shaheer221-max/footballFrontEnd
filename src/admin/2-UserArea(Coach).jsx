@@ -26,7 +26,6 @@ export default function UserAreaCoach() {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllCoaches`)
       .then((res) => {
-        console.log(res.data.data);
         setCoach(res.data.result);
         setData(res.data.data);
       })
@@ -60,18 +59,18 @@ export default function UserAreaCoach() {
     }
   }, [search, data]);
 
-  // Pagination
   const itemsPerPage = 10; // Number of items per page
-  const [itemOffset, setItemOffset] = useState(0);
-  const currentItems = filteredData.slice(
-    itemOffset,
-    itemOffset + itemsPerPage
-  );
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // Calculate the start and end indexes for the current page
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = filteredData.slice(startIndex, endIndex);
+
   const pageCount = Math.ceil(filteredData.length / itemsPerPage);
 
-  const handlePageClick = (selected) => {
-    const newOffset = selected * itemsPerPage;
-    setItemOffset(newOffset);
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
   };
 
   return (
@@ -217,7 +216,7 @@ export default function UserAreaCoach() {
                         className="py-4 font-medium whitespace-nowrap text-white"
                         onClick={() => setopenAddsubcatmodal(false)}
                       >
-                        #{index + 1}
+                        #{index + 1 + startIndex}
                       </th>
                       <td className="py-4 ">
                         <div
