@@ -132,7 +132,7 @@ export default function AddGroups() {
         .then((res) => {
           setGroupAdded(true);
           setError(false);
-          navigate("/selectedGroup");
+          navigate("/selectgroup");
         })
         .catch((error) => {
           // message.error("Group Not Created");

@@ -41,8 +41,12 @@ export default function Chat() {
   const navigation = useNavigate();
 
   const createGroup = async () => {
-    if (name === "" ) {
+    if (name === "") {
       message.error("Please Enter Group Name");
+      return;
+    }
+    if (url === ""){
+      message.error("Please upload group picture");
       return;
     }
     await axios
@@ -55,13 +59,12 @@ export default function Chat() {
         }
       )
       .then((res) => {
-        navigation(`/chat/${res.data.data._id}`);
+        navigation(`/chat/${res.data.data.groupchat._id}`);
         message.success("Group Created");
         setGroupName("");
         setMembers([]);
         setImage("")
         setIsModalOpen(false);
-        console.log(res.data.data);
       })
       .catch((error) => {
         // message.error("Group Not Created");

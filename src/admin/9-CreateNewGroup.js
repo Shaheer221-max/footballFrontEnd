@@ -116,8 +116,12 @@ export default function AddGroups() {
   const navigate = useNavigate();
 
   const createGroup = async () => {
-    if (name === "" || url === "") {
-      message.error("Group Name or Group Image is missing");
+    if (name === "") {
+      message.error("Please Enter Group Name");
+      return;
+    }
+    if (url === ""){
+      message.error("Please upload group picture");
       return;
     }
 

@@ -37,6 +37,11 @@ export default function CoachChat() {
       message.error("Please Enter Group Name");
       return;
     }
+
+    if (url === ""){
+      message.error("Please upload group picture");
+      return;
+    }
     await axios
       .post(
         `${process.env.REACT_APP_API}/groupconversation/CreateGroupChat`,

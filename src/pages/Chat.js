@@ -28,6 +28,10 @@ export default function Chat() {
       message.error("Please Enter Group Name");
       return;
     }
+    if (url === ""){
+      message.error("Please upload group picture");
+      return;
+    }
     setRefresh(true);
     await axios
       .post(
