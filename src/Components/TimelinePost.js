@@ -47,9 +47,7 @@ export default function TimelinePost(props) {
   // getting all posts
   const memberName = async () => {
     await axios
-      .get(
-        `${process.env.REACT_APP_API}/newsfeed/GetAllNewsFeed`
-      )
+      .get(`${process.env.REACT_APP_API}/newsfeed/GetAllNewsFeed`)
       .then((res) => {
         SetPost(res.data.data.reverse());
         console.log("All News Feed: ", res.data.data);
@@ -97,14 +95,11 @@ export default function TimelinePost(props) {
     setRefresh(true);
     setCommentLoading(true);
     await axios
-      .post(
-        `${process.env.REACT_APP_API}/comment/PostComment`,
-        {
-          refOfNewsfeed: val._id,
-          comment: comment[ind],
-          refOfUser: user.user.id,
-        }
-      )
+      .post(`${process.env.REACT_APP_API}/comment/PostComment`, {
+        refOfNewsfeed: val._id,
+        comment: comment[ind],
+        refOfUser: user.user.id,
+      })
       .then((response) => {
         setCommentLoading(false);
         message.success("Comment Added");
@@ -154,9 +149,7 @@ export default function TimelinePost(props) {
     setRefresh(true);
     console.log("in delete post", postId);
     await axios
-      .delete(
-        `${process.env.REACT_APP_API}/newsfeed/DeleteNewsFeed/${postId}`
-      )
+      .delete(`${process.env.REACT_APP_API}/newsfeed/DeleteNewsFeed/${postId}`)
       .then((response) => {
         setRefresh(false);
         message.success("Post Deleted");
@@ -169,16 +162,13 @@ export default function TimelinePost(props) {
     setRefresh(true);
     console.log("in share post", val);
     await axios
-      .post(
-        `${process.env.REACT_APP_API}/newsfeed/ShareNewsFeed`,
-        {
-          refOfUser: user.user.id,
-          status: val.status,
-          image: val.image,
-          video: val.video,
-          refOfGroup: val.refOfGroup,
-        }
-      )
+      .post(`${process.env.REACT_APP_API}/newsfeed/ShareNewsFeed`, {
+        refOfUser: user.user.id,
+        status: val.status,
+        image: val.image,
+        video: val.video,
+        refOfGroup: val.refOfGroup,
+      })
       .then(() => {
         message.success("Post Shared");
         setRefresh(false);
@@ -213,21 +203,21 @@ export default function TimelinePost(props) {
   function formatDuration(createdDate) {
     const now = new Date();
     const durationInSeconds = Math.floor((now - new Date(createdDate)) / 1000);
-  
+
     const minutes = Math.floor(durationInSeconds / 60);
     const hours = Math.floor(durationInSeconds / (60 * 60));
     const days = Math.floor(durationInSeconds / (60 * 60 * 24));
     const weeks = Math.floor(durationInSeconds / (60 * 60 * 24 * 7));
     const months = Math.floor(durationInSeconds / (60 * 60 * 24 * 30.44)); // Average days in a month
     const years = Math.floor(durationInSeconds / (60 * 60 * 24 * 365));
-  
+
     if (years > 0) return years === 1 ? "1y" : `${years}y`;
     if (months > 0) return months === 1 ? "1m" : `${months}m`;
     if (weeks > 0) return weeks === 1 ? "1w" : `${weeks}w`;
     if (days > 0) return days === 1 ? "1d" : `${days}d`;
     if (hours > 0) return hours === 1 ? "1h" : `${hours}h`;
     if (minutes > 0) return minutes === 1 ? "1min" : `${minutes}mins`;
-  
+
     return "Just now";
   }
 
@@ -301,10 +291,7 @@ export default function TimelinePost(props) {
       data.append("refOfUser", user.user.id);
       data.append("status", postt);
       await axios
-        .post(
-          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
-          data
-        )
+        .post(`${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`, data)
         .then((res) => {
           setRefresh(false);
           console.log(res.data);
@@ -320,14 +307,11 @@ export default function TimelinePost(props) {
     } else {
       setRefresh(true);
       await axios
-        .post(
-          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
-          {
-            refOfUser: user.user.id,
-            status: postt,
-            image: img,
-          }
-        )
+        .post(`${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`, {
+          refOfUser: user.user.id,
+          status: postt,
+          image: img,
+        })
         .then((res) => {
           setpostt("");
           setRefresh(false);
@@ -342,6 +326,18 @@ export default function TimelinePost(props) {
         });
     }
   };
+
+  function convertTimestampToTimeString(timestamp) {
+    const date = new Date(timestamp);
+
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const ampm = hours >= 12 ? " pm" : " am";
+    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+
+    return `${formattedHours}:${formattedMinutes}${ampm}`;
+  }
 
   return (
     <div className="">
@@ -489,7 +485,7 @@ export default function TimelinePost(props) {
                     <div className="flex items-center gap-2  mb-8 ml-4">
                       <img
                         className=" mt-[34px] w-9 h-9 rounded-full "
-                        src={val.refOfUser.image}
+                        src={val?.refOfUser?.image}
                         alt="Bonnie image"
                       />
 
@@ -507,7 +503,7 @@ export default function TimelinePost(props) {
                         </div>
                         <div className="flex font-lexend mt-1  items-center gap-4">
                           <h5 className="text-xs  font-normal tracking-tight text-white">
-                            {val?.time?.split('T')[1].slice(3, 8)}
+                            {convertTimestampToTimeString(val?.time)}
                           </h5>
 
                           <svg
@@ -521,7 +517,7 @@ export default function TimelinePost(props) {
                           </svg>
 
                           <h5 className=" text-xs font-light tracking-tight text-white">
-                            {moment(val?.time).format('dddd, MMMM Do YYYY')}
+                            {moment(val?.time).format("dddd, MMMM Do YYYY")}
                           </h5>
                         </div>
                       </div>
@@ -568,7 +564,11 @@ export default function TimelinePost(props) {
                         <img
                           className="mt-5 px-2 w-full rounded-md"
                           src={val.image}
-                          style={{ height: "350px", width: "100%", objectFit: "contain" }}
+                          style={{
+                            height: "350px",
+                            width: "100%",
+                            objectFit: "contain",
+                          }}
                         />
                       </>
                     )}
@@ -734,7 +734,6 @@ export default function TimelinePost(props) {
 
                     {load[ind] ? (
                       val.Comment.map((val, ind) => {
-                        console.log('valdate : ', val);
                         return (
                           <>
                             <div className="flex align-middle mb-3 ml-4">
@@ -756,7 +755,9 @@ export default function TimelinePost(props) {
                               </div>
                             </div>
                             <div className="flex ml-[68px] mb-5 text-white text-xs font-font-lexend">
-                              <p className="ml-2">{formatDuration(val?.createdDate)}</p>
+                              <p className="ml-2">
+                                {formatDuration(val?.createdDate)}
+                              </p>
                               {/* <button className="btn text-xs">Like</button> */}
                               <button
                                 onClick={() => reply(ind)}
@@ -776,12 +777,12 @@ export default function TimelinePost(props) {
                                     />
                                     <div className="text-gray-400 pl-4 bg-[#1A1A1A] p-2 rounded-2xl w-full text-left font-lexend text-xs">
                                       <div className="flex align-middle">
-                                      <p className="text-md text-white mb-2">
-                                        {val?.refOfUser?.name}
-                                      </p>
-                                      <div className="inline-flex font-dm ml-3 items-center px-[10px] text-xs font-medium text-white bg-green-500 rounded-md ">
-                                        {val?.refOfUser?.role}
-                                      </div>
+                                        <p className="text-md text-white mb-2">
+                                          {val?.refOfUser?.name}
+                                        </p>
+                                        <div className="inline-flex font-dm ml-3 items-center px-[10px] text-xs font-medium text-white bg-green-500 rounded-md ">
+                                          {val?.refOfUser?.role}
+                                        </div>
                                       </div>
                                       <p className="text-xs">{val?.text}</p>
                                     </div>
