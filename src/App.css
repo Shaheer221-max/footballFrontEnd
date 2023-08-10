@@ -18,7 +18,15 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
+.ant-picker-input>input::placeholder {
+  color: #22C55E !important;
+}
+.ant-picker .ant-picker-input >input {
+  color: #22C55E !important;
+}
+.ant-picker-input .ant-picker-suffix {
+  color: #22C55E !important;
+}
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

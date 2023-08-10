@@ -4,6 +4,7 @@ import "../styles/player.css";
 import "../styles/font.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import { DatePicker } from "antd";
 import getAge from "get-age";
 import {
   Chart as ChartJS,
@@ -57,6 +58,61 @@ export default function PlayerProfileCenterBox(props) {
         console.log(error.response.data);
       });
   };
+  const monthOptions = [
+    "Month",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const [selectedMonth, setSelectedMonth] = useState("Month");
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from(
+    { length: currentYear - 1999 + 1 },
+    (_, index) => currentYear - index
+  );
+
+  // Filter playerAttendence based on selectedYear
+  const filteredAttendence = playerAttendence.filter((attendanceObject) => {
+    if (selectedYear && selectedYear !== "Year") {
+      const selectedYearInt = parseInt(selectedYear);
+      const year = new Date(attendanceObject.date).getFullYear();
+      if (year !== selectedYearInt) {
+        return false;
+      }
+    }
+
+    if (selectedMonth && selectedMonth !== "Month") {
+      const selectedMonthIndex = monthOptions.indexOf(selectedMonth);
+      const month = new Date(attendanceObject.date).getMonth() + 1;
+      if (month !== selectedMonthIndex) {
+        return false;
+      }
+    }
+
+    if (selectedDate) {
+      const formattedSelectedDate = selectedDate.format("YYYY-MM-DD");
+      const attendanceDate = new Date(attendanceObject.date)
+        .toISOString()
+        .split("T")[0];
+      if (attendanceDate !== formattedSelectedDate) {
+        return false;
+      }
+    }
+
+    return true;
+  });
   // Get Evaluation
   const getEvaluation = async () => {
     const response = await axios.get(
@@ -529,10 +585,77 @@ export default function PlayerProfileCenterBox(props) {
           </div>
         </div>
       </div>
-      
+
       {activeKey === "1" ? (
         <div className="overflow-x-auto   font-lexend relative mx-7 my-5 font-dm rounded-xl">
           <table className="font-dm w-full text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 ">
+          <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
+              <tr className="text-center font-DM-sans">
+                <th
+                  style={{ fontSize: "20px" }}
+                  scope="col"
+                  className="py-3 pl-6 flex justify-start"
+                >
+                  Attendance
+                </th>
+                <th scope="col" className="py-3 pl-3">
+                  <div className="flex items-center space-x-2">
+                    <select
+                      style={{ fontSize: "14px" }}
+                      className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                      onChange={(event) =>
+                        setSelectedYear(
+                          event.target.value === "Year"
+                            ? null
+                            : parseInt(event.target.value)
+                        )
+                      }
+                      value={selectedYear || "Year"}
+                    >
+                      <option className="font-[12px]" value="Year">
+                        Year
+                      </option>
+                      {years.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                    <DatePicker
+                      className=" text-green-500  bg-gray-800  py-1 px-2 rounded-full border border-green-500"
+                      onChange={(date) => setSelectedDate(date)}
+                      value={selectedDate}
+                     
+                    />
+
+                    <button
+                      style={{ width: "80px", fontSize: "14px" }}
+                      className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                      onClick={() => {
+                        setSelectedYear("Year");
+                        setSelectedMonth("Month");
+                        setSelectedDate(null);
+                      }}
+                    >
+                      All
+                    </button>
+                    <select
+                      style={{ fontSize: "14px" }}
+                      className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                      onChange={(event) => setSelectedMonth(event.target.value)}
+                      value={selectedMonth}
+                    >
+                      {monthOptions.map((month) => (
+                        <option key={month} value={month}>
+                          {month}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </th>
+
+              </tr>
+            </thead>
             <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
               <tr className="text-center font-DM-sans">
                 <th scope="col" className="py-3 pl-6 flex justify-start">
@@ -550,9 +673,9 @@ export default function PlayerProfileCenterBox(props) {
               </tr>
             </thead>
             <tbody>
-              {playerAttendence.length > 0 ? (
-                playerAttendence
-                  .slice(0, showAll ? playerAttendence.length : 6) // Display all or first 6 records
+              {filteredAttendence.length > 0 ? (
+                filteredAttendence
+                  .slice(0, showAll ? filteredAttendence.length : 6) // Display all or first 6 records
                   .map((attendanceObject, index) => {
                     return (
                       <>
@@ -595,18 +718,18 @@ export default function PlayerProfileCenterBox(props) {
                     );
                   })
               ) : (
-                <div className="flex justify-center mt-3 w-full h-96">
+                <div className="flex justify-center mt-3 w-full h-96 pl-[7px]">
                   <p className="text-[#818181] font-dm font-normal text-lg">
-                    Loading ...
+                    No results Found
                   </p>
                 </div>
               )}
             </tbody>
             <tr>
               <td></td>
-            
+
               <td>
-                {playerAttendence.length > 6 && (
+                {filteredAttendence.length > 6 && (
                   <div className="flex justify-center m-3 ">
                     <button
                       className="font-[12px] cursor-pointer text-blue-500 underline"
@@ -617,8 +740,8 @@ export default function PlayerProfileCenterBox(props) {
                   </div>
                 )}
               </td>
-            <td></td>
-            <td></td>
+              <td></td>
+              <td></td>
             </tr>
           </table>
         </div>
@@ -627,7 +750,10 @@ export default function PlayerProfileCenterBox(props) {
           <table className="font-dm w-[800px] text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 overflow-x-auto ">
             <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
               <tr className="text-center font-DM-sans">
-                <th scope="col" className="py-3 pl-6 flex justify-start w-[100px]">
+                <th
+                  scope="col"
+                  className="py-3 pl-6 flex justify-start w-[100px]"
+                >
                   Date
                 </th>
                 <th scope="col" className="py-3 pl-3 w-[100px]">
@@ -656,28 +782,28 @@ export default function PlayerProfileCenterBox(props) {
             <tbody>
               {evaluation.length > 0 ? (
                 evaluation
-                .slice(0, showAll ? evaluation.length : 6)
-                .map((evaluationObject, index) => {
-                  return (
-                    <tr className="font-dm border-[#7E7E7E] border-b text-center">
-                      <td className="py-4 text-green-500 pl-6 flex justify-start">
-                        {formatDate(evaluationObject?.date)}{" "}
-                      </td>
-                      <td className="py-4 font-lexend">
-                        {ConvertDateintoDay(evaluationObject?.date)}
-                      </td>
-                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                      <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                      <td className="text-blue-500 underline">
-                        {" "}
-                        View Comments
-                      </td>
-                    </tr>
-                  );
-                })
+                  .slice(0, showAll ? evaluation.length : 6)
+                  .map((evaluationObject, index) => {
+                    return (
+                      <tr className="font-dm border-[#7E7E7E] border-b text-center">
+                        <td className="py-4 text-green-500 pl-6 flex justify-start">
+                          {formatDate(evaluationObject?.date)}{" "}
+                        </td>
+                        <td className="py-4 font-lexend">
+                          {ConvertDateintoDay(evaluationObject?.date)}
+                        </td>
+                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                        <td className="text-blue-500 underline">
+                          {" "}
+                          View Comments
+                        </td>
+                      </tr>
+                    );
+                  })
               ) : (
                 <div className="flex justify-center mt-3 w-full h-96">
                   <p className="text-[#818181] font-dm font-normal text-lg">
@@ -691,7 +817,7 @@ export default function PlayerProfileCenterBox(props) {
               <td></td>
               <td></td>
               <td>
-                {playerAttendence.length > 6 && (
+                {evaluation.length > 6 && (
                   <div className="flex justify-center m-3 w-[100px] ">
                     <button
                       className="font-[12px] cursor-pointer text-blue-500 underline"
