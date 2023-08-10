@@ -77,11 +77,44 @@ export default function PlayerProfileCenterBox(props) {
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
 
+  const [selectedReportMonth, setSelectedReportMonth] = useState("Month");
+  const [selectedReportYear, setSelectedReportYear] = useState(null);
+  const [selectedReportDate, setSelectedReportDate] = useState(null);
+
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 + 1 },
     (_, index) => currentYear - index
   );
+
+  // Filter report based on selectedYear
+  const filteredReport = evaluation.filter((evalObject) => {
+    if (selectedReportYear && selectedReportYear !== "Year") {
+      const selectedYearInt = parseInt(selectedReportYear);
+      const year = new Date(evalObject.date).getFullYear();
+      if (year !== selectedYearInt) {
+        return false;
+      }
+    }
+
+    if (selectedReportMonth && selectedReportMonth !== "Month") {
+      const selectedMonthIndex = monthOptions.indexOf(selectedReportMonth);
+      const month = new Date(evalObject.date).getMonth() + 1;
+      if (month !== selectedMonthIndex) {
+        return false;
+      }
+    }
+
+    if (selectedReportDate) {
+      const formattedSelectedDate = selectedReportDate.format("YYYY-MM-DD");
+      const reportDate = new Date(evalObject.date).toISOString().split("T")[0];
+      if (reportDate !== formattedSelectedDate) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 
   // Filter playerAttendence based on selectedYear
   const filteredAttendence = playerAttendence.filter((attendanceObject) => {
@@ -588,74 +621,71 @@ export default function PlayerProfileCenterBox(props) {
 
       {activeKey === "1" ? (
         <div className="overflow-x-auto   font-lexend relative mx-7 my-5 font-dm rounded-xl">
-          <table className="font-dm w-full text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 ">
-          <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
-              <tr className="text-center font-DM-sans">
-                <th
-                  style={{ fontSize: "20px" }}
-                  scope="col"
-                  className="py-3 pl-6 flex justify-start"
+          <div className="flex justify-between font-dm text-base font-normal text-white/0.81 bg border-[#7E7E7E] bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 border-b">
+            <h1
+              style={{ fontSize: "20px" }}
+              scope="col"
+              className="py-3 pl-6 flex justify-start text-white"
+            >
+              Attendance
+            </h1>
+
+            <div className="py-3 pl-3">
+              <div className="flex items-center justify-end space-x-2">
+                <select
+                  style={{ fontSize: "14px" }}
+                  className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                  onChange={(event) =>
+                    setSelectedYear(
+                      event.target.value === "Year"
+                        ? null
+                        : parseInt(event.target.value)
+                    )
+                  }
+                  value={selectedYear || "Year"}
                 >
-                  Attendance
-                </th>
-                <th scope="col" className="py-3 pl-3">
-                  <div className="flex items-center space-x-2">
-                    <select
-                      style={{ fontSize: "14px" }}
-                      className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
-                      onChange={(event) =>
-                        setSelectedYear(
-                          event.target.value === "Year"
-                            ? null
-                            : parseInt(event.target.value)
-                        )
-                      }
-                      value={selectedYear || "Year"}
-                    >
-                      <option className="font-[12px]" value="Year">
-                        Year
-                      </option>
-                      {years.map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </select>
-                    <DatePicker
-                      className=" text-green-500  bg-gray-800  py-1 px-2 rounded-full border border-green-500"
-                      onChange={(date) => setSelectedDate(date)}
-                      value={selectedDate}
-                     
-                    />
+                  <option className="font-[12px]" value="Year">
+                    Year
+                  </option>
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+                <DatePicker
+                  className=" text-green-500  bg-gray-800  py-1 px-2 rounded-full border border-green-500"
+                  onChange={(date) => setSelectedDate(date)}
+                  value={selectedDate}
+                />
 
-                    <button
-                      style={{ width: "80px", fontSize: "14px" }}
-                      className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
-                      onClick={() => {
-                        setSelectedYear("Year");
-                        setSelectedMonth("Month");
-                        setSelectedDate(null);
-                      }}
-                    >
-                      All
-                    </button>
-                    <select
-                      style={{ fontSize: "14px" }}
-                      className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
-                      onChange={(event) => setSelectedMonth(event.target.value)}
-                      value={selectedMonth}
-                    >
-                      {monthOptions.map((month) => (
-                        <option key={month} value={month}>
-                          {month}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </th>
-
-              </tr>
-            </thead>
+                <button
+                  style={{ width: "80px", fontSize: "14px" }}
+                  className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                  onClick={() => {
+                    setSelectedYear("Year");
+                    setSelectedMonth("Month");
+                    setSelectedDate(null);
+                  }}
+                >
+                  All
+                </button>
+                <select
+                  style={{ fontSize: "14px" }}
+                  className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                  onChange={(event) => setSelectedMonth(event.target.value)}
+                  value={selectedMonth}
+                >
+                  {monthOptions.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          <table className="font-dm w-full text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 ">
             <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
               <tr className="text-center font-DM-sans">
                 <th scope="col" className="py-3 pl-6 flex justify-start">
@@ -673,7 +703,7 @@ export default function PlayerProfileCenterBox(props) {
               </tr>
             </thead>
             <tbody>
-              {filteredAttendence.length > 0 ? (
+              {filteredAttendence.length > 0 &&
                 filteredAttendence
                   .slice(0, showAll ? filteredAttendence.length : 6) // Display all or first 6 records
                   .map((attendanceObject, index) => {
@@ -683,6 +713,7 @@ export default function PlayerProfileCenterBox(props) {
                           <td className="py-3 text-green-500 pl-6 flex justify-start">
                             {formatDate(attendanceObject?.date)}{" "}
                           </td>
+
                           <td className="py-4 font-lexend">
                             {ConvertDateintoDay(attendanceObject?.date)}
                           </td>
@@ -716,21 +747,25 @@ export default function PlayerProfileCenterBox(props) {
                         </tr>
                       </>
                     );
-                  })
-              ) : (
-                <div className="flex justify-center mt-3 w-full h-96 pl-[7px]">
-                  <p className="text-[#818181] font-dm font-normal text-lg">
-                    No results Found
-                  </p>
-                </div>
-              )}
+                  })}
             </tbody>
-            <tr>
-              <td></td>
 
+            <tr>
+              <td>
+                {filteredAttendence.length === 0 && (
+                  <div className="flex justify-center mt-3 w-full h-96 pl-[7px]">
+                    <p className="text-[#818181] font-dm font-normal text-lg">
+                      No results Found
+                    </p>
+                  </div>
+                )}
+              </td>
+            </tr>
+            <tr> 
+              <td></td>
               <td>
                 {filteredAttendence.length > 6 && (
-                  <div className="flex justify-center m-3 ">
+                  <div className="flex justify-center m-3 w-full ">
                     <button
                       className="font-[12px] cursor-pointer text-blue-500 underline"
                       onClick={() => setShowAll(!showAll)} // Toggle the showAll state
@@ -740,13 +775,75 @@ export default function PlayerProfileCenterBox(props) {
                   </div>
                 )}
               </td>
-              <td></td>
-              <td></td>
             </tr>
           </table>
         </div>
       ) : (
         <div className="overflow-x-auto font-lexend relative mx-7 my-5 font-dm rounded-xl">
+          <div className="flex justify-between font-dm w-[800px]  text-base font-normal text-white/0.81 bg border-[#7E7E7E] bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 border-b  overflow-x-auto">
+            <h1
+              style={{ fontSize: "20px" }}
+              scope="col"
+              className="py-3 pl-6 flex justify-start text-white"
+            >
+              Report
+            </h1>
+
+            <div className="py-3 pl-3 mr-[80px]">
+              <div className="flex items-center justify-end space-x-2">
+                <select
+                  style={{ fontSize: "14px" }}
+                  className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                  onChange={(event) =>
+                    setSelectedReportYear(
+                      event.target.value === "Year"
+                        ? null
+                        : parseInt(event.target.value)
+                    )
+                  }
+                  value={selectedReportYear || "Year"}
+                >
+                  <option className="font-[12px]" value="Year">
+                    Year
+                  </option>
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+                <DatePicker
+                  className=" text-green-500  bg-gray-800  py-1 px-2 rounded-full border border-green-500"
+                  onChange={(date) => setSelectedReportDate(date)}
+                  value={selectedReportDate}
+                />
+
+                <button
+                  style={{ width: "80px", fontSize: "14px" }}
+                  className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                  onClick={() => {
+                    setSelectedReportYear("Year");
+                    setSelectedReportMonth("Month");
+                    setSelectedReportDate(null);
+                  }}
+                >
+                  All
+                </button>
+                <select
+                  style={{ fontSize: "14px" }}
+                  className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+                  onChange={(event) => setSelectedReportMonth(event.target.value)}
+                  value={selectedReportMonth}
+                >
+                  {monthOptions.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
           <table className="font-dm w-[800px] text-sm text-left text-white  bg-gradient-to-r from-[#2F2F2F]/100 to-[#3A3A3A]/0 overflow-x-auto ">
             <thead className=" font-dm text-base font-normal text-white/0.81 border-[#7E7E7E] border-b">
               <tr className="text-center font-DM-sans">
@@ -780,9 +877,9 @@ export default function PlayerProfileCenterBox(props) {
               </tr>
             </thead>
             <tbody>
-              {evaluation.length > 0 ? (
-                evaluation
-                  .slice(0, showAll ? evaluation.length : 6)
+              {filteredReport.length > 0 &&
+                filteredReport
+                  .slice(0, showAll ? filteredReport.length : 6)
                   .map((evaluationObject, index) => {
                     return (
                       <tr className="font-dm border-[#7E7E7E] border-b text-center">
@@ -803,22 +900,31 @@ export default function PlayerProfileCenterBox(props) {
                         </td>
                       </tr>
                     );
-                  })
-              ) : (
-                <div className="flex justify-center mt-3 w-full h-96">
-                  <p className="text-[#818181] font-dm font-normal text-lg">
-                    Loading ...
-                  </p>
-                </div>
-              )}
+                  })}
             </tbody>
             <tr>
               <td></td>
               <td></td>
               <td></td>
               <td>
-                {evaluation.length > 6 && (
-                  <div className="flex justify-center m-3 w-[100px] ">
+                {filteredReport.length === 0 && (
+                  <div className="flex justify-center mt-3 w-[full] h-96 pl-[7px]">
+                    <p className="text-[#818181] font-dm font-normal text-lg">
+                      No results Found
+                    </p>
+                  </div>
+                )}
+              </td>
+              <td></td>
+            </tr>
+
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>
+                {filteredReport.length > 6 && (
+                  <div className="flex justify-center m-3 w-full ">
                     <button
                       className="font-[12px] cursor-pointer text-blue-500 underline"
                       onClick={() => setShowAll(!showAll)} // Toggle the showAll state
@@ -828,7 +934,6 @@ export default function PlayerProfileCenterBox(props) {
                   </div>
                 )}
               </td>
-              <td></td>
             </tr>
           </table>
         </div>
