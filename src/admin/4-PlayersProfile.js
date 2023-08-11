@@ -20,7 +20,7 @@ export default function Playerprofile() {
           </div>
 
           {/* center Post */}
-          <div className=" w-[55rem] h-[calc(100vh-95px)] overflow-y-auto border-[#7e7e7e] ">
+          <div className=" w-[60rem] h-[calc(100vh-95px)] overflow-y-auto border-[#7e7e7e] ">
             <PlayerProfileCenterBox data = {location?.state} />
           </div>
 

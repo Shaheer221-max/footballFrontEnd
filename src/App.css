@@ -37,7 +37,9 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.ant-tabs .ant-tabs-tab {
+  padding: 5px 0 !important
+}
 .App-link {
   color: #61dafb;
 }

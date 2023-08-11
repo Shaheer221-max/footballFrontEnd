@@ -21,6 +21,7 @@ import { Bar } from "react-chartjs-2";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { Tabs } from "antd";
+import { useEffect } from "react";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -40,10 +41,10 @@ export default function PlayerProfileCenterBox(props) {
   const [activeKey, setActiveKey] = React.useState("1");
   const navigation = useNavigate();
   const [showAll, setShowAll] = useState(false);
+  const [graphData, setGraphData] = useState();
 
   const onChange = (key) => {
     setActiveKey(key);
-    console.log(key);
   };
   const getPlayerAttendence = async () => {
     await axios
@@ -51,15 +52,14 @@ export default function PlayerProfileCenterBox(props) {
         `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${props?.data?.id}`
       )
       .then((res) => {
-        console.log("66666666666666", res);
         setPlayerAttendence(res?.data?.data?.attendance);
       })
       .catch((error) => {
         console.log(error.response.data);
       });
   };
-  const monthOptions = [
-    "Month",
+
+  const labels = [
     "January",
     "February",
     "March",
@@ -68,11 +68,46 @@ export default function PlayerProfileCenterBox(props) {
     "June",
     "July",
     "August",
-    "September",
-    "October",
-    "November",
-    "December",
   ];
+
+  const avgScores = evaluation.map((item) => item.avgScore);
+
+  const getBackgroundColor = (score) => {
+    return score >= 2 ? "green" : "red";
+  };
+
+  const chartData1 = {
+    labels: labels?.map((month) => month.slice(0, 3)),
+    datasets: [
+      {
+        label: "Average Score",
+        data: avgScores,
+        backgroundColor: avgScores.map((score) => getBackgroundColor(score)),
+        hoverBackgroundColor: "white",
+        borderWidth: 1,
+        barThickness: 20, // Set the bar width to 20 pixels
+      },
+    ],
+  };
+
+  const MonthEnum = {
+    Month: 0,
+    January: 1,
+    February: 2,
+    March: 3,
+    April: 4,
+    May: 5,
+    June: 6,
+    July: 7,
+    August: 8,
+    September: 9,
+    October: 10,
+    November: 11,
+    December: 12,
+  };
+
+  const monthOptions = Object.keys(MonthEnum).map((key) => key);
+
   const [selectedMonth, setSelectedMonth] = useState("Month");
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -80,6 +115,8 @@ export default function PlayerProfileCenterBox(props) {
   const [selectedReportMonth, setSelectedReportMonth] = useState("Month");
   const [selectedReportYear, setSelectedReportYear] = useState(null);
   const [selectedReportDate, setSelectedReportDate] = useState(null);
+
+  const [graphSelectedMonth, setGraphSelectedMonth] = useState('Month');
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -146,12 +183,13 @@ export default function PlayerProfileCenterBox(props) {
 
     return true;
   });
+
   // Get Evaluation
   const getEvaluation = async () => {
     const response = await axios.get(
       `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsOfPlayer/${location?.state._id}`
     );
-    console.log("respone", response);
+    console.log("evaluation response: ", response);
     // Calculate Average of Evaluation
     let sum = 0;
     for (let i = 0; i < response.data.data.length; i++) {
@@ -159,11 +197,9 @@ export default function PlayerProfileCenterBox(props) {
     }
     setAvg(sum / response.data.data.length);
     setEvaluation(response.data.data);
-    console.log("Evaluation: ", response.data.data);
   };
 
   React.useEffect(() => {
-    console.log("props.data", props.data);
     getEvaluation();
     getPlayerAttendence();
   }, []);
@@ -193,17 +229,13 @@ export default function PlayerProfileCenterBox(props) {
       return user1._id === user._id || user2._id === user._id;
     });
     setConversations(filteredConversations);
-    console.log("Conversations: ", filteredConversations);
   };
   React.useEffect(() => {
     getConversations();
   }, []);
 
   const createConversation = async () => {
-    console.log("Creating conversation", conversations);
-    console.log("User Player: ", user._id, "Player: ", location?.state._id);
     if (conversations.length === 0) {
-      console.log("No conversation found");
       const response = await axios.post(
         `${process.env.REACT_APP_API}/conversation/`,
         {
@@ -211,11 +243,9 @@ export default function PlayerProfileCenterBox(props) {
           receiverId: location?.state._id,
         }
       );
-      console.log("Response New Chat: ", response.data);
       navigation(`/chat/${response.data._id}`);
       setConversationId(response.data._id);
     } else {
-      console.log("Conversation found", conversations[0]._id);
       navigation(`/chat/${conversations[0]._id}`);
       setConversationId(conversations[0]._id);
     }
@@ -223,77 +253,9 @@ export default function PlayerProfileCenterBox(props) {
 
   const location = useLocation();
 
-  const staticdata = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-    {
-      id: 6,
-    },
-    {
-      id: 7,
-    },
-    {
-      id: 8,
-    },
-    {
-      id: 9,
-    },
-    {
-      id: 10,
-    },
-  ];
-
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-  ];
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Chart.js Line Chart",
-      },
-    },
-  };
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: "Dataset 1",
-        data: staticdata.map((val) => val.id),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-    ],
-  };
-
   // Get Attendance
   const [attendanceData, setAttendanceData] = React.useState([]);
   const getAttendance = async () => {
-    console.log(location?.state._id);
     await axios
       .get(
         `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
@@ -307,7 +269,6 @@ export default function PlayerProfileCenterBox(props) {
         });
         setAttendanceData(adata);
         console.log("adata: ", adata);
-        // console.log("Attendance",response.data.data.attendance)
       })
       .catch((err) => {
         console.log(err);
@@ -317,170 +278,178 @@ export default function PlayerProfileCenterBox(props) {
     getAttendance();
   }, []);
 
-  // const chartData = {
-  //   labels: attendanceData.map(({ date }) => date.split("T")[0]),
-  //   datasets: [
-  //     {
-  //       label: "Attendance",
-  //       data: attendanceData.map(({ attendance }) =>
-  //         attendance[0].isPresent ? 1 : 1
-  //       ),
-  //       backgroundColor: attendanceData.map(({ attendance }) =>
-  //         attendance[0].isPresent ? "white" : "green"
-  //       ),
-  //       borderWidth: 1,
-  //     },
-  //   ],
-  // };
-  const attendanceDataByMonth = attendanceData.reduce((acc, item) => {
-    const date = new Date(item.date);
-    const month = date.getMonth();
-    const isPresent = item.attendance[0]?.isPresent || false;
-    if (!acc[month]) {
-      acc[month] = { present: 0, total: 0 };
-    }
-    acc[month].total++;
-    if (isPresent) {
-      acc[month].present++;
-    }
-    return acc;
-  }, {});
+  // const filteredData = attendanceData.filter((item) => {
+  //   const date = new Date(item.date);
+  //   const yearMatch =
+  //     !graphSelectedYear || date.getFullYear() === graphSelectedYear;
+  //   const monthMatch =
+  //     !graphSelectedMonth || date.getMonth() === graphSelectedMonth;
+  //   return yearMatch && monthMatch;
+  // });
 
-  // Step 2: Calculate the monthly attendance percentages
-  const monthlyAttendancePercentages = Object.values(attendanceDataByMonth).map(
-    ({ present, total }) => (present / total) * 100
-  );
+  const filterGraphData = (data, selectedMonth) => {
+    if (selectedMonth !== "Month") {
+      const filteredData = data.filter((record) => {
+        const recordDate = new Date(record.date);
+
+        const selectedMonthName = Object.keys(MonthEnum).find(
+          (key) => MonthEnum[key] === recordDate.getMonth() + 1
+        );
+
+        return selectedMonthName === selectedMonth;
+      });
+      return filteredData;
+    } else {
+      return data;
+    }
+  };
+
+  const calculateAttendanceDataByMonth = (data) => {
+    return data.reduce((acc, item) => {
+      const date = new Date(item.date);
+      const month = date.getMonth();
+      const isPresent = item.attendance[0]?.isPresent || false;
+      if (!acc[month]) {
+        acc[month] = { present: 0, total: 0 };
+      }
+      acc[month].total++;
+      if (isPresent) {
+        acc[month].present++;
+      }
+      return acc;
+    }, {});
+  };
+
+  const monthlyPercentages = (attendanceDataByMonth) => {
+    return Object.values(attendanceDataByMonth).map(
+      ({ present, total }) => (present / total) * 100
+    );
+  };
+
   const chartData = {
-    labels: labels.map((month) => month.slice(0, 3)),
+    labels:
+      graphSelectedMonth !== "Month"
+        ? graphSelectedMonth
+        : labels.map((month) => month.slice(0, 3)),
     datasets: [
       {
-        label: "Attendance Percentage",
-        data: monthlyAttendancePercentages,
-        backgroundColor: monthlyAttendancePercentages.map((percentage) =>
+        label:
+          graphData?.length > 0 ? "Attendance Percentage" : "No Data Found",
+        data: graphData,
+        backgroundColor: graphData?.map((percentage) =>
           percentage >= 50 ? "green" : "red"
-        ), // Use green for attendance >= 50% and red for attendance < 50%
-        hoverBackgroundColor: "white", // Change to white when hovering
-        borderWidth: 1,
-        barThickness: 20, // Set the bar width to 20 pixels
-      },
-    ],
-  };
-
-  const avgScores = evaluation.map((item) => item.avgScore);
-
-  const getBackgroundColor = (score) => {
-    return score >= 2 ? "green" : "red";
-  };
-  const chartData1 = {
-    labels: labels.map((month) => month.slice(0, 3)),
-    datasets: [
-      {
-        label: "Average Score",
-        data: avgScores,
-        backgroundColor: avgScores.map((score) => getBackgroundColor(score)),
+        ),
         hoverBackgroundColor: "white",
         borderWidth: 1,
-        barThickness: 20, // Set the bar width to 20 pixels
+        barThickness: 20,
       },
     ],
+  };
+
+  useEffect(() => {
+    const filteredData = filterGraphData(attendanceData, graphSelectedMonth);
+    const monthlyAttendancePercentages =
+      calculateAttendanceDataByMonth(filteredData);
+    const percentage = monthlyPercentages(monthlyAttendancePercentages);
+
+    setGraphData(percentage);
+  }, [graphSelectedMonth, attendanceData]);
+
+  
+
+  const getChartOptions = () => {
+    return {
+      scales: {
+        x: {
+          grid: {
+            display: true,
+            borderColor: "gray",
+            borderWidth: 1,
+          },
+        },
+        y: {
+          grid: {
+            display: true,
+            borderColor: "gray",
+            borderWidth: 1,
+          },
+          ticks: {
+            beginAtZero: true,
+            stepSize: 20,
+            min: 0,
+            max: 100,
+            callback: function (value) {
+              return value + "%";
+            },
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: "top",
+        },
+      },
+      responsive: true,
+      maintainAspectRatio: false,
+      height: 225,
+    };
+  };
+
+  const getGraphHeader = () => {
+    return (
+      <div className="flex justify-between font-dm text-base font-normal text-white/0.81">
+        <div className="flex items-center justify-end space-x-2 p-0 pt-[15px]">
+          <button
+            style={{ width: "80px", fontSize: "14px", height: "31px" }}
+            className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+            onClick={() => {
+              setGraphSelectedMonth("Month");
+            }}
+          >
+            All
+          </button>
+          <select
+            style={{ fontSize: "14px" }}
+            className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
+            onChange={(event) => {
+              setGraphSelectedMonth(event.target.value);
+            }}
+            value={graphSelectedMonth}
+          >
+            {monthOptions.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    );
   };
 
   const items = [
     {
       key: "1",
-      label: `Attendance`,
+      label: "Attendance",
       children: (
         <div className="w-fit" style={{ height: "225px" }}>
-          <Bar
-            data={chartData}
-            options={{
-              scales: {
-                x: {
-                  grid: {
-                    display: true, // Display grid lines for x-axis
-                    borderColor: "gray", // Border color for x-axis
-                    borderWidth: 1, // Border width for x-axis
-                  },
-                },
-                y: {
-                  grid: {
-                    display: true, // Display grid lines for y-axis
-                    borderColor: "gray", // Border color for y-axis
-                    borderWidth: 1, // Border width for y-axis
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    stepSize: 20,
-                    min: 0,
-                    max: 100,
-                    callback: function (value) {
-                      return value + "%";
-                    },
-                  },
-                },
-              },
-              plugins: {
-                legend: {
-                  display: true,
-                  position: "top",
-                },
-              },
-              responsive: true,
-              maintainAspectRatio: false,
-              // height of the canvas in pixels
-              height: 225,
-            }}
-          />
+          <Bar data={chartData} options={getChartOptions()} />
         </div>
       ),
     },
     {
       key: "2",
-      label: `Report`,
+      label: "Report",
       children: (
         <div className="w-fit" style={{ height: "225px" }}>
-          <Bar
-            data={chartData1}
-            options={{
-              scales: {
-                x: {
-                  grid: {
-                    display: true, // Display grid lines for x-axis
-                    borderColor: "gray", // Border color for x-axis
-                    borderWidth: 1, // Border width for x-axis
-                  },
-                },
-                y: {
-                  grid: {
-                    display: true, // Display grid lines for y-axis
-                    borderColor: "gray", // Border color for y-axis
-                    borderWidth: 1, // Border width for y-axis
-                  },
-                  ticks: {
-                    beginAtZero: true,
-                    stepSize: 20,
-                    min: 0,
-                    max: 100,
-                    callback: function (value) {
-                      return value + "%";
-                    },
-                  },
-                },
-              },
-              plugins: {
-                legend: {
-                  display: true,
-                  position: "top",
-                },
-              },
-              responsive: true,
-              maintainAspectRatio: false,
-              // height of the canvas in pixels
-              height: 225,
-            }}
-          />
+          <Bar data={chartData1} options={getChartOptions()} />
         </div>
       ),
+    },
+    {
+      key: activeKey === "1" ? "1" : "2", // Add a new key for the filters tab
+      label: getGraphHeader(),
     },
   ];
 
@@ -599,7 +568,7 @@ export default function PlayerProfileCenterBox(props) {
             </div>
           </div>
         </div>
-        <div className="lg:w-[400px] 2xl:w-[800px] rounded-lg border border-gray-400">
+        <div className="lg:w-[400px] 2xl:w-[800px] rounded-lg border border-gray-400 ">
           {/* tabs  */}
           <div className="flex justify-left text-sm font-normal font-lexend text-center text-gray-500 m-3">
             <ul className="flex flex-wrap -mt-[20px]">
@@ -761,7 +730,7 @@ export default function PlayerProfileCenterBox(props) {
                 )}
               </td>
             </tr>
-            <tr> 
+            <tr>
               <td></td>
               <td>
                 {filteredAttendence.length > 6 && (
@@ -832,7 +801,9 @@ export default function PlayerProfileCenterBox(props) {
                 <select
                   style={{ fontSize: "14px" }}
                   className="bg-gray-800 font-[12px] text-green-500 py-1 px-2 rounded-full border border-green-500"
-                  onChange={(event) => setSelectedReportMonth(event.target.value)}
+                  onChange={(event) =>
+                    setSelectedReportMonth(event.target.value)
+                  }
                   value={selectedReportMonth}
                 >
                   {monthOptions.map((month) => (
