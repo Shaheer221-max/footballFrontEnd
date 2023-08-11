@@ -23,6 +23,8 @@ export default function GroupChatBox(props) {
   const [chat, setChat] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [msgLoading, setMsgLoading] = useState(false);
+  const [fileName, setFileName] = useState("");
+  const [file, setFile] = useState(null);
 
   const hiddenFileInput = React.useRef(null);
 
@@ -175,48 +177,49 @@ export default function GroupChatBox(props) {
   };
 
   const handleChange = (event) => {
-    const data = new FormData();
-    data.append("file", event.target.files[0]);
-    data.append("upload_preset", "player_image");
-    //data.append("cloud_name","dyapmvalo");
-    axios
-      .post("https://api.cloudinary.com/v1_1/dyapmvalo/image/upload", data)
-      .then((res) => {
-        setUrl(res.data.url);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setFileName(event.target.files[0].name);
+    setFile(event.target.files[0]);
   };
 
   const sendMsg = async () => {
-    user?.socket?.current?.emit("sendMessage", {
-      senderId: user.user._id,
-      receiverId: conversation?.Members?.filter(
-        (item) => item._id !== user.user._id
-      )[0]._id,
-      text: sendChat,
-    });
-    setMsgLoading(true);
-
-    await axios
-      .post(
-        `${process.env.REACT_APP_API}/groupconversation/send/${params.id}`,
-        {
-          sender: user.user._id,
-          content: url ? url : sendChat,
-        }
-      )
-      .then((res) => {
-        setSendChat("");
-        setUrl("");
-        setMsgLoading(false);
-      })
-      .catch((error) => {
-        setMsgLoading(false);
-        console.log(error);
+    if (sendChat.trim() === "") {
+      message.error("Cannot send empty Message");
+    } else {
+      user?.socket?.current?.emit("sendMessage", {
+        senderId: user.user._id,
+        receiverId: conversation?.Members?.filter(
+          (item) => item._id !== user.user._id
+        )[0]._id,
+        text: sendChat,
       });
-    AllMessages();
+      setMsgLoading(true);
+      const formData = new FormData();
+      formData.append("sender", user.user._id);
+      formData.append("content", sendChat);
+      formData.append("file", file);
+      await axios
+        .post(
+          `${process.env.REACT_APP_API}/groupconversation/send/${params.id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
+        .then((res) => {
+          setSendChat("");
+          setFileName("");
+          setFile("");
+          setUrl("");
+          setMsgLoading(false);
+        })
+        .catch((error) => {
+          setMsgLoading(false);
+          console.log(error);
+        });
+      AllMessages();
+    }
   };
   const handleChangeMsg = (event) => {
     setSendChat(event.target.value);
@@ -719,7 +722,7 @@ export default function GroupChatBox(props) {
                         </>
                       )}
 
-                      {val.sender !== user.user.id ? (
+                      {val.sender !== user?.user?.id ? (
                         <>
                           <div className="mt-5">
                             <LeftSideChatGroup message={val} />
@@ -728,7 +731,10 @@ export default function GroupChatBox(props) {
                       ) : (
                         <>
                           <div>
-                            <RightSideChatGroup message={val} />
+                            <RightSideChatGroup
+                              fileName={fileName}
+                              message={val}
+                            />
                           </div>
                         </>
                       )}
@@ -779,21 +785,47 @@ export default function GroupChatBox(props) {
             </svg>
             <input
               type="file"
-              accept=".jpg, .jpeg, .png, .gif, .bmp, .pdf, .doc, .docx, .ppt, .pptx"
+              accept=".jpg, .jpeg, .png, .gif, .bmp, .pdf, .doc, .docx, .ppt, .svg, .webp, .jfif, .pptx"
               ref={hiddenFileInput}
               onChange={handleChange}
               style={{ display: "none" }}
             />
           </div>
           <input
-          // width={90}
+            // width={90}
             type="text"
             className="bg-[#212121]   text-white text-sm placeholder-lexend text-lexend rounded-md w-[93%] pl-10 p-2.5  placeholder-gray-400"
-            placeholder="Type Message Here"
+            placeholder={"Type Message Here"}
             required=""
             onChange={handleChangeMsg}
             value={sendChat}
           />
+          {fileName && (
+            <div className="text-white items-center flex pb-[20px]">
+              <div className="mr-[10px]"> {fileName}</div>
+              <div className="m-[5px]"
+                onClick={() => {
+                  setFileName("");
+                  setFile("");
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
