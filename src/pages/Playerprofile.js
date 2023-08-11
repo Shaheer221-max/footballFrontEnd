@@ -20,7 +20,7 @@ export default function Playerprofile() {
           </div>
 
           {/* center Post */}
-          <div className=" w-[55rem] h-[calc(100vh-95px)] overflow-y-auto ">
+          <div className=" w-[60rem] h-[calc(100vh-95px)] overflow-y-auto ">
             <PlayerProfileCenterBox />
           </div>
 
