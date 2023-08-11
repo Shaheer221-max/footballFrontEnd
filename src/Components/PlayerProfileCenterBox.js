@@ -42,9 +42,14 @@ export default function PlayerProfileCenterBox(props) {
   const navigation = useNavigate();
   const [showAll, setShowAll] = useState(false);
   const [graphData, setGraphData] = useState();
+  const [conversations, setConversations] = React.useState([]);
+  const [conversationId, setConversationId] = React.useState();
+  const [reportGraphData, setReportGraphData] = useState();
+  const [graphSelectedMonth, setGraphSelectedMonth] = useState("Month");
 
   const onChange = (key) => {
     setActiveKey(key);
+    setGraphSelectedMonth('Month');
   };
   const getPlayerAttendence = async () => {
     await axios
@@ -70,19 +75,22 @@ export default function PlayerProfileCenterBox(props) {
     "August",
   ];
 
-  const avgScores = evaluation.map((item) => item.avgScore);
-
   const getBackgroundColor = (score) => {
     return score >= 2 ? "green" : "red";
   };
 
   const chartData1 = {
-    labels: labels?.map((month) => month.slice(0, 3)),
+    labels:
+      graphSelectedMonth !== "Month"
+        ? graphSelectedMonth
+        : labels?.map((month) => month.slice(0, 3)),
     datasets: [
       {
-        label: "Average Score",
-        data: avgScores,
-        backgroundColor: avgScores.map((score) => getBackgroundColor(score)),
+        label: reportGraphData?.length > 0 ? "Average Score" : "No Data Found",
+        data: reportGraphData,
+        backgroundColor: reportGraphData?.map((score) =>
+          getBackgroundColor(score)
+        ),
         hoverBackgroundColor: "white",
         borderWidth: 1,
         barThickness: 20, // Set the bar width to 20 pixels
@@ -115,8 +123,6 @@ export default function PlayerProfileCenterBox(props) {
   const [selectedReportMonth, setSelectedReportMonth] = useState("Month");
   const [selectedReportYear, setSelectedReportYear] = useState(null);
   const [selectedReportDate, setSelectedReportDate] = useState(null);
-
-  const [graphSelectedMonth, setGraphSelectedMonth] = useState('Month');
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -189,7 +195,6 @@ export default function PlayerProfileCenterBox(props) {
     const response = await axios.get(
       `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsOfPlayer/${location?.state._id}`
     );
-    console.log("evaluation response: ", response);
     // Calculate Average of Evaluation
     let sum = 0;
     for (let i = 0; i < response.data.data.length; i++) {
@@ -205,8 +210,7 @@ export default function PlayerProfileCenterBox(props) {
   }, []);
 
   // Get All Conversations
-  const [conversations, setConversations] = React.useState([]);
-  const [conversationId, setConversationId] = React.useState();
+
   const getConversations = async () => {
     const response = await axios.get(
       `${process.env.REACT_APP_API}/conversation/${location?.state._id}`
@@ -268,7 +272,6 @@ export default function PlayerProfileCenterBox(props) {
           return { ...items, attendance: filteredRecords };
         });
         setAttendanceData(adata);
-        console.log("adata: ", adata);
       })
       .catch((err) => {
         console.log(err);
@@ -277,15 +280,6 @@ export default function PlayerProfileCenterBox(props) {
   React.useEffect(() => {
     getAttendance();
   }, []);
-
-  // const filteredData = attendanceData.filter((item) => {
-  //   const date = new Date(item.date);
-  //   const yearMatch =
-  //     !graphSelectedYear || date.getFullYear() === graphSelectedYear;
-  //   const monthMatch =
-  //     !graphSelectedMonth || date.getMonth() === graphSelectedMonth;
-  //   return yearMatch && monthMatch;
-  // });
 
   const filterGraphData = (data, selectedMonth) => {
     if (selectedMonth !== "Month") {
@@ -320,6 +314,22 @@ export default function PlayerProfileCenterBox(props) {
     }, {});
   };
 
+  const calculateReportDataByMonth = (data) => {
+    return data.reduce((acc, item) => {
+      const date = new Date(item.date);
+      const month = date.getMonth();
+
+      if (!acc[month]) {
+        acc[month] = { totalAvgScore: 0, totalReports: 0 };
+      }
+
+      acc[month].totalAvgScore += item.avgScore;
+      acc[month].totalReports++;
+
+      return acc;
+    }, {});
+  };
+
   const monthlyPercentages = (attendanceDataByMonth) => {
     return Object.values(attendanceDataByMonth).map(
       ({ present, total }) => (present / total) * 100
@@ -346,6 +356,23 @@ export default function PlayerProfileCenterBox(props) {
     ],
   };
 
+  const monthlyReportPercentages = (ReportDataByMonth) => {
+    return Object.values(ReportDataByMonth).map(
+      ({ totalAvgScore, totalReports }) => totalAvgScore / totalReports
+    );
+  };
+
+  useEffect(() => {
+    const filteredData = filterGraphData(evaluation, graphSelectedMonth);
+    if (graphSelectedMonth !== 'Month') {
+      const monthlyReportData = calculateReportDataByMonth(filteredData);
+      const percentage = monthlyReportPercentages(monthlyReportData);
+      setReportGraphData(percentage);
+    } else {
+      setReportGraphData(filteredData.map((item) => item.avgScore));
+    }
+  }, [graphSelectedMonth, evaluation]);
+
   useEffect(() => {
     const filteredData = filterGraphData(attendanceData, graphSelectedMonth);
     const monthlyAttendancePercentages =
@@ -354,8 +381,6 @@ export default function PlayerProfileCenterBox(props) {
 
     setGraphData(percentage);
   }, [graphSelectedMonth, attendanceData]);
-
-  
 
   const getChartOptions = () => {
     return {
