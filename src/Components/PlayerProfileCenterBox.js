@@ -49,7 +49,7 @@ export default function PlayerProfileCenterBox(props) {
 
   const onChange = (key) => {
     setActiveKey(key);
-    setGraphSelectedMonth('Month');
+    setGraphSelectedMonth("Month");
   };
   const getPlayerAttendence = async () => {
     await axios
@@ -149,9 +149,21 @@ export default function PlayerProfileCenterBox(props) {
     }
 
     if (selectedReportDate) {
-      const formattedSelectedDate = selectedReportDate.format("YYYY-MM-DD");
-      const reportDate = new Date(evalObject.date).toISOString().split("T")[0];
-      if (reportDate !== formattedSelectedDate) {
+      const reportDate = new Date(evalObject.date);
+
+      const selectedYear = selectedReportDate.year();
+      const selectedMonth = selectedReportDate.month();
+      const selectedDay = selectedReportDate.date();
+
+      const reportYear = reportDate.getFullYear();
+      const reportMonth = reportDate.getMonth();
+      const reportDay = reportDate.getDate();
+
+      if (
+        reportYear !== selectedYear ||
+        reportMonth !== selectedMonth ||
+        reportDay !== selectedDay
+      ) {
         return false;
       }
     }
@@ -178,11 +190,21 @@ export default function PlayerProfileCenterBox(props) {
     }
 
     if (selectedDate) {
-      const formattedSelectedDate = selectedDate.format("YYYY-MM-DD");
-      const attendanceDate = new Date(attendanceObject.date)
-        .toISOString()
-        .split("T")[0];
-      if (attendanceDate !== formattedSelectedDate) {
+      const attendanceDate = new Date(attendanceObject.date);
+
+      const selectedYear = selectedDate.year();
+      const selectedMonth = selectedDate.month();
+      const selectedDay = selectedDate.date();
+
+      const attendanceYear = attendanceDate.getFullYear();
+      const attendanceMonth = attendanceDate.getMonth();
+      const attendanceDay = attendanceDate.getDate();
+
+      if (
+        attendanceYear !== selectedYear ||
+        attendanceMonth !== selectedMonth ||
+        attendanceDay !== selectedDay
+      ) {
         return false;
       }
     }
@@ -364,7 +386,7 @@ export default function PlayerProfileCenterBox(props) {
 
   useEffect(() => {
     const filteredData = filterGraphData(evaluation, graphSelectedMonth);
-    if (graphSelectedMonth !== 'Month') {
+    if (graphSelectedMonth !== "Month") {
       const monthlyReportData = calculateReportDataByMonth(filteredData);
       const percentage = monthlyReportPercentages(monthlyReportData);
       setReportGraphData(percentage);
