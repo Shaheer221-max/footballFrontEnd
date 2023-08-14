@@ -11,6 +11,20 @@ export default function RightSideChatGroup(props) {
   const [three, setThree] = React.useState("");
   const user = useSelector((state) => state.user);
 
+  const extensionArray = [
+    "jpg",
+    "jpeg",
+    "png",
+    "svg",
+    "webp",
+    "pdf",
+    "doc",
+    "docx",
+    "ppt",
+    "pptx",
+    "jfif",
+  ];
+
   function getFileExtension() {
     const extensionIndex = props?.message?.content?.lastIndexOf(".");
     if (extensionIndex === -1) {
@@ -19,29 +33,28 @@ export default function RightSideChatGroup(props) {
 
     setThree(getExtension(props?.message?.content));
   }
-function getfileSrc(file) {
-  switch (file) {
-    case "jpg":
-    case "jpeg":
-    case "png":
-    case "svg":
-    case "webp":
-    case "jfif":
-      return props.message.content;
-    case "pdf":
-      return "https://www.thoughtco.com/thmb/gJwCuYnaX0nW2zbCc3y55QKLqEI=/1280x1364/filters:fill(auto,1)/Pdf_by_mimooh.svg-56a9d1943df78cf772aaca04.jpg";
-    case "doc":
-    case "docx":
-      return "https://cdn3.iconfinder.com/data/icons/file-extension-28/267/docx-512.png";
+  function getfileSrc(file) {
+    switch (file) {
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "svg":
+      case "webp":
+      case "jfif":
+        return props.message.content;
+      case "pdf":
+        return "https://www.thoughtco.com/thmb/gJwCuYnaX0nW2zbCc3y55QKLqEI=/1280x1364/filters:fill(auto,1)/Pdf_by_mimooh.svg-56a9d1943df78cf772aaca04.jpg";
+      case "doc":
+      case "docx":
+        return "https://cdn3.iconfinder.com/data/icons/file-extension-28/267/docx-512.png";
       case "ppt":
       case "pptx":
-        return "https://cdn2.iconfinder.com/data/icons/linne-file-types/60/ppt-512.png"
-    default:
-      // Handle cases not covered in the switch
-      return null;
+        return "https://cdn2.iconfinder.com/data/icons/linne-file-types/60/ppt-512.png";
+      default:
+        // Handle cases not covered in the switch
+        return null;
+    }
   }
-}
-
 
   function getExtension(url) {
     const urlParts = url.split("/");
@@ -97,38 +110,37 @@ function getfileSrc(file) {
               </p>
             </div>
             <p
-              className="font-medium bg-[#212121] text-base text-white mt-1  rounded-tr-lg rounded-b-lg py-2 px-6"
+              className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-6"
               style={{ width: "100%", overflowWrap: "break-word" }}
             >
-              {three === "jpg" ||
-              three === "jpeg," ||
-              three === "png" ||
-              three === "svg" ||
-              three === "webp" ||
-              three === "pdf" ||
-              three === "doc" ||
-              three === "docx" ||
-              three === "ppt" ||
-              three === "pptx" ||
-              three === "jfif" ? (
-                <a
-                  href={props.message.content} // Link to the image
-                  target="_blank" // Open link in a new tab
-                  rel="noopener noreferrer" // Security best practice for opening links
-                  style={{
-                    textDecoration: "none", // Remove underline from the link
-                  }}
-                >
-                  <img
-                    className="h-[300px] w-[300px] cursor-pointer border border-gray-300 hover:border-green-500"
-                    src={getfileSrc(three)}
-                    alt="image"
-                  />
-                </a>
-              ) : three === "mp4" ? (
-                <video>
+              {three === "mp4" ? (
+                <video controls>
                   <source src={props.message.content} type="video/mp4" />
                 </video>
+              ) : props.message.content && extensionArray.includes(three) ? (
+                <div>
+                  <a
+                    href={props.message.content} // Link to the image
+                    target="_blank" // Open link in a new tab
+                    rel="noopener noreferrer" // Security best practice for opening links
+                    style={{
+                      textDecoration: "none", // Remove underline from the link
+                    }}
+                  >
+                    <img
+                      className="h-[300px] w-[300px] cursor-pointer border border-gray-300 hover:border-green-500"
+                      src={getfileSrc(three)}
+                      alt="image"
+                    />
+                  </a>
+
+                  <p
+                    className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-6"
+                    style={{ width: "100%", overflowWrap: "break-word" }}
+                  >
+                    {props.message.content}
+                  </p>
+                </div>
               ) : (
                 props.message.content
               )}

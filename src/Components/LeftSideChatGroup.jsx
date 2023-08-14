@@ -10,6 +10,21 @@ export default function LeftSideChatGroup(props) {
   const user = useSelector((state) => state.user);
   const [three, setThree] = React.useState("");
 
+
+  const extensionArray = [
+    "jpg",
+    "jpeg",
+    "png",
+    "svg",
+    "webp",
+    "pdf",
+    "doc",
+    "docx",
+    "ppt",
+    "pptx",
+    "jfif",
+  ];
+
   function getFileExtension() {
     const extensionIndex = props?.message?.content?.lastIndexOf(".");
     if (extensionIndex === -1) {
@@ -113,38 +128,39 @@ function getfileSrc(file) {
               </p>
             </div>
             <p
-              className="font-medium bg-[#212121] text-base text-white mt-1  rounded-tr-lg rounded-b-lg py-2 px-6"
+              className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-6"
               style={{ width: "100%", overflowWrap: "break-word" }}
             >
-              {three === "jpg" ||
-              three === "jpeg," ||
-              three === "png" ||
-              three === "svg" ||
-              three === "webp" ||
-              three === "pdf" ||
-              three === "doc" ||
-              three === "docx" ||
-              three === "ppt" ||
-              three === "pptx" ||
-              three === "jfif" ? (
-                <a
-                  href={props.message.content} // Link to the image
-                  target="_blank" // Open link in a new tab
-                  rel="noopener noreferrer" // Security best practice for opening links
-                  style={{
-                    textDecoration: "none", // Remove underline from the link
-                  }}
-                >
-                  <img
-                    className="h-[300px] w-[300px] cursor-pointer border border-gray-300 hover:border-green-500"
-                    src={getfileSrc(three)}
-                    alt="image"
-                  />
-                </a>
-              ) : three === "mp4" ? (
-                <video>
+              {three === "mp4" ? (
+                <video controls>
                   <source src={props.message.content} type="video/mp4" />
                 </video>
+              ) : props.message.content &&
+                extensionArray.includes(three)
+                 ? (
+                <div>
+                  <a
+                    href={props.message.content} // Link to the image
+                    target="_blank" // Open link in a new tab
+                    rel="noopener noreferrer" // Security best practice for opening links
+                    style={{
+                      textDecoration: "none", // Remove underline from the link
+                    }}
+                  >
+                    <img
+                      className="h-[300px] w-[300px] cursor-pointer border border-gray-300 hover:border-green-500"
+                      src={getfileSrc(three)}
+                      alt="image"
+                    />
+                  </a>
+
+                  <p
+                    className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-6"
+                    style={{ width: "100%", overflowWrap: "break-word" }}
+                  >
+                    {props.message.content}
+                  </p>
+                </div>
               ) : (
                 props.message.content
               )}

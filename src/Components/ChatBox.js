@@ -24,6 +24,8 @@ export default function ChatBox(props) {
   const [fileName, setFileName] = useState("");
   const [file, setFile] = useState(null);
 
+  const [msgLoading, setMsgLoading] = useState(false);
+
   const hiddenFileInput = React.useRef(null);
 
   const params = useParams();
@@ -146,12 +148,19 @@ export default function ChatBox(props) {
   };
 
   const handleChange = (event) => {
+    setMsgLoading(true); // Set msgLoading to true when you start loading
     setFileName(event.target.files[0].name);
     setFile(event.target.files[0]);
+    // You might have additional code here for processing the file
+  
+    // After you finish loading, set msgLoading back to false after 2 seconds
+    setTimeout(() => {
+      setMsgLoading(false);
+    }, 2000); // 2000 milliseconds = 2 seconds
   };
 
   const sendMsg = async () => {
-    if (sendChat.trim() === "") {
+    if (sendChat.trim() === "" && !file) {
       message.error("Cannot send empty Message");
     } else {
       user?.socket?.current?.emit("sendMessage", {
@@ -161,28 +170,24 @@ export default function ChatBox(props) {
         )[0]._id,
         text: sendChat,
       });
+      setMsgLoading(true);
       const formData = new FormData();
+      formData.append("conversationId", params.id)
       formData.append("sender", user.user._id);
-      formData.append("content", sendChat);
+      formData.append("text", sendChat);
       formData.append("file", file);
       await axios
-        .post(
-          `${process.env.REACT_APP_API}/groupconversation/send/${params.id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        )
+        .post(`${process.env.REACT_APP_API}/message/`, formData)
         .then((res) => {
           setSendChat("");
           setFileName("");
           setFile("");
           setUrl("");
+          setMsgLoading(false);
         })
         .catch((error) => {
           console.log(error);
+          setMsgLoading(false);
         });
       AllMessages();
     }
@@ -526,7 +531,7 @@ export default function ChatBox(props) {
                     ) : (
                       <>
                         <div>
-                          <RightSideChat fileName={fileName} message={val} />
+                          <RightSideChat fileName={fileName} message={val}  />
                         </div>
                       </>
                     )}
@@ -548,9 +553,9 @@ export default function ChatBox(props) {
           <div
             className="cursor-pointer absolute top-3.5 right-2"
             onClick={sendMsg}
-            onKeyDown={sendMsg}
+            onKeyDown={handleKeyDown}
           >
-            {refresh ? (
+            {refresh || msgLoading ? (
               <svg
                 className="animate-spin h-5 w-5 text-white"
                 xmlns="http://www.w3.org/2000/svg"

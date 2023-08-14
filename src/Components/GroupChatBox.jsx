@@ -177,12 +177,20 @@ export default function GroupChatBox(props) {
   };
 
   const handleChange = (event) => {
+    setMsgLoading(true); // Set msgLoading to true when you start loading
     setFileName(event.target.files[0].name);
     setFile(event.target.files[0]);
+    // You might have additional code here for processing the file
+  
+    // After you finish loading, set msgLoading back to false after 2 seconds
+    setTimeout(() => {
+      setMsgLoading(false);
+    }, 2000); // 2000 milliseconds = 2 seconds
   };
 
+
   const sendMsg = async () => {
-    if (sendChat.trim() === "") {
+    if (sendChat.trim() === "" && !file) {
       message.error("Cannot send empty Message");
     } else {
       user?.socket?.current?.emit("sendMessage", {
@@ -658,7 +666,7 @@ export default function GroupChatBox(props) {
             ref={messageEl}
           >
             <>
-              {msgLoading ? (
+              {/* {msgLoading ? (
                 <div className="flex justify-center align-middle items-center h-[60vh] ">
                   <svg
                     className="animate-spin h-7 w-7 text-white"
@@ -681,67 +689,66 @@ export default function GroupChatBox(props) {
                     ></path>
                   </svg>
                 </div>
-              ) : (
-                chat.map((val, ind) => {
-                  return (
-                    <div>
-                      {ind === 0 ? (
-                        <>
-                          <div className="flex items-center py-4 mx-10">
-                            <div className="flex-grow h-px bg-gray-400"></div>
+              ) : ( */}
+              {chat.map((val, ind) => {
+                return (
+                  <div>
+                    {ind === 0 ? (
+                      <>
+                        <div className="flex items-center py-4 mx-10">
+                          <div className="flex-grow h-px bg-gray-400"></div>
 
-                            <span className="flex-shrink text-base font-dm text-[#ffffff] px-4  font-normal">
-                              {today === val.timestamp.slice(0, 10) ? (
-                                <>Today</>
-                              ) : (
-                                <>{val.timestamp.slice(0, 10)}</>
-                              )}
-                            </span>
+                          <span className="flex-shrink text-base font-dm text-[#ffffff] px-4  font-normal">
+                            {today === val.timestamp.slice(0, 10) ? (
+                              <>Today</>
+                            ) : (
+                              <>{val.timestamp.slice(0, 10)}</>
+                            )}
+                          </span>
 
-                            <div className="flex-grow h-px bg-gray-400"></div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          {val?.createdAt?.slice(0, 10).toString() !==
-                          chat[ind - 1]?.createdAt?.slice(0, 10).toString() ? (
-                            <>
-                              <div className="flex items-center py-4 mx-10">
-                                <div className="flex-grow h-px bg-gray-400"></div>
+                          <div className="flex-grow h-px bg-gray-400"></div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {val?.createdAt?.slice(0, 10).toString() !==
+                        chat[ind - 1]?.createdAt?.slice(0, 10).toString() ? (
+                          <>
+                            <div className="flex items-center py-4 mx-10">
+                              <div className="flex-grow h-px bg-gray-400"></div>
 
-                                <span className="flex-shrink text-base font-dm text-[#ffffff] px-4  font-normal">
-                                  {val?.createdAt?.slice(0, 10)}
-                                </span>
+                              <span className="flex-shrink text-base font-dm text-[#ffffff] px-4  font-normal">
+                                {val?.createdAt?.slice(0, 10)}
+                              </span>
 
-                                <div className="flex-grow h-px bg-gray-400"></div>
-                              </div>
-                            </>
-                          ) : (
-                            <></>
-                          )}
-                        </>
-                      )}
+                              <div className="flex-grow h-px bg-gray-400"></div>
+                            </div>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    )}
 
-                      {val.sender !== user?.user?.id ? (
-                        <>
-                          <div className="mt-5">
-                            <LeftSideChatGroup message={val} />
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div>
-                            <RightSideChatGroup
-                              fileName={fileName}
-                              message={val}
-                            />
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  );
-                })
-              )}
+                    {val.sender !== user?.user?.id ? (
+                      <>
+                        <div className="mt-5">
+                          <LeftSideChatGroup message={val} />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          <RightSideChatGroup
+                            fileName={fileName}
+                            message={val}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
             </>
           </div>
         </div>
@@ -754,18 +761,41 @@ export default function GroupChatBox(props) {
             className="cursor-pointer absolute top-3.5 right-2"
             onClick={sendMsg}
           >
-            <svg
-              width="15"
-              height="12"
-              viewBox="0 0 24 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2.48647 12.7028L9.95408 11.2092C10.6209 11.076 10.6209 10.8592 9.95408 10.726L2.48647 9.23244C2.04167 9.14364 1.60847 8.71004 1.51967 8.26564L0.0260634 0.798029C-0.107537 0.130828 0.285664 -0.179173 0.903665 0.106027L23.6913 10.6232C24.1029 10.8132 24.1029 11.122 23.6913 11.312L0.903665 21.8293C0.285664 22.1145 -0.107537 21.8045 0.0260634 21.1373L1.51967 13.6696C1.60847 13.2252 2.04167 12.7916 2.48647 12.7028Z"
-                fill="white"
-              />
-            </svg>
+            {refresh || msgLoading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                ></path>
+              </svg>
+            ) : (
+              <svg
+                width="15"
+                height="12"
+                viewBox="0 0 24 22"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2.48647 12.7028L9.95408 11.2092C10.6209 11.076 10.6209 10.8592 9.95408 10.726L2.48647 9.23244C2.04167 9.14364 1.60847 8.71004 1.51967 8.26564L0.0260634 0.798029C-0.107537 0.130828 0.285664 -0.179173 0.903665 0.106027L23.6913 10.6232C24.1029 10.8132 24.1029 11.122 23.6913 11.312L0.903665 21.8293C0.285664 22.1145 -0.107537 21.8045 0.0260634 21.1373L1.51967 13.6696C1.60847 13.2252 2.04167 12.7916 2.48647 12.7028Z"
+                  fill="white"
+                />
+              </svg>
+            )}
           </div>
           <div
             onClick={handleClick}
@@ -803,7 +833,8 @@ export default function GroupChatBox(props) {
           {fileName && (
             <div className="text-white items-center flex pb-[20px]">
               <div className="mr-[10px]"> {fileName}</div>
-              <div className="m-[5px]"
+              <div
+                className="m-[5px]"
                 onClick={() => {
                   setFileName("");
                   setFile("");
