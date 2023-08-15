@@ -223,7 +223,6 @@ export default function PlayerProfileCenterBox(props) {
     const response = await axios.get(
       `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsOfPlayer/${location?.state._id}`
     );
-    console.log("Evaluation: ", response);
     // Calculate Average of Evaluation
     let sum = 0;
     for (let i = 0; i < response.data.data.length; i++) {
@@ -308,14 +307,12 @@ export default function PlayerProfileCenterBox(props) {
         `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
       )
       .then((response) => {
-        console.log("Attendance: ", response);
         const adata = response.data.data.attendance.map((items) => {
           const filteredRecords = items.attendance.filter(
             (record) => record.refOfPlayer === location?.state._id
           );
           return { ...items, attendance: filteredRecords };
         });
-        console.log("adata: ", adata);
 
         setAttendanceData(adata);
       })
@@ -345,19 +342,33 @@ export default function PlayerProfileCenterBox(props) {
   };
 
   const calculateAttendanceDataByMonth = (data) => {
-    return data.reduce((acc, item) => {
+    const acc = data.reduce((acc, item) => {
       const date = new Date(item.date);
-      const month = date.getMonth();
+      const month = date.getMonth() + 1;
       const isPresent = item.attendance[0]?.isPresent || false;
+
       if (!acc[month]) {
         acc[month] = { present: 0, total: 0 };
       }
+
       acc[month].total++;
+
       if (isPresent) {
         acc[month].present++;
       }
+
       return acc;
-    }, {})
+    }, {});
+
+    if (graphSelectedMonth === "Month") {
+      // Iterate through months and add missing entries
+      for (let month = 1; month <= 12; month++) {
+        if (!acc[month]) {
+          acc[month] = { present: 0, total: 0 };
+        }
+      }
+    }
+    return acc;
   };
 
   const calculateReportDataByMonth = (data) => {
@@ -392,7 +403,7 @@ export default function PlayerProfileCenterBox(props) {
           graphData?.length > 0 ? "Attendance Percentage" : "No Data Found",
         data: graphData,
         backgroundColor: graphData?.map((percentage) =>
-          percentage >= 50 ? "green" : "red"
+          percentage >= 40 ? "green" : "red"
         ),
         hoverBackgroundColor: "white",
         borderWidth: 1,
@@ -441,22 +452,6 @@ export default function PlayerProfileCenterBox(props) {
       calculateAttendanceDataByMonth(filteredData);
     const percentage = monthlyPercentages(monthlyAttendancePercentages);
     setGraphData(percentage);
-    // if (graphSelectedMonth !== "Month") {
-    //   const monthlyAttendancePercentages =
-    //     calculateAttendanceDataByMonth(filteredData);
-    //   console.log("MONTHLY ATTENDANCE: IF ", monthlyAttendancePercentages);
-    //   const percentage = monthlyPercentages(monthlyAttendancePercentages);
-    //   console.log("PRCENTAGE: IF ", percentage);
-    //   setGraphData(percentage);
-    // }
-    // } else {
-    //   const monthlyAttendancePercentages =
-    //     calculateAttendanceDataByMonth(filteredData);
-    //   console.log("MONTHLY ATTENDANCE: ", monthlyAttendancePercentages);
-    //   const percentage = monthlyPercentages(monthlyAttendancePercentages);
-    //   console.log("PRCENTAGE: ", percentage);
-    //   setGraphData(percentage);
-    // }
   }, [graphSelectedMonth, attendanceData]);
 
   const getChartOptions = () => {
