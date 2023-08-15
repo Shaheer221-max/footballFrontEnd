@@ -46,6 +46,7 @@ export default function PlayerProfileCenterBox(props) {
   const [conversationId, setConversationId] = React.useState();
   const [reportGraphData, setReportGraphData] = useState();
   const [graphSelectedMonth, setGraphSelectedMonth] = useState("Month");
+  const [reportTableSkills, setReportTableSkills] = useState([]);
 
   const onChange = (key) => {
     setActiveKey(key);
@@ -217,12 +218,27 @@ export default function PlayerProfileCenterBox(props) {
     const response = await axios.get(
       `${process.env.REACT_APP_API}/evaluation/ViewEvaluationsOfPlayer/${location?.state._id}`
     );
+    console.log("Evaluation: ", response);
     // Calculate Average of Evaluation
     let sum = 0;
     for (let i = 0; i < response.data.data.length; i++) {
       sum += response.data.data[i].avgScore;
     }
     setAvg(sum / response.data.data.length);
+    // // Create an object to store evaluation records with unique dates
+    // const uniqueDatesData = {};
+
+    // // Filter and add records to the uniqueDatesData object
+    // response.data.data.forEach((evaluationObject) => {
+    //   const date = new Date(evaluationObject.date).toDateString(); // Convert to a string to group by date only
+    //   if (!uniqueDatesData[date]) {
+    //     uniqueDatesData[date] = evaluationObject;
+    //   }
+    // });
+
+    // // Convert the uniqueDatesData object values to an array
+    // const uniqueDatesArray = Object.values(uniqueDatesData);
+    // console.log('UNIQUE DATES ARRAT: ', uniqueDatesArray);
     setEvaluation(response.data.data);
   };
 
@@ -384,6 +400,7 @@ export default function PlayerProfileCenterBox(props) {
     );
   };
 
+  //EVALUATION GRAPH DATA
   useEffect(() => {
     const filteredData = filterGraphData(evaluation, graphSelectedMonth);
     if (graphSelectedMonth !== "Month") {
@@ -391,7 +408,11 @@ export default function PlayerProfileCenterBox(props) {
       const percentage = monthlyReportPercentages(monthlyReportData);
       setReportGraphData(percentage);
     } else {
-      setReportGraphData(filteredData.map((item) => item.avgScore));
+      setReportGraphData(
+        filteredData
+          .filter((report) => report.refOfSkill !== null)
+          .map((item) => item.avgScore)
+      );
     }
   }, [graphSelectedMonth, evaluation]);
 
@@ -524,6 +545,19 @@ export default function PlayerProfileCenterBox(props) {
 
     return daysOfWeek[dayIndex];
   }
+  useEffect(() => {
+    if (filteredReport) {
+      let uniqueSkills = [];
+      // Loop through reference data
+      for (const entry of filteredReport) {
+        const skillName = entry.refOfSkill?.skillname; // Use optional chaining
+        if (skillName && !uniqueSkills.includes(skillName)) {
+          uniqueSkills.push(skillName);
+        }
+      }
+      setReportTableSkills(uniqueSkills);
+    }
+  }, [filteredReport]);
 
   return (
     <>
@@ -874,21 +908,15 @@ export default function PlayerProfileCenterBox(props) {
                 <th scope="col" className="py-3 pl-3 w-[100px]">
                   Day
                 </th>
-                <th scope="col" className="py-3 pl-3">
-                  Mental Skill
-                </th>
-                <th scope="col" className="py-3 pl-3">
-                  Personal Traits
-                </th>
-                <th scope="col" className="py-3 pl-3">
-                  Physical Aptitude
-                </th>
-                <th scope="col" className="py-3 pl-3">
-                  Physical Fitness
-                </th>
-                <th scope="col" className="py-3 pl-3 justify-center">
-                  Practical Evaluation
-                </th>
+                {reportTableSkills.map((skill, index) => (
+                  <th
+                    scope="col"
+                    className="py-3 pl-3 justify-center"
+                    key={index}
+                  >
+                    {skill}
+                  </th>
+                ))}
                 <th scope="col" className="py-3 pl-3 justify-center">
                   Comments
                 </th>
@@ -897,6 +925,7 @@ export default function PlayerProfileCenterBox(props) {
             <tbody>
               {filteredReport.length > 0 &&
                 filteredReport
+                  .filter((report) => report.refOfSkill !== null)
                   .slice(0, showAll ? filteredReport.length : 6)
                   .map((evaluationObject, index) => {
                     return (
@@ -907,11 +936,13 @@ export default function PlayerProfileCenterBox(props) {
                         <td className="py-4 font-lexend">
                           {ConvertDateintoDay(evaluationObject?.date)}
                         </td>
-                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
-                        <td>{evaluationObject.avgScore.toFixed(1)}</td>
+                        {reportTableSkills.map((skill, skillIndex) => (
+                          <td key={skillIndex}>
+                            {evaluationObject.refOfSkill?.skillname === skill
+                              ? evaluationObject.avgScore.toFixed(1)
+                              : "-"}
+                          </td>
+                        ))}
                         <td className="text-blue-500 underline">
                           {" "}
                           View Comments
@@ -925,7 +956,8 @@ export default function PlayerProfileCenterBox(props) {
               <td></td>
               <td></td>
               <td>
-                {filteredReport.length === 0 && (
+                {filteredReport.filter((report) => report.refOfSkill !== null)
+                  .length === 0 && (
                   <div className="flex justify-center mt-3 w-[full] h-96 pl-[7px]">
                     <p className="text-[#818181] font-dm font-normal text-lg">
                       No results Found
@@ -941,7 +973,8 @@ export default function PlayerProfileCenterBox(props) {
               <td></td>
               <td></td>
               <td>
-                {filteredReport.length > 6 && (
+                {filteredReport.filter((report) => report.refOfSkill !== null)
+                  .length > 6 && (
                   <div className="flex justify-center m-3 w-full ">
                     <button
                       className="font-[12px] cursor-pointer text-blue-500 underline"
