@@ -47,6 +47,7 @@ export default function PlayerProfileCenterBox(props) {
   const [reportGraphData, setReportGraphData] = useState();
   const [graphSelectedMonth, setGraphSelectedMonth] = useState("Month");
   const [reportTableSkills, setReportTableSkills] = useState([]);
+  const [filteredLabels, setFilteredLabels] = useState([]);
 
   const onChange = (key) => {
     setActiveKey(key);
@@ -74,6 +75,10 @@ export default function PlayerProfileCenterBox(props) {
     "June",
     "July",
     "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const getBackgroundColor = (score) => {
@@ -84,7 +89,7 @@ export default function PlayerProfileCenterBox(props) {
     labels:
       graphSelectedMonth !== "Month"
         ? graphSelectedMonth
-        : labels?.map((month) => month.slice(0, 3)),
+        : filteredLabels?.map((month) => month.slice(0, 3)),
     datasets: [
       {
         label: reportGraphData?.length > 0 ? "Average Score" : "No Data Found",
@@ -303,12 +308,15 @@ export default function PlayerProfileCenterBox(props) {
         `${process.env.REACT_APP_API}/attendance/GetAttendanceOfPlayer/${location?.state._id}`
       )
       .then((response) => {
+        console.log("Attendance: ", response);
         const adata = response.data.data.attendance.map((items) => {
           const filteredRecords = items.attendance.filter(
             (record) => record.refOfPlayer === location?.state._id
           );
           return { ...items, attendance: filteredRecords };
         });
+        console.log("adata: ", adata);
+
         setAttendanceData(adata);
       })
       .catch((err) => {
@@ -349,7 +357,7 @@ export default function PlayerProfileCenterBox(props) {
         acc[month].present++;
       }
       return acc;
-    }, {});
+    }, {})
   };
 
   const calculateReportDataByMonth = (data) => {
@@ -363,7 +371,6 @@ export default function PlayerProfileCenterBox(props) {
 
       acc[month].totalAvgScore += item.avgScore;
       acc[month].totalReports++;
-
       return acc;
     }, {});
   };
@@ -408,11 +415,23 @@ export default function PlayerProfileCenterBox(props) {
       const percentage = monthlyReportPercentages(monthlyReportData);
       setReportGraphData(percentage);
     } else {
-      setReportGraphData(
-        filteredData
-          .filter((report) => report.refOfSkill !== null)
-          .map((item) => item.avgScore)
+      const monthlyReportData = calculateReportDataByMonth(
+        filteredData?.filter((report) => report.refOfSkill !== null)
       );
+      const percentage = monthlyReportPercentages(monthlyReportData);
+      setReportGraphData(percentage);
+      const skillMonthNames = filteredData
+        ?.filter((report) => report.refOfSkill !== null)
+        .map((item) =>
+          new Date(item.date).toLocaleString("default", { month: "long" })
+        );
+      // Filter unique month names
+      const uniqueMonthNames = Array.from(new Set(skillMonthNames));
+      // Filter and map the unique month names to month labels
+      const filteredLabelstemp = labels?.filter((monthName) =>
+        uniqueMonthNames.includes(monthName)
+      );
+      setFilteredLabels(filteredLabelstemp);
     }
   }, [graphSelectedMonth, evaluation]);
 
@@ -421,8 +440,23 @@ export default function PlayerProfileCenterBox(props) {
     const monthlyAttendancePercentages =
       calculateAttendanceDataByMonth(filteredData);
     const percentage = monthlyPercentages(monthlyAttendancePercentages);
-
     setGraphData(percentage);
+    // if (graphSelectedMonth !== "Month") {
+    //   const monthlyAttendancePercentages =
+    //     calculateAttendanceDataByMonth(filteredData);
+    //   console.log("MONTHLY ATTENDANCE: IF ", monthlyAttendancePercentages);
+    //   const percentage = monthlyPercentages(monthlyAttendancePercentages);
+    //   console.log("PRCENTAGE: IF ", percentage);
+    //   setGraphData(percentage);
+    // }
+    // } else {
+    //   const monthlyAttendancePercentages =
+    //     calculateAttendanceDataByMonth(filteredData);
+    //   console.log("MONTHLY ATTENDANCE: ", monthlyAttendancePercentages);
+    //   const percentage = monthlyPercentages(monthlyAttendancePercentages);
+    //   console.log("PRCENTAGE: ", percentage);
+    //   setGraphData(percentage);
+    // }
   }, [graphSelectedMonth, attendanceData]);
 
   const getChartOptions = () => {
@@ -501,7 +535,7 @@ export default function PlayerProfileCenterBox(props) {
       key: "1",
       label: "Attendance",
       children: (
-        <div className="w-fit" style={{ height: "225px" }}>
+        <div style={{ height: "225px", width: "360px" }}>
           <Bar data={chartData} options={getChartOptions()} />
         </div>
       ),
@@ -510,7 +544,7 @@ export default function PlayerProfileCenterBox(props) {
       key: "2",
       label: "Report",
       children: (
-        <div className="w-fit" style={{ height: "225px" }}>
+        <div style={{ height: "225px", width: "360px" }}>
           <Bar data={chartData1} options={getChartOptions()} />
         </div>
       ),
