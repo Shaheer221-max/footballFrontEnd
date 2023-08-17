@@ -92,7 +92,6 @@ export default function TimelinePost(props) {
       )
       .then((res) => {
         SetPost(res.data.data.reverse());
-        console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -100,7 +99,7 @@ export default function TimelinePost(props) {
   };
   useEffect(() => {
     memberName();
-  }, [refresh, user, props]);
+  }, [refresh, user]);
 
   const addLike = async (val) => {
     console.log(val);
@@ -213,18 +212,15 @@ export default function TimelinePost(props) {
       .then(() => {
         message.success("Post Shared");
         setRefresh(false);
-        console.log("post shared");
       });
   };
 
-  console.log("first", props.data.val);
   const hiddenFileInputphoto = React.useRef(null);
   const hiddenFileInputvideo = React.useRef(null);
   const [postt, setpostt] = useState("");
   const [img, setimg] = useState("");
   const [video, setVideo] = useState(false);
   const [vid, setvid] = useState("");
-  const [posts, setPost] = useState(false);
   const [Activemage, setActiveImage] = useState(false);
   const [selected, setSelected] = useState(false);
   const [name, setName] = useState(false);
@@ -239,7 +235,6 @@ export default function TimelinePost(props) {
         },
       })
       .then((res) => {
-        console.log(res.data.data.doc.id);
         setActiveId(res.data.data.doc.id);
       })
       .catch((error) => {
@@ -270,7 +265,6 @@ export default function TimelinePost(props) {
         setimg(res.data.url);
         setvid(false);
         setSelected(true);
-        console.log(res.data.url);
       })
       .catch((err) => {
         console.log("Image not Selected");
@@ -285,9 +279,11 @@ export default function TimelinePost(props) {
     setpostt(event.target.value);
   };
 
-  // sending post
   const sendPost = async () => {
-    console.log(vid);
+    if (postt === "" && !img && !video) {
+      message.error("Post not Uploaded");
+      return;
+    }
     setPostLoading(true);
     setRefresh(true);
     if (video) {
@@ -303,17 +299,18 @@ export default function TimelinePost(props) {
         .post(`${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`, data)
         .then((res) => {
           setRefresh(false);
-          message.success("Post Uploaded");
           setPostLoading(false);
-          console.log(res.data);
-          console.log("post send");
+          SetPost([res.data.data, ...post]);
+          SetPost(post.reverse());
           setpostt("");
           setimg("");
-          setvid("");
+          setName("");
+          message.success("Post Uploaded");
+
         })
         .catch((error) => {
-          message.error("Post not Uploaded");
           console.log(error);
+          message.error("Post not Uploaded");
         });
     } else {
       setRefresh(true);
@@ -326,20 +323,21 @@ export default function TimelinePost(props) {
         })
         .then((res) => {
           setRefresh(false);
-          message.success("Post Uploaded");
-          setPostLoading(false);
-          console.log(res.data);
-          console.log("post send");
-          setpostt("");
+          setPostLoading(false);          
+          SetPost([res.data.data, ...post]);
+          SetPost(post.reverse());
           setimg("");
-          setvid("");
+          setpostt("");
+          setName("");
+          message.success("Post Uploaded");
         })
         .catch((error) => {
-          message.error("Post not Uploaded");
           console.log(error);
+          message.error("Post not Uploaded");
         });
     }
   };
+
 
   return (
     <div className="">
@@ -464,7 +462,6 @@ export default function TimelinePost(props) {
         {post.length > 0 ? (
           <>
             {post.map((val, ind) => {
-              console.log("val", val);
               return (
                 <>
                   {/* if post img */}

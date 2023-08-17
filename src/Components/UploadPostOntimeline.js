@@ -9,10 +9,10 @@ import { message } from "antd";
 export default function UploadPostOntimeline(props) {
   const hiddenFileInputphoto = React.useRef(null);
   const hiddenFileInputvideo = React.useRef(null);
-  const [postt, setpostt] = useState('');
+  const [postt, setpostt] = useState("");
   const [img, setimg] = useState(false);
   const [vid, setvid] = useState(false);
-  const [post, setPost] = useState(false);
+  const [post, setPost] = useState([]);
   const { group, setActiveGroup } = useContext(AuthContext);
   const { id, setActiveId } = useContext(AuthContext);
   const [Activemage, setActiveImage] = useState(false);
@@ -23,7 +23,7 @@ export default function UploadPostOntimeline(props) {
   const [postLoading, setPostLoading] = useState(false);
   const token = localStorage.getItem("token");
 
-  const {user} = useSelector((state) => state);
+  const { user } = useSelector((state) => state);
 
   const getData = async () => {
     await axios
@@ -57,8 +57,8 @@ export default function UploadPostOntimeline(props) {
     const data = new FormData();
     data.append("file", event.target.files[0]);
     data.append("upload_preset", "player_image");
-    data.append('height', 300); // set height
-    data.append('width', 500);
+    data.append("height", 300); // set height
+    data.append("width", 500);
     //data.append("cloud_name","dyapmvalo");
     axios
       .post(`https://api.cloudinary.com/v1_1/dyapmvalo/image/upload`, data)
@@ -82,53 +82,56 @@ export default function UploadPostOntimeline(props) {
   };
 
   const sendPost = async () => {
-    if(postt === '' && !img && !video){
+    if (postt === "" && !img && !video) {
       message.error("Post not Uploaded");
       return;
     }
     setPostLoading(true);
+
     if (video) {
-      const data = new FormData();
-      data.append("file", video);
-      data.append("upload_preset", "player_image");
-      data.append("refOfUser", user.user.id);
-      data.append("status", postt);
-      await axios
-        .post(
-          `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
-          data
-        )
-        .then((res) => {
-          console.log(res.data);
-          setPostLoading(false);
-          message.success("Post Uploaded");
-          console.log("post send");
-        })
-        .catch((error) => {
-          console.log(error);
-          message.error("Post not Uploaded");
-        });
-    }
-    else {
-      await axios
-      .post(
-        `${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`,
-        {
-          refOfUser: user.user.id,
-          status: postt,
-          image: img,
-        }
-      )
-      .then((res) => {
-        setPostLoading(false);
-        console.log(res.data);
-        message.success("Post Uploaded");
-        console.log("post send");
-      })
-      .catch((error) => {
+      try {
+        const data = new FormData();
+        data.append("file", video);
+        data.append("upload_preset", "player_image");
+        data.append("refOfUser", user.user.id);
+        data.append("status", postt);
+        await axios
+          .post(`${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`, data)
+          .then((res) => {
+            console.log(res.data);
+            message.success("Post Uploaded");
+            setPost([res.data.data, ...post]);
+            setPost(post.reverse());
+            setPostLoading(false);
+            setimg("");
+            setpostt("");
+            setName("");
+          });
+      } catch (error) {
         console.log(error);
         message.error("Post not Uploaded");
-      });
+      }
+    } else {
+      try {
+        await axios
+          .post(`${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`, {
+            refOfUser: user.user.id,
+            status: postt,
+            image: img,
+          })
+          .then((res) => {
+            message.success("Post Uploaded");
+            setPost([res.data.data, ...post]);
+            setPost(post.reverse());
+            setPostLoading(false);
+            setimg("");
+            setpostt("");
+            setName("");
+          });
+      } catch (error) {
+        console.log(error);
+        message.error("Post not Uploaded");
+      }
     }
   };
 
@@ -161,9 +164,7 @@ export default function UploadPostOntimeline(props) {
           </div>
           {selected ? (
             <div>
-              <p className="text-white text-sm text-left ml-10 pl-5 pt-2">
-                
-              </p>
+              <p className="text-white text-sm text-left ml-10 pl-5 pt-2"></p>
             </div>
           ) : (
             <></>
@@ -227,13 +228,11 @@ export default function UploadPostOntimeline(props) {
               <button
                 onClick={sendPost}
                 className="inline-flex  py-2 px-7 ml-auto text-sm font-normal text-white bg-green-500 rounded-[4px] "
-                
               >
                 {postLoading ? (
                   <svg
                     className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
-                    
                     fill="none"
                     viewBox="0 0 24 24"
                   >
@@ -250,9 +249,10 @@ export default function UploadPostOntimeline(props) {
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8v8z"
                     ></path>
-                    </svg>
-                    ) : 'Post'}
-              
+                  </svg>
+                ) : (
+                  "Post"
+                )}
               </button>
             </div>
           </div>

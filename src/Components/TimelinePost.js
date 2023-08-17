@@ -50,7 +50,6 @@ export default function TimelinePost(props) {
       .get(`${process.env.REACT_APP_API}/newsfeed/GetAllNewsFeed`)
       .then((res) => {
         SetPost(res.data.data.reverse());
-        console.log("All News Feed: ", res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -160,7 +159,6 @@ export default function TimelinePost(props) {
 
   const sharePost = async (val) => {
     setRefresh(true);
-    console.log("in share post", val);
     await axios
       .post(`${process.env.REACT_APP_API}/newsfeed/ShareNewsFeed`, {
         refOfUser: user.user.id,
@@ -172,7 +170,6 @@ export default function TimelinePost(props) {
       .then(() => {
         message.success("Post Shared");
         setRefresh(false);
-        console.log("post shared");
       });
   };
 
@@ -188,7 +185,7 @@ export default function TimelinePost(props) {
   const [postt, setpostt] = useState("");
   const [img, setimg] = useState(false);
   const [vid, setvid] = useState(false);
-  const [posts, setPost] = useState(false);
+  const [posts, setPost] = useState([]);
   const { id, setActiveId } = useContext(AuthContext);
   const [Activemage, setActiveImage] = useState(false);
   const [selected, setSelected] = useState(false);
@@ -221,6 +218,18 @@ export default function TimelinePost(props) {
     return "Just now";
   }
 
+  //currently time is in utc we are converting it to localtime.
+  function convertUtcToLocalTime(utcTimestamp) {
+    const localTime = new Date(utcTimestamp).toLocaleTimeString(undefined, {
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      hour12: true,
+      hour: "numeric",
+      minute: "numeric",
+    });
+
+    return localTime;
+  }
+
   const getData = async () => {
     await axios
       .get(`${process.env.REACT_APP_API}/users/me`, {
@@ -229,7 +238,6 @@ export default function TimelinePost(props) {
         },
       })
       .then((res) => {
-        console.log(res.data.data.doc.id);
         setActiveId(res.data.data.doc.id);
       })
       .catch((error) => {
@@ -294,11 +302,13 @@ export default function TimelinePost(props) {
         .post(`${process.env.REACT_APP_API}/newsfeed/PostNewsFeed`, data)
         .then((res) => {
           setRefresh(false);
-          console.log(res.data);
           setPostLoading(false);
           message.success("Post Uploaded");
-          console.log("post send");
+          SetPost([res.data.data, ...post]);
+          SetPost(post.reverse());
           setpostt("");
+          setimg("");
+          setName("");
         })
         .catch((error) => {
           console.log(error);
@@ -313,12 +323,15 @@ export default function TimelinePost(props) {
           image: img,
         })
         .then((res) => {
-          setpostt("");
           setRefresh(false);
-          setPostLoading(false);
-          console.log(res.data);
+          setPostLoading(false);          
+          SetPost([res.data.data, ...post]);
+          SetPost(post.reverse());
           message.success("Post Uploaded");
-          console.log("post send");
+          setimg("");
+          setpostt("");
+          setName("");
+
         })
         .catch((error) => {
           console.log(error);
@@ -326,18 +339,6 @@ export default function TimelinePost(props) {
         });
     }
   };
-
-  function convertTimestampToTimeString(timestamp) {
-    const date = new Date(timestamp);
-
-    const hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const ampm = hours >= 12 ? " pm" : " am";
-    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-    const formattedMinutes = minutes.toString().padStart(2, "0");
-
-    return `${formattedHours}:${formattedMinutes}${ampm}`;
-  }
 
   return (
     <div className="">
@@ -503,7 +504,7 @@ export default function TimelinePost(props) {
                         </div>
                         <div className="flex font-lexend mt-1  items-center gap-4">
                           <h5 className="text-xs  font-normal tracking-tight text-white">
-                            {convertTimestampToTimeString(val?.time)}
+                            {convertUtcToLocalTime(val?.time)}
                           </h5>
 
                           <svg
