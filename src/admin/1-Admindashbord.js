@@ -280,8 +280,19 @@ export default function Dashboard() {
     await axios
       .get(`${process.env.REACT_APP_API}/evaluation/GetTopProspects`)
       .then((res) => {
-        console.log(res.data.data);
-        setTopProspect(res.data.data);
+        const uniquePlayersMap = {};
+
+        const uniqueTopProspects = res.data.data.reduce((acc, prospect) => {
+          const playerId = prospect.refOfPlayer.id;
+
+          if (!uniquePlayersMap[playerId]) {
+            uniquePlayersMap[playerId] = true;
+            acc.push(prospect);
+          }
+
+          return acc;
+        }, []);
+        setTopProspect(uniqueTopProspects);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -331,7 +342,7 @@ export default function Dashboard() {
                   }}
                 >
                   <MenuItem onClick={deleteSchedule}>Delete Schedule</MenuItem>
-                </Menu>  
+                </Menu>
 
                 {getEvents.length > 0 ? (
                   getEvents?.map((val, ind) => (
