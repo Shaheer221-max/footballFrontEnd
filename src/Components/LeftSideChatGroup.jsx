@@ -6,8 +6,11 @@ import axios from "axios";
 
 export default function LeftSideChatGroup(props) {
   const location = useLocation();
-  console.log(location.state.Members);
+console.log('location.state.members', location?.state?.Members);
+console.log('props22', props);
+
   const user = useSelector((state) => state.user);
+  console.log('user', user);
   const [three, setThree] = React.useState("");
 
 
@@ -98,11 +101,11 @@ function getfileSrc(file) {
     <>
       <div className=" mx-10 my-5 font-lexend">
         <div className="flex gap-2">
-          {props.message.sender == user.id ? (
+          {props.message.sender === user?.user?.id ? (
             <img
               className=" w-10 h-10 rounded-full "
               src={user.user.image}
-              alt="Bonnie image"
+              alt="BonnieImage"
             />
           ) : (
             location?.state?.Members?.map((item) =>
@@ -112,7 +115,7 @@ function getfileSrc(file) {
                 <img
                   className=" w-10 h-10 rounded-full "
                   src={item.image}
-                  alt="Bonnie image"
+                  alt="BonnieImage"
                 />
               )
             )

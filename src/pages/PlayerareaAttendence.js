@@ -15,6 +15,7 @@ export default function PlayerareaAttendence() {
   const [openAddsubcatmodal, setopenAddsubcatmodal] = useState(false);
   const [players, setPlayers] = useState([]);
   const [search, setSearch] = useState("");
+  const [attendanceObj, setAttendanceObj] = useState([]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -107,7 +108,7 @@ export default function PlayerareaAttendence() {
         console.log(error.response.data);
       });
   };
-
+  console.log("filter", filter);
   const [attendanceData, setAttendanceData] = useState([]);
 
   const getAttendance = async () => {
@@ -121,7 +122,9 @@ export default function PlayerareaAttendence() {
         );
         if (todayAttendance) {
           setTodayAttendance(true);
+          setAttendanceObj(todayAttendance);
         }
+
         console.log(todayAttendance);
         console.log(res.data.data.doc);
         setAttendanceData(res.data.data.doc);
@@ -137,6 +140,18 @@ export default function PlayerareaAttendence() {
 
   const [todayAttendance, setTodayAttendance] = useState(false);
 
+  const isAttendancePresent = (attendanceArray, playerId) => {
+    console.log(
+      "isAttendancePresent",
+      attendanceArray
+      // attendanceArray.some(
+      //   (atten) => atten.refOfPlayer === playerId && atten.isPresent
+      // )
+    );
+    return attendanceArray?.some(
+      (atten) => atten?.refOfPlayer === playerId && atten?.isPresent
+    );
+  };
   return (
     <>
       <div className="flex-col w-full">
@@ -286,8 +301,14 @@ export default function PlayerareaAttendence() {
                           onChange={(e) => {
                             handleChangeAttendance(ind, e.target.checked);
                           }}
-                          checked={attendance[ind].isPresent}
-                          disabled={todayAttendance}
+                          checked={isAttendancePresent(
+                            attendanceObj?.attendance,
+                            attendance?.id
+                          )}
+                          disabled={isAttendancePresent(
+                            attendanceObj?.attendance,
+                            attendance?.id
+                          )}
                         />
                       </td>
                     </tr>

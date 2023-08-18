@@ -137,6 +137,7 @@ export default function GroupChatBox(props) {
         `${process.env.REACT_APP_API}/groupconversation/messages/${params.id}`
       )
       .then((res) => {
+        console.log('response', res);
         setChat(res.data);
       })
       .catch((error) => {

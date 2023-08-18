@@ -86,7 +86,11 @@ export default function LeftSideChat(props) {
           ) : (
             location?.state?.members?.map((item) =>
               item.id === user.user.id ? (
-                ""
+                <img
+                className=" w-10 h-10 rounded-full "
+                src={item.image}
+                alt="Bonnie image"
+              />
               ) : (
                 <img
                   className=" w-10 h-10 rounded-full "
