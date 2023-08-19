@@ -108,18 +108,25 @@ function getfileSrc(file) {
               alt="BonnieImage"
             />
           ) : (
-            location?.state?.Members?.map((item) =>
-              item.id !== props.message.sender ? (
-                ""
-              ) : (
-                <img
-                  className=" w-10 h-10 rounded-full "
-                  src={item.image}
-                  alt="BonnieImage"
-                />
+            location?.state?.Members?.some((item) => item.id === props.message.sender) ? (
+              location?.state?.Members?.map((item) =>
+                item.id === props.message.sender ? (
+                  <img
+                    key={item.id}
+                    className="w-10 h-10 rounded-full"
+                    src={item.image}
+                    alt="BonnieImage"
+                  />
+                ) : null
               )
-            )
-          )}
+            ) : (
+              <img
+                className="w-10 h-10 rounded-full"
+                src={props?.message?.sender?.image}
+                alt="BonnieImage"
+              />
+            ))}
+            
 
           <div style={{ width: "50%" }}>
             <div className="flex  justify-between">
