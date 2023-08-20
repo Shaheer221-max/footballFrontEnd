@@ -101,16 +101,16 @@ function getfileSrc(file) {
     <>
       <div className=" mx-10 my-5 font-lexend">
         <div className="flex gap-2">
-          {props.message.sender === user?.user?.id ? (
+          {props.message.sender.id === user?.user?.id ? (
             <img
               className=" w-10 h-10 rounded-full "
               src={user.user.image}
               alt="BonnieImage"
             />
           ) : (
-            location?.state?.Members?.some((item) => item.id === props.message.sender) ? (
+            location?.state?.Members?.some((item) => item.id === props.message?.sender?.id) ? (
               location?.state?.Members?.map((item) =>
-                item.id === props.message.sender ? (
+                item.id === props.message?.sender?.id ? (
                   <img
                     key={item.id}
                     className="w-10 h-10 rounded-full"

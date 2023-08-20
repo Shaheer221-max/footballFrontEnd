@@ -522,7 +522,7 @@ export default function ChatBox(props) {
                       </>
                     )}
 
-                    {val.sender !== user.user.id ? (
+                    {val.sender.id !== user.user.id ? (
                       <>
                         <div className="mt-5">
                           <LeftSideChat message={val} />
