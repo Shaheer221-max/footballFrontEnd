@@ -49,7 +49,7 @@ export default function TimelinePost(props) {
     await axios
       .get(`${process.env.REACT_APP_API}/newsfeed/GetAllNewsFeed`)
       .then((res) => {
-        SetPost(res.data.data.reverse());
+        SetPost(res.data.data);
       })
       .catch((error) => {
         console.log(error);
