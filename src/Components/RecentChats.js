@@ -286,7 +286,7 @@ export default function RecentChats(props) {
                                     </div>
                                   </div>
                                   <p className="font-normal font-lexend text-sm  mt-0 text-[#777777]">
-                                    {val.lastMessage.slice(0, 25)}
+                                    {val?.lastMessage?.slice(0, 25)}
                                   </p>
                                 </div>
                               </div>

@@ -83,18 +83,25 @@ export default function LeftSideChat(props) {
               src={user.user.image}
               alt="Bonnie image"
             />
-          ) : (
-            location?.state?.members?.map((item) =>
-              item.id === user.user.id ? (
-                ""
-              ) : (
+          ) : location?.state?.Members?.some(
+              (item) => item.id === props.message.sender
+            ) ? (
+            location?.state?.Members?.map((item) =>
+              item.id === props.message.sender ? (
                 <img
-                  className=" w-10 h-10 rounded-full "
+                  key={item.id}
+                  className="w-10 h-10 rounded-full"
                   src={item.image}
-                  alt="Bonnie image"
+                  alt="BonnieImage"
                 />
-              )
+              ) : null
             )
+          ) : (
+            <img
+              className="w-10 h-10 rounded-full"
+              src={props?.message?.sender?.image}
+              alt="BonnieImage"
+            />
           )}
 
           <div style={{ width: "50%" }}>
@@ -114,9 +121,7 @@ export default function LeftSideChat(props) {
                 <video controls>
                   <source src={props.message.text} type="video/mp4" />
                 </video>
-              ) : props.message.text &&
-                extensionArray.includes(three)
-                 ? (
+              ) : props.message.text && extensionArray.includes(three) ? (
                 <div>
                   <a
                     href={props.message.text} // Link to the image
