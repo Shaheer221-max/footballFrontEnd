@@ -47,7 +47,6 @@ export default function VerificationCenter() {
 
   // getting players from database
   const data = async () => {
-    console.log("in data");
     let res = await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
@@ -59,7 +58,6 @@ export default function VerificationCenter() {
         //   Playerdata = res.data.data.filter((val) => val.active === "pending");
 
         setPage(res.data.data);
-        console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -77,14 +75,12 @@ export default function VerificationCenter() {
   };
 
   const approve = (id) => {
-    console.log(id);
     axios
       .put(`${process.env.REACT_APP_API}/users/updateUser/${id}`, {
         active: "active",
       })
       .then((response) => {
         message.success("Player Approved");
-        console.log(response);
         const updatedData = staticdata.filter((object) => object._id !== id);
         setStaticData(updatedData);
         setStaticDataCopy(updatedData);
@@ -101,7 +97,6 @@ export default function VerificationCenter() {
       })
       .then((response) => {
         message.success("Player Un Approved");
-        console.log(response);
         const updatedData = staticdata.filter((object) => object._id !== id);
         setStaticData(updatedData);
         setStaticDataCopy(updatedData);
@@ -125,26 +120,14 @@ export default function VerificationCenter() {
     const indexOfFirstPage = indexOfLastPage - playersPerPage;
     let page = [];
     page = newData.slice(indexOfFirstPage, indexOfLastPage);
-    console.log('page12', page);
     setStaticData(page);
     setTotalPages(Math.ceil(newData.length = 0? 1: newData.length  / playersPerPage));
-    console.log('math.ceil', Math.ceil(newData.length / playersPerPage));
-    console.log("Current pages", currentPage);
-    console.log(
-      "Index Of 1st",
-      indexOfFirstPage,
-      "Last Index",
-      indexOfLastPage,
-      "next",
-      next
-    );
   };
 
   const nextPage = () => {
     if (currentPage < totalPages) {
       let current = currentPage;
       setCurrentPage((prev) => setCurrentPage(prev + 1));
-      console.log(currentPage);
       next = true;
       data();
     }
@@ -165,7 +148,6 @@ export default function VerificationCenter() {
   };
 
   const checkNames = (val) => {
-    console.log(staticdataCopy);
     if (val.name.toUpperCase().includes(searchPlayer.toUpperCase())) {
       return val.name;
     }
@@ -195,9 +177,6 @@ export default function VerificationCenter() {
     arr[index].isPlayer = false;
     setStaticData(arr);
   };
-  {
-    console.log("staticdata567", staticdata);
-  }
   return (
     <>
       <div className="flex-col w-full">
@@ -353,7 +332,6 @@ export default function VerificationCenter() {
                               {/* {object.active === "active" ? ( */}
                               <button
                                 onClick={() => {
-                                  console.log("Approve button clicked");
                                   approve(object._id);
                                 }}
                                 className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
@@ -363,7 +341,6 @@ export default function VerificationCenter() {
                               {/* ) : ( */}
                               <button
                                 onClick={() => {
-                                  console.log("Unapprove button clicked");
                                   unapproved(object._id);
                                 }}
                                 className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"
@@ -458,7 +435,6 @@ export default function VerificationCenter() {
                               {/* {object.active === "pending" ? ( */}
                               <button
                                 onClick={() => {
-                                  console.log("Approve button clicked");
                                   approve(object._id);
                                 }}
                                 className="bg-green-500 pl-3 pr-3 pt-1 pb-1 mr-2 rounded-sm"
@@ -468,7 +444,6 @@ export default function VerificationCenter() {
                               {/* ) : ( */}
                               <button
                                 onClick={() => {
-                                  console.log("Unapprove button clicked");
                                   unapproved(object._id);
                                 }}
                                 className="bg-red-500 pl-3 pr-3 pt-1 pb-1 rounded-sm"

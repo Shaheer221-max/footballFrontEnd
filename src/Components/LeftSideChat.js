@@ -65,7 +65,6 @@ export default function LeftSideChat(props) {
 
     // Get the last part, which should be the extension
     const extension = parts[parts.length - 1];
-    console.log("extension", extension);
     return extension;
   }
 

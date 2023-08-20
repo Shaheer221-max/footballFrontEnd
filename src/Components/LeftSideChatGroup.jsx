@@ -6,11 +6,8 @@ import axios from "axios";
 
 export default function LeftSideChatGroup(props) {
   const location = useLocation();
-console.log('location.state.members', location?.state?.Members);
-console.log('props22', props);
 
   const user = useSelector((state) => state.user);
-  console.log('user', user);
   const [three, setThree] = React.useState("");
 
 
@@ -72,7 +69,6 @@ function getfileSrc(file) {
 
     // Get the last part, which should be the extension
     const extension = parts[parts.length - 1];
-    console.log("extension", extension);
     return extension;
   }
 
@@ -84,7 +80,6 @@ function getfileSrc(file) {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
       .then((res) => {
-        console.log(res.data);
         setPlayers(res.data.data.doc);
       })
       .catch((error) => {

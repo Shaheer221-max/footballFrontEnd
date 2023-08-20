@@ -137,7 +137,6 @@ export default function GroupChatBox(props) {
         `${process.env.REACT_APP_API}/groupconversation/messages/${params.id}`
       )
       .then((res) => {
-        console.log('response', res);
         setChat(res.data);
       })
       .catch((error) => {
@@ -232,7 +231,6 @@ export default function GroupChatBox(props) {
   };
   const handleChangeMsg = (event) => {
     setSendChat(event.target.value);
-    console.log(sendChat);
   };
 
   const messageEl = useRef(null);
@@ -254,12 +252,6 @@ export default function GroupChatBox(props) {
       .then((res) => {
         // Set Players that are not in location.state.members
         setPlayers(
-          res?.data?.data?.filter(
-            (item) =>
-              !conversation?.Members?.some((player) => player._id === item._id)
-          )
-        );
-        console.log(
           res?.data?.data?.filter(
             (item) =>
               !conversation?.Members?.some((player) => player._id === item._id)

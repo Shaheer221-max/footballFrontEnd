@@ -25,7 +25,6 @@ export default function PlayerareaAttendence() {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
-        console.log(res.data.data);
         setPlayers(res.data.data);
       })
       .catch((error) => {
@@ -55,7 +54,6 @@ export default function PlayerareaAttendence() {
     newAttendance[index].isPresent = value;
 
     setAttendance(newAttendance);
-    console.log(newAttendance);
   };
 
   React.useEffect(() => {
@@ -70,15 +68,11 @@ export default function PlayerareaAttendence() {
   // Pagination
   const [itemOffset, setItemOffset] = React.useState(0);
   const endOffset = itemOffset + 5;
-  console.log(`Loading items from ${itemOffset} to ${endOffset}`);
   const currentItems = players.slice(itemOffset, endOffset);
   const pageCount = Math.ceil(players.length / 5);
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * 5) % players.length;
-    console.log(
-      `User requested page number ${event.selected}, which is offset ${newOffset}`
-    );
     setItemOffset(newOffset);
   };
 
@@ -90,7 +84,7 @@ export default function PlayerareaAttendence() {
       message.error("Attendance Already Marked");
       return;
     }
-    console.log(attendance);
+
     await axios
       .post(`${process.env.REACT_APP_API}/attendance/MarkAttendance`, {
         date: date,
@@ -99,7 +93,7 @@ export default function PlayerareaAttendence() {
       })
       .then((res) => {
         setAttendance([]);
-        console.log(res.data.data);
+      
         message.success("Attendance Marked");
         getAttendance();
       })
@@ -108,7 +102,7 @@ export default function PlayerareaAttendence() {
         console.log(error.response.data);
       });
   };
-  console.log("filter", filter);
+
   const [attendanceData, setAttendanceData] = useState([]);
 
   const getAttendance = async () => {
@@ -124,9 +118,6 @@ export default function PlayerareaAttendence() {
           setTodayAttendance(true);
           setAttendanceObj(todayAttendance);
         }
-
-        console.log(todayAttendance);
-        console.log(res.data.data.doc);
         setAttendanceData(res.data.data.doc);
       })
       .catch((error) => {
@@ -141,13 +132,6 @@ export default function PlayerareaAttendence() {
   const [todayAttendance, setTodayAttendance] = useState(false);
 
   const isAttendancePresent = (attendanceArray, playerId) => {
-    console.log(
-      "isAttendancePresent",
-      attendanceArray
-      // attendanceArray.some(
-      //   (atten) => atten.refOfPlayer === playerId && atten.isPresent
-      // )
-    );
     return attendanceArray?.some(
       (atten) => atten?.refOfPlayer === playerId && atten?.isPresent
     );
