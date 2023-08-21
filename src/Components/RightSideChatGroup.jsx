@@ -79,14 +79,14 @@ export default function RightSideChatGroup(props) {
     <>
       <div className="window mx-10 my-5" id="chat-window">
         <div className="flex flex-row-reverse gap-2 px-5">
-          {props.message.sender == user.user.id ? (
+          {props?.message?.sender == user?.user?.id ? (
             <img
               className=" w-10 h-10 rounded-full "
-              src={user.user.image}
+              src={user?.user?.image}
               alt="Bonnie image"
             />
           ) : (
-            location.state.members.map((item) =>
+            location?.state?.members?.map((item) =>
               item.id === user.user.id ? (
                 ""
               ) : (
