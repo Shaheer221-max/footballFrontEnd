@@ -99,7 +99,6 @@ export default function ChatBox(props) {
       .get(`${process.env.REACT_APP_API}/message/${params.id}`)
       .then((res) => {
         setChat(res.data);
-        console.log("All Messages: ", res.data);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -114,9 +113,7 @@ export default function ChatBox(props) {
   const [sendChat, setSendChat] = useState("");
 
   useEffect(() => {
-    // console.log("Get message");
     user?.socket?.current?.on("getMessage", (data) => {
-      console.log("Get message: ", data.text);
       setArrivalMessage({
         sender: data.senderId,
         text: data.text,
@@ -126,7 +123,6 @@ export default function ChatBox(props) {
   }, []);
 
   useEffect(() => {
-    console.log("Display message");
     // setLastMessage(arrivalMessage?.text);
     arrivalMessage &&
       location?.state?.members?.map((data) => {
@@ -194,7 +190,6 @@ export default function ChatBox(props) {
   };
   const handleChangeMsg = (event) => {
     setSendChat(event.target.value);
-    console.log(sendChat);
   };
 
   const messageEl = useRef(null);
@@ -210,14 +205,12 @@ export default function ChatBox(props) {
   // Get Conversation from Id
   const [conversation, setConversation] = useState(null);
   const getConversation = async () => {
-    console.log("Conversation Id: ", params.id);
     await axios
       .post(
         `${process.env.REACT_APP_API}/conversation/conversation/${params.id}`
       )
       .then((res) => {
         setConversation(res.data.data);
-        console.log("Conversation: ", res.data.data);
       })
       .catch((error) => {
         console.log(error.response.data);

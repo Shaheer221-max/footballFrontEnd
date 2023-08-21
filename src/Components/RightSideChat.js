@@ -67,7 +67,6 @@ export default function RightSideChat(props) {
 
     // Get the last part, which should be the extension
     const extension = parts[parts.length - 1];
-    console.log("extension", extension);
     return extension;
   }
 
@@ -75,8 +74,6 @@ export default function RightSideChat(props) {
     getFileExtension();
   }, []);
 
-  console.log("three.include:",  extensionArray.some((ext) =>
-  props.message.text.toLowerCase().endsWith(ext)));
   return (
     <>
       <div className="window mx-10 my-5" id="chat-window">

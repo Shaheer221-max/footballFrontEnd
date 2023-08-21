@@ -81,7 +81,6 @@ export default function Groups() {
       .delete(`${process.env.REACT_APP_API}/group/DeleteGroup/` + groupId)
       .then((res) => {
         message.success("Group Deleted Successfully");
-        console.log(res.data);
         setRefresh(false);
         handleClose();
       })

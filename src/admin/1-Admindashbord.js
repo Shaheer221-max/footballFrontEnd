@@ -45,7 +45,6 @@ export default function Dashboard() {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state);
-  console.log("Admin: ", user);
 
   const socket = useRef();
 
@@ -130,14 +129,12 @@ export default function Dashboard() {
         })
         .then((res) => {
           message.success("Offday Added");
-          console.log(res.data);
           setevent(false);
           setschedule(false);
         })
         .catch((error) => {
           message.error("Offday Not Added");
           setError(error.response.data);
-          console.log(error.response.data);
         });
     }
   };
@@ -155,7 +152,6 @@ export default function Dashboard() {
     await axios
       .get(`${process.env.REACT_APP_API}/event/getEvents`)
       .then((res) => {
-        console.log(res.data.data.doc);
         if (res.data.data !== res.data.data.Prototype) {
           SetAllGetEvents(
             res.data.data.doc.filter((data) => data.offDay == false)
@@ -199,7 +195,6 @@ export default function Dashboard() {
       .then((res) => {
         message.success("Event Added");
         setRefresh(true);
-        console.log(res.data);
         setevent(false);
         setschedule(false);
         setError(false);
@@ -228,7 +223,6 @@ export default function Dashboard() {
       .then((res) => {
         message.success("Event Deleted");
         setRefresh(true);
-        console.log(res.data);
       })
       .catch((error) => {
         message.error("Something went wrong");

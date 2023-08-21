@@ -103,7 +103,6 @@ export default function AddItems() {
         role: "Player",
       })
       .then((res) => {
-        console.log(res.data);
         setError(false);
         setPlayerAdded(true);
       })

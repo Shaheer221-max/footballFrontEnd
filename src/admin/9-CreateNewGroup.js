@@ -198,7 +198,6 @@ export default function AddGroups() {
       )
       .then((res) => {
         message.success("Member Added Successfully");
-        console.log(res.data);
       })
       .catch((error) => {
         message.error("Member Not Added");
@@ -223,7 +222,6 @@ export default function AddGroups() {
       )
       .then((res) => {
         message.success("Member Removed Successfully");
-        console.log(res.data);
       })
       .catch((error) => {
         message.error("Member Not Removed");

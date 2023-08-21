@@ -130,7 +130,6 @@ export default function CoachChat() {
         `${process.env.REACT_APP_API}/message/${params.id}`
       )
       .then((res) => {
-        console.log(res.data);
         setChat(res.data);
       })
       .catch((error) => {
@@ -156,7 +155,6 @@ export default function CoachChat() {
       .then((res) => {
         setSendChat("");
         setUrl("");
-        console.log(res.data);
         console.log("msg sent");
       })
       .catch((error) => {

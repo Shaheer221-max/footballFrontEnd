@@ -6,7 +6,6 @@ import { useLocation } from "react-router-dom";
 import moment from "moment";
 
 export default function RightSideChatGroup(props) {
-  console.log(props);
   const location = useLocation();
   const [three, setThree] = React.useState("");
   const user = useSelector((state) => state.user);
@@ -68,7 +67,6 @@ export default function RightSideChatGroup(props) {
 
     // Get the last part, which should be the extension
     const extension = parts[parts.length - 1];
-    console.log("extension", extension);
     return extension;
   }
 
