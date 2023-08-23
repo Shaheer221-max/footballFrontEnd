@@ -58,7 +58,6 @@ export default function GroupChatBox(props) {
   const showModal = () => {
     setSearch("");
     setIsModalOpen(true);
-    
   };
   const handleOk = () => {
     setIsModalOpen(false);
@@ -197,8 +196,8 @@ export default function GroupChatBox(props) {
   };
 
   const sendMsg = async () => {
-    if (sendChat.trim() === "" && !file) {
-      message.error("Cannot send empty Message");
+    if (sendChat.trim() === "") {
+      message.error("Message is required");
     } else {
       user?.socket?.current?.emit("sendMessage", {
         senderId: user.user._id,
@@ -279,7 +278,6 @@ export default function GroupChatBox(props) {
     );
   }, [isModalOpen1]);
 
-
   const addMember = async (id) => {
     setRefresh(true);
     setPlayers([...players, id]);
@@ -337,9 +335,7 @@ export default function GroupChatBox(props) {
 
   const [filteredUsers, setFilteredUsers] = React.useState([]);
   React.useEffect(() => {
-
     if (search === "") {
-     
       setFiltered(conversation?.Members);
     } else {
       setFilteredUsers(

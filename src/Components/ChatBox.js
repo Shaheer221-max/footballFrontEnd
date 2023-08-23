@@ -160,8 +160,8 @@ export default function ChatBox(props) {
   };
 
   const sendMsg = async () => {
-    if (sendChat.trim() === "" && !file) {
-      message.error("Cannot send empty Message");
+    if (sendChat.trim() === "") {
+      message.error("Message is required");
     } else {
       user?.socket?.current?.emit("sendMessage", {
         senderId: user.user._id,
