@@ -6,11 +6,9 @@ import { useLocation } from "react-router-dom";
 import moment from "moment";
 
 export default function RightSideChatGroup(props) {
-  console.log(props);
   const location = useLocation();
   const [three, setThree] = React.useState("");
   const user = useSelector((state) => state.user);
-
   const extensionArray = [
     "jpg",
     "jpeg",
@@ -68,7 +66,6 @@ export default function RightSideChatGroup(props) {
 
     // Get the last part, which should be the extension
     const extension = parts[parts.length - 1];
-    console.log("extension", extension);
     return extension;
   }
 
@@ -98,7 +95,7 @@ export default function RightSideChatGroup(props) {
               )
             )
           )}
-          <div style={{ width: "50%" }}>
+         <div style={{ width:  `${props.message.content && props.message.link ? '30%' : '50%'}` }}>
             <div className="flex flex-row-reverse justify-between mx2">
               <h5 className="text-lg font-normal tracking-tight text-white">
                 {user.user.name}
@@ -117,10 +114,10 @@ export default function RightSideChatGroup(props) {
                 <video controls>
                   <source src={props.message.content} type="video/mp4" />
                 </video>
-              ) : props.message.content && extensionArray.includes(three) ? (
+              ) : props.message.content && props.message.link ? (
                 <div>
                   <a
-                    href={props.message.content} // Link to the image
+                    href={props.message.link} // Link to the image
                     target="_blank" // Open link in a new tab
                     rel="noopener noreferrer" // Security best practice for opening links
                     style={{
@@ -129,13 +126,13 @@ export default function RightSideChatGroup(props) {
                   >
                     <img
                       className="h-[300px] w-[300px] cursor-pointer border border-gray-300 hover:border-green-500"
-                      src={getfileSrc(three)}
+                      src={props.message.link}
                       alt="image"
                     />
                   </a>
 
                   <p
-                    className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-6"
+                    className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-4"
                     style={{ width: "100%", overflowWrap: "break-word" }}
                   >
                     {props.message.content}

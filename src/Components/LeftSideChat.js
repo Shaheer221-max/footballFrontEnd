@@ -76,7 +76,7 @@ export default function LeftSideChat(props) {
     <>
       <div className=" mx-10 my-5 font-lexend">
         <div className="flex gap-2">
-          {props.message.sender == user.user.id ? (
+          {props.message.sender == user?.user?.id ? (
             <img
               className=" w-10 h-10 rounded-full "
               src={user.user.image}
@@ -103,7 +103,7 @@ export default function LeftSideChat(props) {
             />
           )}
 
-          <div style={{ width: "50%" }}>
+<div style={{ width:  `${props.message.text && props.message.link ? '30%' : '50%'}` }}>
             <div className="flex  justify-between">
               <h5 className="text-lg font-normal tracking-tight  text-white">
                 {/* {props.name} */}
@@ -120,10 +120,10 @@ export default function LeftSideChat(props) {
                 <video controls>
                   <source src={props.message.text} type="video/mp4" />
                 </video>
-              ) : props.message.text && extensionArray.includes(three) ? (
+              ) :  props.message.text && props.message.link ? (
                 <div>
                   <a
-                    href={props.message.text} // Link to the image
+                    href={props.message.link} // Link to the image
                     target="_blank" // Open link in a new tab
                     rel="noopener noreferrer" // Security best practice for opening links
                     style={{
@@ -132,7 +132,7 @@ export default function LeftSideChat(props) {
                   >
                     <img
                       className="h-[300px] w-[300px] cursor-pointer border border-gray-300 hover:border-green-500"
-                      src={getfileSrc(three)}
+                      src={props.message.link}
                       alt="image"
                     />
                   </a>
