@@ -26,11 +26,9 @@ export default function VerificationCenterCoach() {
 
   // getting players from database
   const data = async () => {
-    console.log("in data");
     let res = await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllCoaches`)
       .then((res) => {
-        console.log(res.data.data);
         if (res.data.data !== res.data.data.Prototype) {
           setStaticData(
             res.data.data.filter((val) => val.active === "pending")
@@ -55,7 +53,6 @@ export default function VerificationCenterCoach() {
   };
 
   const [filteredData, setFilteredData] = useState([]);
-  console.log("filteredData12", filteredData);
   React.useEffect(() => {
     if (searchPlayer === "") {
       setFilteredData(staticdata);
@@ -83,22 +80,12 @@ export default function VerificationCenterCoach() {
     setTotalPages(
       Math.ceil((data.length = 0 ? 1 : data.length / playersPerPage))
     );
-    console.log("Current pages", currentPage);
-    console.log(
-      "Index Of 1st",
-      indexOfFirstPage,
-      "Last Index",
-      indexOfLastPage,
-      "next",
-      next
-    );
   };
 
   const nextPage = () => {
     if (currentPage < totalPages) {
       let current = currentPage;
       setCurrentPage((prev) => setCurrentPage(prev + 1));
-      console.log(currentPage);
       next = true;
       data();
     }
@@ -114,7 +101,6 @@ export default function VerificationCenterCoach() {
       .then((response) => {
         setRefresh(false);
         message.success("Approved");
-        console.log(response);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -127,7 +113,6 @@ export default function VerificationCenterCoach() {
       .delete(`${process.env.REACT_APP_API}/users/deleteUser/${id}`)
       .then((response) => {
         setRefresh(false);
-        console.log(response);
       })
       .catch((error) => {
         console.log(error.response.data);

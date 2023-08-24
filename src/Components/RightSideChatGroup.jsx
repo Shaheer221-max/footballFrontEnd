@@ -9,7 +9,6 @@ export default function RightSideChatGroup(props) {
   const location = useLocation();
   const [three, setThree] = React.useState("");
   const user = useSelector((state) => state.user);
-
   const extensionArray = [
     "jpg",
     "jpeg",
@@ -77,14 +76,14 @@ export default function RightSideChatGroup(props) {
     <>
       <div className="window mx-10 my-5" id="chat-window">
         <div className="flex flex-row-reverse gap-2 px-5">
-          {props.message?.sender?.id == user.user.id ? (
+          {props?.message?.sender?.id == user?.user?.id ? (
             <img
               className=" w-10 h-10 rounded-full "
-              src={user.user.image}
+              src={user?.user?.image}
               alt="Bonnie image"
             />
           ) : (
-            location.state.members.map((item) =>
+            location?.state?.members?.map((item) =>
               item.id === user.user.id ? (
                 ""
               ) : (
@@ -96,7 +95,7 @@ export default function RightSideChatGroup(props) {
               )
             )
           )}
-          <div style={{ width: "50%" }}>
+         <div style={{ width:  `${props.message.content && props.message.link ? '30%' : '50%'}` }}>
             <div className="flex flex-row-reverse justify-between mx2">
               <h5 className="text-lg font-normal tracking-tight text-white">
                 {user.user.name}
@@ -115,10 +114,10 @@ export default function RightSideChatGroup(props) {
                 <video controls>
                   <source src={props.message.content} type="video/mp4" />
                 </video>
-              ) : props.message.content && extensionArray.includes(three) ? (
+              ) : props.message.content && props.message.link ? (
                 <div>
                   <a
-                    href={props.message.content} // Link to the image
+                    href={props.message.link} // Link to the image
                     target="_blank" // Open link in a new tab
                     rel="noopener noreferrer" // Security best practice for opening links
                     style={{
@@ -127,13 +126,13 @@ export default function RightSideChatGroup(props) {
                   >
                     <img
                       className="h-[300px] w-[300px] cursor-pointer border border-gray-300 hover:border-green-500"
-                      src={getfileSrc(three)}
+                      src={props.message.link}
                       alt="image"
                     />
                   </a>
 
                   <p
-                    className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-6"
+                    className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-4"
                     style={{ width: "100%", overflowWrap: "break-word" }}
                   >
                     {props.message.content}

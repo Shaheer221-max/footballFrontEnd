@@ -101,12 +101,10 @@ export default function Dashboard() {
       })
       .then((res) => {
         message.success("Offday Added");
-        console.log(res.data);
       })
       .catch((error) => {
         message.error("Offday Not Added");
         setError(error.response.data);
-        console.log(error.response.data);
       });
   };
 
@@ -114,7 +112,6 @@ export default function Dashboard() {
     await axios
       .get(`${process.env.REACT_APP_API}/event/getEvents`)
       .then((res) => {
-        console.log(res.data.data.doc);
         if (res.data.data !== res.data.data.Prototype) {
           SetAllGetEvents(
             res.data.data.doc.filter((data) => data.offDay == false)
@@ -140,7 +137,6 @@ export default function Dashboard() {
       message.error("Please fill all fields");
       return;
     }
-    console.log(date);
     await axios
       .post(`${process.env.REACT_APP_API}/event/CreateEvent`, {
         // date: `${day}-${month}-${yearr}`,
@@ -151,7 +147,6 @@ export default function Dashboard() {
       .then((res) => {
         message.success("Event Added");
         setRefresh(true);
-        console.log(res.data);
         setevent(false);
         setschedule(false);
         setError(false);
@@ -159,7 +154,6 @@ export default function Dashboard() {
       .catch((error) => {
         message.error("Something went wrong");
         setError(error.response.data);
-        console.log(error.response.data);
       });
   };
 
@@ -180,7 +174,6 @@ export default function Dashboard() {
       .then((res) => {
         message.success("Event Deleted");
         setRefresh(true);
-        console.log(res.data);
       })
       .catch((error) => {
         message.error("Something went wrong");
@@ -217,7 +210,6 @@ export default function Dashboard() {
   useEffect(() => {
     socket.current = io(`https://footballsocketioforchat.herokuapp.com`);
     const obj = { current: socket.current };
-    console.log("Socket: ", obj);
     dispatch({ type: "SOCKET", payload: obj });
   }, []);
 
@@ -232,7 +224,6 @@ export default function Dashboard() {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
-        console.log(res.data.data);
         setAllPlayers(res.data.data);
       })
       .catch((error) => {

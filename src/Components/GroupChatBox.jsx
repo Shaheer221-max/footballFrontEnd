@@ -25,6 +25,8 @@ export default function GroupChatBox(props) {
   const [msgLoading, setMsgLoading] = useState(false);
   const [fileName, setFileName] = useState("");
   const [file, setFile] = useState(null);
+  const [search, setSearch] = React.useState("");
+  const [filtered, setFiltered] = React.useState([]);
 
   const hiddenFileInput = React.useRef(null);
 
@@ -42,6 +44,7 @@ export default function GroupChatBox(props) {
       )
       .then((res) => {
         setConversation(res.data.data);
+        AllPlayers();
       })
       .catch((err) => {
         console.log(err);
@@ -50,25 +53,29 @@ export default function GroupChatBox(props) {
 
   React.useEffect(() => {
     getCurrentConversation();
-  }, [refresh]);
+  }, [refresh, params.id]);
 
   const showModal = () => {
+    setSearch("");
     setIsModalOpen(true);
   };
   const handleOk = () => {
     setIsModalOpen(false);
   };
   const handleCancel = () => {
+    setSearch("");
     setIsModalOpen(false);
   };
 
   const showModal1 = () => {
+    setSearch("");
     setIsModalOpen1(true);
   };
   const handleOk1 = () => {
     setIsModalOpen1(false);
   };
   const handleCancel1 = () => {
+    setSearch("");
     setIsModalOpen1(false);
   };
 
@@ -137,7 +144,6 @@ export default function GroupChatBox(props) {
         `${process.env.REACT_APP_API}/groupconversation/messages/${params.id}`
       )
       .then((res) => {
-        console.log('response', res);
         setChat(res.data);
       })
       .catch((error) => {
@@ -182,17 +188,16 @@ export default function GroupChatBox(props) {
     setFileName(event.target.files[0].name);
     setFile(event.target.files[0]);
     // You might have additional code here for processing the file
-  
+
     // After you finish loading, set msgLoading back to false after 2 seconds
     setTimeout(() => {
       setMsgLoading(false);
     }, 2000); // 2000 milliseconds = 2 seconds
   };
 
-
   const sendMsg = async () => {
-    if (sendChat.trim() === "" && !file) {
-      message.error("Cannot send empty Message");
+    if (sendChat.trim() === "") {
+      message.error("Message is required");
     } else {
       user?.socket?.current?.emit("sendMessage", {
         senderId: user.user._id,
@@ -232,7 +237,6 @@ export default function GroupChatBox(props) {
   };
   const handleChangeMsg = (event) => {
     setSendChat(event.target.value);
-    console.log(sendChat);
   };
 
   const messageEl = useRef(null);
@@ -253,16 +257,10 @@ export default function GroupChatBox(props) {
       .get(`${process.env.REACT_APP_API}/users/GetAllPlayers`)
       .then((res) => {
         // Set Players that are not in location.state.members
-        setPlayers(
-          res?.data?.data?.filter(
-            (item) =>
-              !conversation?.Members?.some((player) => player._id === item._id)
-          )
-        );
-        console.log(
-          res?.data?.data?.filter(
-            (item) =>
-              !conversation?.Members?.some((player) => player._id === item._id)
+        setPlayers(res?.data?.data);
+        setFilteredUsers(
+          res?.data?.data?.filter((item) =>
+            conversation?.Members?.some((player) => player._id !== item._id)
           )
         );
       })
@@ -270,6 +268,15 @@ export default function GroupChatBox(props) {
         console.log(error.response.data);
       });
   };
+
+  useEffect(() => {
+    setFilteredUsers(
+      players?.filter(
+        (item) =>
+          !conversation?.Members?.some((player) => player._id === item._id)
+      )
+    );
+  }, [isModalOpen1]);
 
   const addMember = async (id) => {
     setRefresh(true);
@@ -281,11 +288,11 @@ export default function GroupChatBox(props) {
       .then((res) => {
         message.success("Member Added");
         getCurrentConversation();
-        AllPlayers();
+        // AllPlayers();
         setRefresh(false);
         setOpenMembers(false);
         setIsModalOpen(false);
-        AllPlayers();
+        // AllPlayers();
         setIsModalOpen1(false);
       })
       .catch((error) => {
@@ -306,7 +313,6 @@ export default function GroupChatBox(props) {
         AllPlayers();
         message.success("Member Removed");
         setOpenMembers(false);
-        AllPlayers();
         setIsModalOpen(false);
       })
       .catch((error) => {
@@ -316,10 +322,7 @@ export default function GroupChatBox(props) {
 
   React.useEffect(() => {
     AllPlayers();
-  }, [params.id, refresh]);
-
-  const [search, setSearch] = React.useState("");
-  const [filtered, setFiltered] = React.useState([]);
+  }, [params.id]);
 
   const handleChangeSearch = (event) => {
     setSearch(event.target.value);
@@ -331,18 +334,17 @@ export default function GroupChatBox(props) {
   };
 
   const [filteredUsers, setFilteredUsers] = React.useState([]);
-
   React.useEffect(() => {
     if (search === "") {
-      setFilteredUsers(players);
+      setFiltered(conversation?.Members);
     } else {
       setFilteredUsers(
-        players?.filter((player) =>
+        filteredUsers?.filter((player) =>
           player.name.toLowerCase().includes(search.toLowerCase())
         )
       );
     }
-  }, [search, players, refresh]);
+  }, [search, params.id, refresh]);
 
   const handleChangeSearch1 = (event) => {
     setSearch(event.target.value);
@@ -415,6 +417,7 @@ export default function GroupChatBox(props) {
               type="text"
               placeholder="Search"
               onChange={handleChangeSearch}
+              value={search}
             />
           </div>
           {search !== ""
@@ -554,9 +557,10 @@ export default function GroupChatBox(props) {
               type="text"
               placeholder="Search"
               onChange={handleChangeSearch1}
+              value={search}
             />
           </div>
-          {filteredUsers.map((data) => {
+          {filteredUsers?.map((data) => {
             return (
               <div
                 className="mt-6"

@@ -94,6 +94,7 @@ export default function RecentChats(props) {
     await axios
       .get(`${process.env.REACT_APP_API}/group/GetAllGroups`)
       .then((res) => {
+    
         setGroups(res.data.data.doc);
       })
       .catch((error) => {
@@ -105,6 +106,7 @@ export default function RecentChats(props) {
     await axios
       .get(`${process.env.REACT_APP_API}/users/GetAllUsers`)
       .then((res) => {
+      
         // Get All Users Except Current User
         const filteredUsers = res.data.data.doc.filter(
           (user) => user.id !== id
@@ -124,6 +126,7 @@ export default function RecentChats(props) {
       })
       .then((res) => {
         navigate(`/chat/${res.data._id}`);
+     
       })
       .catch((error) => {
         console.log(error.response.data);

@@ -123,7 +123,7 @@ function getfileSrc(file) {
             ))}
             
 
-          <div style={{ width: "50%" }}>
+            <div style={{ width:  `${props.message.content && props.message.link ? '30%' : '50%'}` }}>
             <div className="flex  justify-between">
               <h5 className="text-lg font-normal tracking-tight  text-white">
                 {/* {props.name} */}
@@ -141,7 +141,7 @@ function getfileSrc(file) {
                   <source src={props.message.content} type="video/mp4" />
                 </video>
               ) : props.message.content &&
-                extensionArray.includes(three)
+              props.message.link
                  ? (
                 <div>
                   <a
@@ -154,14 +154,14 @@ function getfileSrc(file) {
                   >
                     <img
                       className="h-[300px] w-[300px] cursor-pointer border border-gray-300 hover:border-green-500"
-                      src={getfileSrc(three)}
+                      src={props.message.link}
                       alt="image"
                     />
                   </a>
 
                   <p
                     className="font-medium bg-[#212121] text-base text-white mt-1 rounded-tr-lg rounded-b-lg py-2 px-6"
-                    style={{ width: "100%", overflowWrap: "break-word" }}
+                    style={{ width: "70%", overflowWrap: "break-word" }}
                   >
                     {props.message.content}
                   </p>

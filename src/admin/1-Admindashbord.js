@@ -184,7 +184,6 @@ export default function Dashboard() {
       message.error("Please fill all fields");
       return;
     }
-    console.log(date);
     await axios
       .post(`${process.env.REACT_APP_API}/event/CreateEvent`, {
         // date: `${day}-${month}-${yearr}`,

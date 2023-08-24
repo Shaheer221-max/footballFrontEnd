@@ -156,8 +156,8 @@ export default function ChatBox(props) {
   };
 
   const sendMsg = async () => {
-    if (sendChat.trim() === "" && !file) {
-      message.error("Cannot send empty Message");
+    if (sendChat.trim() === "") {
+      message.error("Message is required");
     } else {
       user?.socket?.current?.emit("sendMessage", {
         senderId: user.user._id,
@@ -399,7 +399,7 @@ export default function ChatBox(props) {
           <div className="flex items-center gap-2 pb-5 px-5 ml-4 border-b border-grey-500">
             <>
               {conversation?.members?.map((item) =>
-                item.id === user.user.id ? (
+                item.id === user?.user?.id ? (
                   ""
                 ) : (
                   <>
@@ -420,7 +420,7 @@ export default function ChatBox(props) {
             <div>
               <div className="flex items-center gap-4">
                 {conversation?.members?.map((item) =>
-                  item.id === user.user.id ? (
+                  item.id === user?.user?.id ? (
                     ""
                   ) : (
                     <></>
@@ -431,7 +431,7 @@ export default function ChatBox(props) {
 
                 <>
                   {conversation?.members?.map((item) =>
-                    item.id === user.user.id ? (
+                    item.id === user?.user?.id ? (
                       ""
                     ) : (
                       <div className="inline-flex font-dm items-center py-1 px-5  text-xs font-medium text-white bg-green-500 rounded-md ">
@@ -515,7 +515,7 @@ export default function ChatBox(props) {
                       </>
                     )}
 
-                    {val.sender.id !== user.user.id ? (
+                    {val.sender.id !== user?.user?.id ? (
                       <>
                         <div className="mt-5">
                           <LeftSideChat message={val} />
