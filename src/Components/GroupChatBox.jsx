@@ -337,6 +337,12 @@ export default function GroupChatBox(props) {
   React.useEffect(() => {
     if (search === "") {
       setFiltered(conversation?.Members);
+      setFilteredUsers(
+        players?.filter(
+          (item) =>
+            !conversation?.Members?.some((player) => player._id === item._id)
+        )
+      );
     } else {
       setFilteredUsers(
         filteredUsers?.filter((player) =>
