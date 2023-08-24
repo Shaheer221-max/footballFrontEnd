@@ -784,7 +784,9 @@ export default function PlayerProfileCenterBox(props) {
             <tbody>
               {filteredAttendence.length > 0 &&
                 filteredAttendence
+                .reverse()
                   .slice(0, showAll ? filteredAttendence.length : 6) // Display all or first 6 records
+                  
                   .map((attendanceObject, index) => {
                     return (
                       <>
@@ -946,15 +948,16 @@ export default function PlayerProfileCenterBox(props) {
                     {skill}
                   </th>
                 ))}
-                <th scope="col" className="py-3 pl-3 justify-center">
+                {/* <th scope="col" className="py-3 pl-3 justify-center">
                   Comments
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
               {filteredReport.length > 0 &&
                 filteredReport
                   .filter((report) => report.refOfSkill !== null)
+                  .reverse()
                   .slice(0, showAll ? filteredReport.length : 6)
                   .map((evaluationObject, index) => {
                     return (
@@ -972,10 +975,10 @@ export default function PlayerProfileCenterBox(props) {
                               : "-"}
                           </td>
                         ))}
-                        <td className="text-blue-500 underline">
+                        {/* <td className="text-blue-500 underline">
                           {" "}
                           View Comments
-                        </td>
+                        </td> */}
                       </tr>
                     );
                   })}
