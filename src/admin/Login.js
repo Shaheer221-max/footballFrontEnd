@@ -69,7 +69,6 @@ export const Login = () => {
             if (res?.data?.data?.user?.role === "Admin") {
               message.success("Logged In Successfully");
               dispatch({ type: "USER_LOGIN_SUCCESS", payload: res.data });
-              console.log(res.data);
               localStorage.setItem("token", res.data.token);
               localStorage.setItem("current", "Admin");
               setActiveId(email);

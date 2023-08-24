@@ -77,7 +77,7 @@ export default function RightSideChat(props) {
     <>
       <div className="window mx-10 my-5" id="chat-window">
         <div className="flex flex-row-reverse gap-2 px-5">
-          {props.message.sender == user.user.id ? (
+          {props.message?.sender?.id == user.user.id ? (
             <img
               className=" w-10 h-10 rounded-full "
               src={user.user.image}

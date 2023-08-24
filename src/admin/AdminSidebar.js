@@ -13,7 +13,7 @@ export default function Sidebar() {
     <>
       {shop === true ? (
         <>
-          <div className="w-28 bg-[#212121] h-screen overflow-y-scroll">
+          <div className="w-28 bg-[#212121]  h-screen overflow-y-scroll">
             <div className=" py-4 px-3 flex justify-center  h-screen ">
               <ul className="space-y-[18.5px] ">
                 <li onClick={() => setShop(false)}>
@@ -259,7 +259,11 @@ export default function Sidebar() {
                         : "flex items-center text-base font-normal  p-1.5 rounded-lg hover:bg-gray-500 border-dashed justify-center"
                     }
                   >
-                    <img src={verify} style = {{ width: 33, height: 33 }} alt="" />
+                    <img
+                      src={verify}
+                      style={{ width: 33, height: 33 }}
+                      alt=""
+                    />
                   </NavLink>
                 </li>
 
@@ -462,11 +466,12 @@ export default function Sidebar() {
                     </svg>
                   </NavLink>
                 </li>
-                <li onClick={() => 
-                  {
-                    localStorage.removeItem("token")
-                    setdrop(false)
-                  }}>
+                <li
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    setdrop(false);
+                  }}
+                >
                   <NavLink
                     to={"/"}
                     className="flex items-center p-2.5 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 justify-center"

@@ -296,7 +296,7 @@ export default function Chat() {
 
         <div className="flex   divide-x divide-[#7e7e7e] h-[calc(100vh-115px)] overflow-y-auto">
           {/* left side-bar details  */}
-          <div className="w-[40%] ml-8">
+          <div className="w-[30%] ml-8">
             <RecentChats refresh={refresh} />
           </div>
 
