@@ -10,12 +10,15 @@ import {
 import ReactPaginate from "react-paginate";
 
 import { message } from "antd";
+import { useEffect } from "react";
 
 export default function PlayerareaAttendence() {
   const [openAddsubcatmodal, setopenAddsubcatmodal] = useState(false);
   const [players, setPlayers] = useState([]);
   const [search, setSearch] = useState("");
-  const [attendanceObj, setAttendanceObj] = useState([]);
+  const [todayAttendanceList, setTodayAttendanceList] = useState([]);
+  const [checkedAttendanceList, setCheckedAttendanceList] = useState([]);
+  const [temp, setTemp] = useState([]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -37,9 +40,9 @@ export default function PlayerareaAttendence() {
   React.useEffect(() => {
     if (search === "") {
       setFilter(players);
-      setAttendance(
-        players.map((player) => ({ refOfPlayer: player._id, isPresent: false }))
-      );
+      // setAttendance(
+      //   players.map((player) => ({ refOfPlayer: player._id, isPresent: false }))
+      // );
     } else {
       setFilter(
         players.filter((player) =>
@@ -50,10 +53,13 @@ export default function PlayerareaAttendence() {
   }, [search, players]);
 
   const handleChangeAttendance = (index, value) => {
-    const newAttendance = [...attendance];
-    newAttendance[index].isPresent = value;
+    const updatedTemp = checkedAttendanceList.map((item, currentIndex) => ({
+      ...item,
+      isPresent: currentIndex === index ? value : item.isPresent,
+    }));
 
-    setAttendance(newAttendance);
+    // Set the state to the modified array
+    setCheckedAttendanceList(updatedTemp);
   };
 
   React.useEffect(() => {
@@ -76,26 +82,16 @@ export default function PlayerareaAttendence() {
     setItemOffset(newOffset);
   };
 
-  // Create array of Players with their attendance
-  const [attendance, setAttendance] = useState([]);
-
   const AddAttendance = async (id) => {
-    if (todayAttendance) {
-      message.error("Attendance Already Marked");
-      return;
-    }
-
     await axios
       .post(`${process.env.REACT_APP_API}/attendance/MarkAttendance`, {
         date: date,
-        attendance: attendance,
+        attendance: checkedAttendanceList,
         isMarked: true,
       })
       .then((res) => {
-        setAttendance([]);
-      
         message.success("Attendance Marked");
-        getAttendance();
+        setTodayAttendanceList(res.data.data.doc.attendance);
       })
       .catch((error) => {
         message.error("Attendance Not Marked");
@@ -103,39 +99,50 @@ export default function PlayerareaAttendence() {
       });
   };
 
-  const [attendanceData, setAttendanceData] = useState([]);
-
   const getAttendance = async () => {
     const date = new Date().toISOString();
     await axios
       .get(`${process.env.REACT_APP_API}/attendance/GetAllAttendance`)
       .then((res) => {
         // Check if attendance is marked for today
-        const todayAttendance = res.data.data.doc.find(
+        const todayAttendance = res.data.data.doc.filter(
           (item) => item.date.split("T")[0] === date.split("T")[0]
         );
-        if (todayAttendance) {
-          setTodayAttendance(true);
-          setAttendanceObj(todayAttendance);
+        const todayAttendanceReversed = [...todayAttendance].reverse();
+        const todayAttendancePopped = [...todayAttendanceReversed].pop();
+
+        if (todayAttendancePopped.attendance?.length === 0) {
+          const updatedAttendanceList = players.map((player) => ({
+            refOfPlayer: player._id,
+            isPresent: false,
+          }));
+
+          setTodayAttendanceList(updatedAttendanceList);
+          setCheckedAttendanceList(updatedAttendanceList);
+        } else {
+          const todayAttendanceReversed = [...todayAttendance].reverse();
+          const todayAttendancePopped = [...todayAttendanceReversed].pop();
+
+          setTodayAttendanceList(todayAttendancePopped.attendance);
+          setCheckedAttendanceList(todayAttendancePopped.attendance);
         }
-        setAttendanceData(res.data.data.doc);
       })
       .catch((error) => {
         console.log(error.response.data);
       });
   };
 
+  const isPlayerPresentToday = (playerId) => {
+    const isPlayerPresent = todayAttendanceList.some((attendance) => {
+      if (attendance.refOfPlayer === playerId) return attendance.isPresent;
+    });
+    return isPlayerPresent;
+  };
+
   React.useEffect(() => {
     getAttendance();
   }, []);
 
-  const [todayAttendance, setTodayAttendance] = useState(false);
-
-  const isAttendancePresent = (attendanceArray, playerId) => {
-    return attendanceArray?.some(
-      (atten) => atten?.refOfPlayer === playerId && atten?.isPresent
-    );
-  };
   return (
     <>
       <div className="flex-col w-full">
@@ -285,14 +292,11 @@ export default function PlayerareaAttendence() {
                           onChange={(e) => {
                             handleChangeAttendance(ind, e.target.checked);
                           }}
-                          checked={isAttendancePresent(
-                            attendanceObj?.attendance,
-                            attendance?.id
-                          )}
-                          disabled={isAttendancePresent(
-                            attendanceObj?.attendance,
-                            attendance?.id
-                          )}
+                          checked={
+                            checkedAttendanceList[ind]?.isPresent
+                            // isPlayerPresentToday(val.id)
+                          }
+                          disabled={isPlayerPresentToday(val.id)}
                         />
                       </td>
                     </tr>
