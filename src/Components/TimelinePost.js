@@ -591,8 +591,8 @@ export default function TimelinePost(props) {
 
                     <div className="flex gap-2 mt-3 py-5 ml-6 border-b border-grey-500">
                       {val?.Like?.some(
-                        (value) => value.refOfUser._id == user.user.id
-                      ) ? (
+                        (value) => value?.refOfUser?._id == user?.user?.id
+                        ) ? (
                         <>
                           <div onClick={() => deleteLike(val)}>
                             <svg
