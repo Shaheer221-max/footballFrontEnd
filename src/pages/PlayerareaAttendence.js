@@ -58,8 +58,6 @@ export default function PlayerareaAttendence() {
       isPresent: currentIndex === index ? value : item.isPresent,
     }));
 
-    console.log("Updated: ", updatedTemp);
-
     // Set the state to the modified array
     setCheckedAttendanceList(updatedTemp);
   };
@@ -85,7 +83,6 @@ export default function PlayerareaAttendence() {
   };
 
   const AddAttendance = async (id) => {
-    console.log("CHECKED: ", checkedAttendanceList);
     await axios
       .post(`${process.env.REACT_APP_API}/attendance/MarkAttendance`, {
         date: date,
