@@ -58,6 +58,8 @@ export default function PlayerareaAttendence() {
       isPresent: currentIndex === index ? value : item.isPresent,
     }));
 
+    console.log("Updated: ", updatedTemp);
+
     // Set the state to the modified array
     setCheckedAttendanceList(updatedTemp);
   };
@@ -83,6 +85,7 @@ export default function PlayerareaAttendence() {
   };
 
   const AddAttendance = async (id) => {
+    console.log("CHECKED: ", checkedAttendanceList);
     await axios
       .post(`${process.env.REACT_APP_API}/attendance/MarkAttendance`, {
         date: date,
@@ -108,10 +111,11 @@ export default function PlayerareaAttendence() {
         const todayAttendance = res.data.data.doc.filter(
           (item) => item.date.split("T")[0] === date.split("T")[0]
         );
+
         const todayAttendanceReversed = [...todayAttendance].reverse();
         const todayAttendancePopped = [...todayAttendanceReversed].pop();
 
-        if (todayAttendancePopped.attendance?.length === 0) {
+        if (todayAttendance.length === 0) {
           const updatedAttendanceList = players.map((player) => ({
             refOfPlayer: player._id,
             isPresent: false,
